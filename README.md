@@ -1,8 +1,3 @@
-# 3D-Elderly-Care-Community-IOT-System
-Here’s the English translation of your text:  
-
----
-
 ### **Smart 3D Elderly Care Community IoT System (S3ECCIS)**  
 
 #### **Background:**  
