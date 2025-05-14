@@ -33,6 +33,11 @@ Doctors and caregivers can use this platform via mobile devices to **remotely mo
 
 ---  
 
+### about software
+S3ECCIS will build on the open-source software, for example , EMQX(mqtt), maria DB.
+all the software in the S3ECCIS will give its link of source.
+
+
 ### **Smart Device Solutions & Inventory**  
 - Smart surveillance camera  
 - Smart emergency call button  
