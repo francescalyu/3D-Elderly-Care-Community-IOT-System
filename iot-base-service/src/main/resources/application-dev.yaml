@@ -1,0 +1,26 @@
+server:
+  port: 9099
+
+app:
+  id: 602518344108609536  #项目ID
+
+spring:
+
+#MQTT配置信息
+mqtt:
+  #上报点位
+  upload:
+    enable: true
+    server: mqtt://124.71.174.115:9083
+    topic: emeters
+  #下发指令
+  order:
+    enable: true
+    server: mqtt://124.71.174.115:9083
+    reqTopic: sndcmd
+    resTopic: rescmd
+
+swagger:
+  version: DEV
+
+

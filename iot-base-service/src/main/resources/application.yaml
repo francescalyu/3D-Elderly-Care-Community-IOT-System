@@ -1,0 +1,8 @@
+spring:
+  profiles:
+    active: ${active:dev}
+  application:
+    name: iot-base-service
+
+feign:
+  client:
