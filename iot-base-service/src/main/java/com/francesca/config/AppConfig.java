@@ -16,7 +16,4 @@ public class AppConfig {
     @Value("${app.id}")
     private String appId;
 
-    @Value("${mqtt.upload.server}")
-    private String mqttServer;
-
 }

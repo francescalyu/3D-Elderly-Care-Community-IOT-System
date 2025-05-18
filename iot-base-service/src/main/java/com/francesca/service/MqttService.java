@@ -1,6 +1,8 @@
 package com.francesca.service;
 
 
+import com.francesca.mqtt.MqttResponseBody;
+
 /**
  * 点位上报器
  *
@@ -12,6 +14,12 @@ package com.francesca.service;
 
 public interface MqttService {
 
+
+    void sendMessage();
+
+    void messageArrived(MqttResponseBody mqttResponseBody);
+
+    void messageHeartbeat();
 
     /**
      * 上传点位到远端

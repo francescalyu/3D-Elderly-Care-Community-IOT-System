@@ -4,21 +4,21 @@ server:
 app:
   id: 602518344108609536  #项目ID
 
-spring:
+
 
 #MQTT配置信息
 mqtt:
-  #上报点位
-  upload:
-    enable: true
-    server: mqtt://124.71.174.115:9083
-    topic: emeters
-  #下发指令
-  order:
-    enable: true
-    server: mqtt://124.71.174.115:9083
-    reqTopic: sndcmd
-    resTopic: rescmd
+  url: tcp://124.71.174.115:9083
+  username:
+  password:
+  client-id: 602518344108609536
+  id: 1
+  timeout: 120
+  keep-alive: 20
+  qos: 1,1
+  completion-timeout: 3000
+  topics: /8cce4e513ef0/subcribe,v3/sub/HA/WSE2/A08B30
+
 
 swagger:
   version: DEV
