@@ -11,16 +11,30 @@ public class UrlConstant {
     public static final String iot_base = "/api/v1";
 
     /**
-     * 能源驾驶舱
+     * dashboard
      */
     public static final String Dashboard = iot_base + "/dash";
 
         /**
-         * 能源驾驶舱电力
+         * dashboard - power
          */
-        public static final String Dashboard_Power =  "/power";
+        public static final String Dashboard_Power = Dashboard + "/power";
 
 
+    /**
+     * subsystem
+     */
+    public static final String Subsys = iot_base + "/subsys";
+
+    /**
+     * area
+     */
+    public static final String Area = iot_base + "/area";
+
+    /**
+     * subsystem
+     */
+    public static final String Product = iot_base + "/product";
 
 
 

@@ -1,14 +1,11 @@
 package com.francesca.model.DTO;
 
-import java.io.Serializable;
-import java.math.BigInteger;
-import java.util.Date;
-
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+
+import java.io.Serializable;
+import java.math.BigInteger;
 
 /**
  * @Author francesca
@@ -17,8 +14,8 @@ import lombok.Data;
  */
 
 @Data
-@TableName("subsys")
-public class SubsysEntity implements Serializable {
+@TableName("area")
+public class AreaEntity implements Serializable {
     /**
      * id
      */
