@@ -21,6 +21,9 @@ public class Sys {
     private String id;
 
     @ApiModelProperty("子系统名称" )
-    private String sysName;
+    private String name;
+
+    @ApiModelProperty("子系统别名" )
+    private String alias;
 
 }

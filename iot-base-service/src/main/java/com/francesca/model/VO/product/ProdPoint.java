@@ -20,11 +20,17 @@ public class ProdPoint {
     @ApiModelProperty("点位id" )
     private String id;
 
+    @ApiModelProperty("产品id" )
+    private String prodid;
+
     @ApiModelProperty("点位名" )
-    private String ptName;
+    private String name;
+
+    @ApiModelProperty("别名" )
+    private String alias;
 
     @ApiModelProperty("点位值" )
-    private String ptValue;
+    private String value;
 
     @ApiModelProperty("单位" )
     private String unit;

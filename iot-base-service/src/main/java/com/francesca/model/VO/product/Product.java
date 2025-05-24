@@ -11,6 +11,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 
 @Data
 @NoArgsConstructor
@@ -23,16 +25,22 @@ public class Product {
     @ApiModelProperty("厂家" )
     private String manu;
 
-    @ApiModelProperty("点位前缀 0或空为无" )
-    private String prefix;
+    @ApiModelProperty("是否可控 1 - 可控   0 - 不可控 " )
+    private String isctrl;
 
     @ApiModelProperty("产品名称" )
-    private String prodName;
+    private String name;
+
+    @ApiModelProperty("别名" )
+    private String alias;
 
     @ApiModelProperty("子系统" )
     private String sys;
 
-    @ApiModelProperty("topic前缀" )
-    private String topicPre;
+    @ApiModelProperty("产品模型" )
+    private List<ProdPoint> model;
+
+    @ApiModelProperty("备注" )
+    private String desc;
 
 }
