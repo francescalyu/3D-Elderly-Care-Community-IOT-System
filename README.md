@@ -14,6 +14,9 @@ It then constructs a **3D-simulated digital twin of the user’s home environmen
 
 Doctors and caregivers can use this platform via mobile devices to **remotely monitor** the elderly’s home environment, appliance usage, health data, and movement patterns. With AI-assisted algorithms, the system helps users while **reducing energy consumption**, contributing to environmental protection and lower carbon emissions.  
 
+
+### the view 3D-png of the room
+![img](https://github.com/francescalyu/3D-Elderly-Care-Community-IOT-System/blob/main/3D-FBX/room.png)
 ---  
 
 ### **Objectives:**  
@@ -54,7 +57,10 @@ all the software in the S3ECCIS will give its link of source.
 - Smart health-tracking bracelet (step counter & GPS)  
 - Smart power outage alarm  
 - Smart circuit breaker  
-- UWB positioning base stations  
+- UWB positioning base stations
+
+- ### the 3D-view with the IOT device
+- ![img](https://github.com/francescalyu/3D-Elderly-Care-Community-IOT-System/blob/main/3D-FBX/room-mark.png)
 
 ---
 
