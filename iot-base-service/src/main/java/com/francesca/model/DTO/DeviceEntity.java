@@ -42,7 +42,7 @@ public class DeviceEntity implements Serializable {
     /**
      * description
      */
-    private String desc;
+    private String descript;
 
     /**
      * manufacture id

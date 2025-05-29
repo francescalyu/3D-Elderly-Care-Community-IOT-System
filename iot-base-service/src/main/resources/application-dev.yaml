@@ -10,7 +10,7 @@ spring:
     url: jdbc:mysql://124.71.174.115:9088/s3eccis?characterEncoding=utf-8&useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
-    password: 88888888
+    password: 888888
     # HikariCP 自定义配置，对应 HikariConfig 配置属性类
     hikari:
       minimum-idle: 1 # 池中维护的最小空闲连接数，默认为 10 个。
@@ -29,9 +29,9 @@ mqtt:
   id: 1
   timeout: 120
   keep-alive: 20
-  qos: 1,1
+  qos: 1,1,1,1,1
   completion-timeout: 3000
-  topics: /8cce4e513ef0/subcribe,v3/sub/HA/WSE2/A08B30
+  topics: /8cce4e513ef0/subcribe,v3/sub/HA/WSE2/A08B30,v3/sub/HA/WPS2/4E68C8,v3/sub/HA/WPS2/A2227C,v3/sub/HA/WPS2/A15F90
 
 
 swagger:

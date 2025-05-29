@@ -55,9 +55,10 @@ public class AreaDaoImpl extends ServiceImpl<AreaMapper, AreaEntity> implements 
             log.warn("id is empty, update fail ");
             return;
         }
-        LambdaUpdateWrapper<AreaEntity> wrapper = Wrappers.lambdaUpdate();
-        wrapper.eq(AreaEntity::getId, entity.getId());
-        update(wrapper);
+        update(entity,
+                Wrappers.<AreaEntity>lambdaUpdate()
+                        .eq(AreaEntity::getId, entity.getId())
+        );
     }
 
     @Override

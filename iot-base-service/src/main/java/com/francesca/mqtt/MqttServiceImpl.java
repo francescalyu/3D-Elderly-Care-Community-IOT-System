@@ -1,8 +1,11 @@
 package com.francesca.mqtt;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.francesca.config.MqttConfig;
+import com.francesca.service.PointService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 /**
@@ -11,7 +14,7 @@ import org.springframework.stereotype.Service;
  * 2025-05-16
  */
 
-@Service
+@Component
 @Slf4j
 public class MqttServiceImpl implements MqttService {
 
@@ -21,8 +24,8 @@ public class MqttServiceImpl implements MqttService {
     @Autowired
     private MqttSender mqttSender;
 
-//    @Autowired
-//    DataService dataService;
+    @Autowired
+    private PointService pointService;
 
     @Override
     public void sendMessage() {
@@ -32,9 +35,13 @@ public class MqttServiceImpl implements MqttService {
     }
 
     @Override
-    public void messageArrived(MqttResponseBody mqttResponseBody) {
-        log.info("接口的消息：{}", mqttResponseBody );
-        //dataService.save(mqttResponseBody);
+    public void messageArrived(String topic , String msg) {
+//        try {
+//            //pointService.handleMqttMsg(topic, msg);
+//        } catch (JsonProcessingException e) {
+//            e.printStackTrace();
+//        }
+         log.info("ok");
     }
 
     @Override

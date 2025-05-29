@@ -6,6 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
+import javax.annotation.Resource;
+import java.util.Arrays;
+
 /**
  * @Author francesca
 
@@ -17,6 +20,9 @@ public class MqttPushClient {
 
     private static MqttClient client;
 
+    private MqttService mqttService;
+
+
     public static MqttClient getClient() {
         return client;
     }
@@ -24,6 +30,12 @@ public class MqttPushClient {
     public static void setClient(MqttClient client) {
         MqttPushClient.client = client;
     }
+
+    public MqttPushClient(MqttService mqttService) {
+        this.mqttService = mqttService;
+
+    }
+
 
     private MqttConnectOptions getOption(String userName, String password, int outTime, int KeepAlive) {
         // MQTT连接设置
@@ -57,11 +69,12 @@ public class MqttPushClient {
                     mqttConfig.getTimeout(), mqttConfig.getKeepAlive());
             MqttPushClient.setClient(client);
             try {
-                client.setCallback(new PushCallback<Object>(this, mqttConfig));
+                client.setCallback(new PushCallback(this, mqttConfig , mqttService));
                 if (!client.isConnected()) {
                     client.connect(options);
                     log.info("================>>>MQTT连接成功<<======================");
                     //订阅主题
+                    log.info(Arrays.toString(mqttConfig.getTopic()));
                     subscribe(mqttConfig.getTopic(), mqttConfig.getQos());
                 } else {// 这里的逻辑是如果连接不成功就重新连接
                     client.disconnect();

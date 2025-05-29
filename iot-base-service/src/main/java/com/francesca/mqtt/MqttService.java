@@ -12,7 +12,7 @@ public interface MqttService {
     void sendMessage();
 
 
-    void messageArrived(MqttResponseBody mqttResponseBody);
+    void messageArrived(String topic, String msg);
 
 
     void messageHeartbeat();

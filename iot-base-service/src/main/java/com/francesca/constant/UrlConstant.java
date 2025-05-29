@@ -32,9 +32,15 @@ public class UrlConstant {
     public static final String Area = iot_base + "/area";
 
     /**
-     * subsystem
+     * product
      */
     public static final String Product = iot_base + "/product";
+
+
+    /**
+     * device
+     */
+    public static final String Device = iot_base + "/device";
 
 
 

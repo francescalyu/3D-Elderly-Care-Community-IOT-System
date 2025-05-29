@@ -52,9 +52,12 @@ public class SubsysDaoImpl extends ServiceImpl<SubsysMapper, SubsysEntity> imple
             log.warn("id is empty, update fail ");
             return;
         }
-        LambdaUpdateWrapper<SubsysEntity> wrapper = Wrappers.lambdaUpdate();
-        wrapper.eq(SubsysEntity::getId, subsysEntity.getId());
-        update(wrapper);
+
+        update(subsysEntity,
+                Wrappers.<SubsysEntity>lambdaUpdate()
+                        .eq(SubsysEntity::getId, subsysEntity.getId())
+        );
+
     }
 
     @Override

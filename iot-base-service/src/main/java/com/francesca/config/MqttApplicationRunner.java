@@ -2,6 +2,7 @@ package com.francesca.config;
 
 
 import com.francesca.mqtt.MqttPushClient;
+import com.francesca.mqtt.MqttService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -21,12 +22,15 @@ public class MqttApplicationRunner implements ApplicationRunner {
     @Autowired
     private MqttConfig mqttConfig;
 
+    @Autowired
+    private MqttService mqttService;
+
     @Override
     public void run(ApplicationArguments args) throws Exception {
         if (log.isInfoEnabled()) {
             log.info("===============>>>Mqtt is run starting:<<==================");
         }
-        MqttPushClient mqttPushClient = new MqttPushClient();
+        MqttPushClient mqttPushClient = new MqttPushClient(mqttService);
         mqttPushClient.connect(mqttConfig);
         // 订阅主题
         mqttPushClient.subscribe(mqttConfig.getTopic(), mqttConfig.getQos());

@@ -6,10 +6,13 @@ package com.francesca.model.VO.Device;
  * 2025-05-16
  */
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.math.BigInteger;
 
 
 @Data
@@ -17,11 +20,15 @@ import lombok.NoArgsConstructor;
 @ApiModel("device - device")
 public class Device {
 
+
     @ApiModelProperty("设备id" )
-    private String id;
+    private BigInteger id;
 
     @ApiModelProperty("产品id" )
-    private String pid;
+    private BigInteger pid;
+
+    @ApiModelProperty("产品名" )
+    private String product;
 
     @ApiModelProperty("厂家产品id" )
     private String manuId;
@@ -37,9 +44,6 @@ public class Device {
 
     @ApiModelProperty("所在区域" )
     private String area;
-
-    @ApiModelProperty("产品名称" )
-    private String prodname;
 
     @ApiModelProperty("子系统" )
     private String sys;
