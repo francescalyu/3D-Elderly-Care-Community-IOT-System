@@ -7,10 +7,10 @@ app:
 spring:
   # datasource 数据源配置内容，对应 DataSourceProperties 配置属性类
   datasource:
-    url: jdbc:mysql://8.8.8.8:9088/s3eccis?characterEncoding=utf-8&useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true
+    url: jdbc:mysql://8.8.8.8/s3eccis?characterEncoding=utf-8&useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
-    password: 88888888
+    password: 8888888
     # HikariCP 自定义配置，对应 HikariConfig 配置属性类
     hikari:
       minimum-idle: 1 # 池中维护的最小空闲连接数，默认为 10 个。
@@ -22,7 +22,7 @@ mybatis-plus:
 
 #MQTT配置信息
 mqtt:
-  url:
+  url: 8.8.8.8
   username:
   password:
   client-id: 602518344108609536

@@ -21,4 +21,6 @@ public interface CacheService {
 
         void putUStoneSmokeSensorStatus(BigInteger id , UStoneSmokeSensorStatus uStoneSmokeSensorStatus);
 
+        void updateCurrentAir(UStoneAirSixSensorStatus uStoneAirSixSensorStatus);
+
 }

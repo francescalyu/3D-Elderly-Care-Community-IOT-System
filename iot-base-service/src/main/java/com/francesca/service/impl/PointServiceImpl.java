@@ -53,6 +53,7 @@ public class PointServiceImpl implements PointService {
            UStoneAirSixSensorData sensorData = objectMapper.readValue(msg, UStoneAirSixSensorData.class);
            log.info("============》》rcv ustone Air Six Sensor Msg , device id : " + device.getManuId() );
            cacheService.putUStoneAirSixSensorStatus(device.getId() , sensorData.getStatus());
+           cacheService.updateCurrentAir(sensorData.getStatus());
        }
 
         //ustone smoke sensor

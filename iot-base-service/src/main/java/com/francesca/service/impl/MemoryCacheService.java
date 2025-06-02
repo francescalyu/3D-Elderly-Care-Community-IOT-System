@@ -95,4 +95,24 @@ public class MemoryCacheService implements CacheService {
     public void putUStoneSmokeSensorStatus(BigInteger id , UStoneSmokeSensorStatus uStoneSmokeSensorStatus) {
 
     }
+
+    @Override
+    public void updateCurrentAir(UStoneAirSixSensorStatus uStoneAirSixSensorStatus) {
+        this.dashAirVO.setPs(uStoneAirSixSensorStatus.getParticleSize());
+        this.dashAirVO.setCo2(uStoneAirSixSensorStatus.getCo2Ppm());
+        this.dashAirVO.setHumidity(uStoneAirSixSensorStatus.getEnvHumidity());
+        this.dashAirVO.setPm10(uStoneAirSixSensorStatus.getMassPm10());
+        this.dashAirVO.setTemp(uStoneAirSixSensorStatus.getEnvTemperature());
+        this.dashAirVO.setPm25(uStoneAirSixSensorStatus.getMassPm2_5());
+        this.dashAirVO.setPm10(uStoneAirSixSensorStatus.getMassPm10());
+        this.dashAirVO.setTvoc(uStoneAirSixSensorStatus.getTvocPpb());
+        this.dashAirVO.setHumidity(" % ");
+        this.dashAirVO.setTempUnit(" C ");
+        this.dashAirVO.setTvocUnit( " PPB ");
+        this.dashAirVO.setCo2Unit( " PPM ");
+        this.dashAirVO.setPm10Unit( " ug/m3 ");
+        this.dashAirVO.setPm25Unit( " ug/m3 ");
+        this.dashAirVO.getLevel();
+
+    }
 }

@@ -35,4 +35,6 @@ public class StandardConstant {
 
     public static final BigDecimal temp_hot = new BigDecimal(28);
 
+    public static final BigDecimal smoke_warn = new BigDecimal(100);
+
 }
