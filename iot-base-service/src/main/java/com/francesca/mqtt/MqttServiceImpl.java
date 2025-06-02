@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
  * 2025-05-16
  */
 
-@Component
+//@Component
 @Slf4j
 public class MqttServiceImpl implements MqttService {
 

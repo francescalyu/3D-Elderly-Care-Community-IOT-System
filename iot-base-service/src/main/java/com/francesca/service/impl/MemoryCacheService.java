@@ -5,6 +5,10 @@ import cn.hutool.core.util.StrUtil;
 import com.francesca.dao.DeviceDao;
 import com.francesca.model.DTO.DeviceEntity;
 import com.francesca.model.VO.Device.Device;
+import com.francesca.model.VO.dash.DashAirVO;
+import com.francesca.mqtt.ustoneMsg.UStone10AOutlet;
+import com.francesca.mqtt.ustoneMsg.UStoneAirSixSensorStatus;
+import com.francesca.mqtt.ustoneMsg.UStoneSmokeSensorStatus;
 import com.francesca.service.CacheService;
 import com.francesca.service.DeviceMsg;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,15 +16,25 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.math.BigInteger;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class MemoryCacheService implements CacheService {
 
     private final Map<BigInteger, Device> cache = new ConcurrentHashMap<>();
+
+    private final Map<BigInteger, UStone10AOutlet> uStone10AOutletLast = new ConcurrentHashMap<>();
+
+    private final Map<BigInteger, UStoneSmokeSensorStatus> uStoneSmokeSensorStatusLast = new ConcurrentHashMap<>();
+
+    private final  Map<BigInteger, UStoneAirSixSensorStatus> uStoneAirSixSensorStatusLast = new ConcurrentHashMap<>();
+
+    private final  List<UStone10AOutlet> uStone10AOutlet5min = Collections.synchronizedList(new ArrayList<>());
+
+
+    private final  DashAirVO dashAirVO = new DashAirVO() ;
+
 
     @Autowired
     private DeviceDao deviceDao;
@@ -65,5 +79,20 @@ public class MemoryCacheService implements CacheService {
                 .filter(p -> p.getTopicUp() != null && upTopic.trim().equals(p.getTopicUp().trim()))
                 .findFirst()
                 .orElse(null);
+    }
+
+    @Override
+    public void putUStone10AOutlet(BigInteger id ,UStone10AOutlet uStone10AOutlet) {
+        this.uStone10AOutletLast.put(id , uStone10AOutlet);
+    }
+
+    @Override
+    public void putUStoneAirSixSensorStatus(BigInteger id , UStoneAirSixSensorStatus uStoneAirSixSensorStatus) {
+
+    }
+
+    @Override
+    public void putUStoneSmokeSensorStatus(BigInteger id , UStoneSmokeSensorStatus uStoneSmokeSensorStatus) {
+
     }
 }

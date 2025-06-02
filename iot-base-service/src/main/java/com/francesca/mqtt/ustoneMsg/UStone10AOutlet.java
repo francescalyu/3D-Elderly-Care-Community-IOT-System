@@ -1,7 +1,15 @@
 package com.francesca.mqtt.ustoneMsg;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
+/**
+ * @Author francesca
+
+ * 2025-05-29
+ */
 
 public class UStone10AOutlet {
     @JsonProperty("voltage_rms")
@@ -25,10 +33,55 @@ public class UStone10AOutlet {
     @JsonProperty("energy_yesterday")
     private String energyYesterday;
 
+    public BigDecimal getCount1minEnergy() {
+        return count1minEnergy;
+    }
+
+    public void setCount1minEnergy(BigDecimal count1minEnergy) {
+        this.count1minEnergy = count1minEnergy;
+    }
+
     @JsonProperty("date_time")
     private LocalDateTime dateTime;
 
     private int power1;
+
+    private BigDecimal count1minEnergy;
+
+    private void countMinEnergyWhen0(){
+
+        BigDecimal energy = new BigDecimal(energyToday);
+
+        //处理时钟有问题的10A插座, 计算1分钟电量
+        if (energy.equals(0)){
+            BigDecimal aPower = new BigDecimal(activePower);
+
+            // 1min = 1/60 hours
+            BigDecimal oneMin = new BigDecimal("1").divide(new BigDecimal("60"));
+
+            BigDecimal energy1min = aPower.multiply(oneMin);
+
+            // wh /1000 = kwh
+            energy1min = energy1min.divide(new BigDecimal("1000"));
+
+            this.setCount1minEnergy(energy1min);
+
+        }else {
+            this.setCount1minEnergy(energy);
+        }
+
+    }
+
+
+    public Long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Long timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    private Long timestamp ;
 
 
     private int[] irValues = new int[64]; // 索引0对应ir1，索引63对应ir64

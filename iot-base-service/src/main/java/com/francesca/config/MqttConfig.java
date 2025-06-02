@@ -3,6 +3,7 @@ package com.francesca.config;
 
 import lombok.Data;
 
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
@@ -72,6 +73,8 @@ public class MqttConfig {
     private int[] qos;
 
     private int completionTimeout;
+
+
 
 }
 

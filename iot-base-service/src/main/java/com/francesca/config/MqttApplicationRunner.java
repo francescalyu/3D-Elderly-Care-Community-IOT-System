@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
  * 2025-05-16
  */
 
-@Component
+//@Component
 @Slf4j
 public class MqttApplicationRunner implements ApplicationRunner {
 

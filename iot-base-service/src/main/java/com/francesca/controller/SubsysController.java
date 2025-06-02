@@ -4,7 +4,6 @@ package com.francesca.controller;
 import com.francesca.constant.UrlConstant;
 import com.francesca.dao.SubsysDao;
 import com.francesca.model.DTO.SubsysEntity;
-import com.francesca.model.VO.dash.DashCurrPowerVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;

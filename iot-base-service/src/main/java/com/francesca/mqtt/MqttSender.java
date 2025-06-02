@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
  * 2025-05-16
  */
 
-@Component(value = "mqttSender")
+//@Component(value = "mqttSender")
 @Slf4j
 public class MqttSender {
 

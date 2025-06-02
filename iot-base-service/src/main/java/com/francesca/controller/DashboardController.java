@@ -2,7 +2,7 @@ package com.francesca.controller;
 
 
 import com.francesca.constant.UrlConstant;
-import com.francesca.model.VO.dash.DashCurrPowerVO;
+import com.francesca.model.VO.dash.DashAirVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -28,10 +28,10 @@ public class DashboardController {
 
     @ApiOperation(value = "获取电量")
     @GetMapping( "getPower")
-    public DashCurrPowerVO getPower() {
+    public DashAirVO getPower() {
         System.out.println(UrlConstant.Dashboard_Power + "/getPower");
 
-        return new DashCurrPowerVO();
+        return new DashAirVO();
     }
 
 

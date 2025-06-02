@@ -19,7 +19,7 @@ import javax.annotation.Resource;
  */
 
 @Slf4j
-@Component
+//@Component
 public class PushCallback implements MqttCallback {
 
     private MqttPushClient client;

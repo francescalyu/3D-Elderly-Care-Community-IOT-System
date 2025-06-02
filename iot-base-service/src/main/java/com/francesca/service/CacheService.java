@@ -1,6 +1,9 @@
 package com.francesca.service;
 
 import com.francesca.model.VO.Device.Device;
+import com.francesca.mqtt.ustoneMsg.UStone10AOutlet;
+import com.francesca.mqtt.ustoneMsg.UStoneAirSixSensorStatus;
+import com.francesca.mqtt.ustoneMsg.UStoneSmokeSensorStatus;
 
 import java.math.BigInteger;
 
@@ -12,6 +15,10 @@ public interface CacheService {
 
         Device getDeviceByTopic(String upTopic);
 
+        void putUStone10AOutlet(BigInteger id , UStone10AOutlet uStone10AOutlet);
 
+        void putUStoneAirSixSensorStatus(BigInteger id , UStoneAirSixSensorStatus uStoneAirSixSensorStatus);
+
+        void putUStoneSmokeSensorStatus(BigInteger id , UStoneSmokeSensorStatus uStoneSmokeSensorStatus);
 
 }

@@ -8,6 +8,12 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
+/**
+ * @Author francesca
+
+ * 2025-05-29
+ */
+
 public class UStone10AOutletDeserializer extends StdDeserializer<UStone10AOutlet> {
 
     public UStone10AOutletDeserializer() {
