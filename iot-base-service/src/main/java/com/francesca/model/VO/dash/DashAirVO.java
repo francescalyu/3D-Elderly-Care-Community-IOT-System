@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 
 @Data
 @NoArgsConstructor
-@ApiModel("dashboard - air")
+@ApiModel("仪表板 - 空气质量")
 public class DashAirVO {
 
     @ApiModelProperty("时间" )
@@ -26,8 +26,14 @@ public class DashAirVO {
     @ApiModelProperty("pm2.5" )
     private String pm25;
 
+    @ApiModelProperty("pm2.5 单位" )
+    private String pm25Unit;
+
     @ApiModelProperty("pm10" )
     private String pm10;
+
+    @ApiModelProperty("pm10 单位" )
+    private String pm10Unit;
 
     @ApiModelProperty("总挥发性有机化合物" )
     private String tvoc;
@@ -38,6 +44,9 @@ public class DashAirVO {
     @ApiModelProperty("平均颗粒物尺寸" )
     private String ps;
 
+    @ApiModelProperty("平均颗粒物尺寸 单位" )
+    private String psUnit;
+
     @ApiModelProperty("二氧化碳" )
     private String co2;
 
@@ -47,8 +56,14 @@ public class DashAirVO {
     @ApiModelProperty("温度 " )
     private String temp;
 
+    @ApiModelProperty("温度 单位 " )
+    private String tempUnit;
+
     @ApiModelProperty("湿度   " )
     private String humidity;
+
+    @ApiModelProperty("湿度  单位 " )
+    private String humidityUnit;
 
     @ApiModelProperty("室内空气质量  0 - 正常  1 - 轻度   2 - 严重  " )
     private String level;
@@ -61,8 +76,8 @@ public class DashAirVO {
 
         level = "0";
 
-        String pm25str = this.pm25.replaceAll("[^0-9.]", "").trim();
-        BigDecimal pm25 = new BigDecimal(pm25str);
+
+        BigDecimal pm25 = new BigDecimal(this.pm25);
 
         if (pm25.compareTo(StandardConstant.PM25_ug) > 0 ){
             level = "1";

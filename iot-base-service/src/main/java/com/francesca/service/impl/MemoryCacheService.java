@@ -1,5 +1,6 @@
 package com.francesca.service.impl;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.francesca.dao.DeviceDao;
@@ -11,6 +12,7 @@ import com.francesca.mqtt.ustoneMsg.UStoneAirSixSensorStatus;
 import com.francesca.mqtt.ustoneMsg.UStoneSmokeSensorStatus;
 import com.francesca.service.CacheService;
 import com.francesca.service.DeviceMsg;
+import com.francesca.util.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -96,17 +98,23 @@ public class MemoryCacheService implements CacheService {
 
     @Override
     public void updateCurrentAir(UStoneAirSixSensorStatus uStoneAirSixSensorStatus) {
-        this.dashAirVO.setPs(uStoneAirSixSensorStatus.getParticleSize());
-        this.dashAirVO.setCo2(uStoneAirSixSensorStatus.getCo2Ppm());
-        this.dashAirVO.setHumidity(uStoneAirSixSensorStatus.getEnvHumidity());
-        this.dashAirVO.setPm10(uStoneAirSixSensorStatus.getMassPm10());
-        this.dashAirVO.setTemp(uStoneAirSixSensorStatus.getEnvTemperature());
-        this.dashAirVO.setPm25(uStoneAirSixSensorStatus.getMassPm2_5());
-        this.dashAirVO.setPm10(uStoneAirSixSensorStatus.getMassPm10());
-        this.dashAirVO.setTvoc(uStoneAirSixSensorStatus.getTvocPpb());
-        this.dashAirVO.setHumidity(uStoneAirSixSensorStatus.getEnvHumidity());
+        this.dashAirVO.setPs(CommonUtil.toNumberStr(uStoneAirSixSensorStatus.getParticleSize()));
+        this.dashAirVO.setCo2(CommonUtil.toNumberStr(uStoneAirSixSensorStatus.getCo2Ppm()));
+        this.dashAirVO.setHumidity(CommonUtil.toNumberStr(uStoneAirSixSensorStatus.getEnvHumidity()));
+        this.dashAirVO.setPm10(CommonUtil.toNumberStr(uStoneAirSixSensorStatus.getMassPm10()));
+        this.dashAirVO.setTemp(CommonUtil.toNumberStr(uStoneAirSixSensorStatus.getEnvTemperature()));
+        this.dashAirVO.setPm25(CommonUtil.toNumberStr(uStoneAirSixSensorStatus.getMassPm2_5()));
+        this.dashAirVO.setPm10(CommonUtil.toNumberStr(uStoneAirSixSensorStatus.getMassPm10()));
+        this.dashAirVO.setTvoc(CommonUtil.toNumberStr(uStoneAirSixSensorStatus.getTvocPpb()));
+        this.dashAirVO.setHumidity(CommonUtil.toNumberStr(uStoneAirSixSensorStatus.getEnvHumidity()));
+        this.dashAirVO.setTempUnit(" C ");
+        this.dashAirVO.setPm10Unit( " ug/m3");
+        this.dashAirVO.setPm25Unit( " ug/m3" );
+        this.dashAirVO.setPsUnit( "um" );
         this.dashAirVO.setTvocUnit( " PPB ");
         this.dashAirVO.setCo2Unit( " PPM ");
+        this.dashAirVO.setHumidityUnit( " % ");
+        this.dashAirVO.setTimestamp(DateUtil.now());
         this.dashAirVO.setLevel();
 
     }
