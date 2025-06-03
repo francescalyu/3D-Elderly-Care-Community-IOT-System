@@ -31,8 +31,6 @@ public class MemoryCacheService implements CacheService {
     private final  Map<BigInteger, UStoneAirSixSensorStatus> uStoneAirSixSensorStatusLast = new ConcurrentHashMap<>();
 
     private final  List<UStone10AOutlet> uStone10AOutlet5min = Collections.synchronizedList(new ArrayList<>());
-
-
     private final  DashAirVO dashAirVO = new DashAirVO() ;
 
 
@@ -106,13 +104,15 @@ public class MemoryCacheService implements CacheService {
         this.dashAirVO.setPm25(uStoneAirSixSensorStatus.getMassPm2_5());
         this.dashAirVO.setPm10(uStoneAirSixSensorStatus.getMassPm10());
         this.dashAirVO.setTvoc(uStoneAirSixSensorStatus.getTvocPpb());
-        this.dashAirVO.setHumidity(" % ");
-        this.dashAirVO.setTempUnit(" C ");
+        this.dashAirVO.setHumidity(uStoneAirSixSensorStatus.getEnvHumidity());
         this.dashAirVO.setTvocUnit( " PPB ");
         this.dashAirVO.setCo2Unit( " PPM ");
-        this.dashAirVO.setPm10Unit( " ug/m3 ");
-        this.dashAirVO.setPm25Unit( " ug/m3 ");
-        this.dashAirVO.getLevel();
+        this.dashAirVO.setLevel();
 
+    }
+
+    @Override
+    public DashAirVO getCurrentAir() {
+        return this.dashAirVO;
     }
 }

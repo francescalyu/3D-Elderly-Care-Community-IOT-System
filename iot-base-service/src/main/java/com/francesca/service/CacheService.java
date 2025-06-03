@@ -1,6 +1,7 @@
 package com.francesca.service;
 
 import com.francesca.model.VO.Device.Device;
+import com.francesca.model.VO.dash.DashAirVO;
 import com.francesca.mqtt.ustoneMsg.UStone10AOutlet;
 import com.francesca.mqtt.ustoneMsg.UStoneAirSixSensorStatus;
 import com.francesca.mqtt.ustoneMsg.UStoneSmokeSensorStatus;
@@ -22,5 +23,7 @@ public interface CacheService {
         void putUStoneSmokeSensorStatus(BigInteger id , UStoneSmokeSensorStatus uStoneSmokeSensorStatus);
 
         void updateCurrentAir(UStoneAirSixSensorStatus uStoneAirSixSensorStatus);
+
+        DashAirVO getCurrentAir();
 
 }

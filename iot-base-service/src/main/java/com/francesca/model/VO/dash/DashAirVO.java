@@ -26,14 +26,8 @@ public class DashAirVO {
     @ApiModelProperty("pm2.5" )
     private String pm25;
 
-    @ApiModelProperty("pm2.5 单位" )
-    private String pm25Unit;
-
     @ApiModelProperty("pm10" )
     private String pm10;
-
-    @ApiModelProperty("pm10 单位" )
-    private String pm10Unit;
 
     @ApiModelProperty("总挥发性有机化合物" )
     private String tvoc;
@@ -44,9 +38,6 @@ public class DashAirVO {
     @ApiModelProperty("平均颗粒物尺寸" )
     private String ps;
 
-    @ApiModelProperty("平均颗粒物尺寸单位" )
-    private String psUnit;
-
     @ApiModelProperty("二氧化碳" )
     private String co2;
 
@@ -56,14 +47,8 @@ public class DashAirVO {
     @ApiModelProperty("温度 " )
     private String temp;
 
-    @ApiModelProperty("温度单位  默认摄氏度" )
-    private String tempUnit;
-
     @ApiModelProperty("湿度   " )
     private String humidity;
-
-    @ApiModelProperty("湿度单位  默认%" )
-    private String humidityUnit;
 
     @ApiModelProperty("室内空气质量  0 - 正常  1 - 轻度   2 - 严重  " )
     private String level;
@@ -72,11 +57,12 @@ public class DashAirVO {
     private String tempLevel;
 
 
-    private  void setLevel(){
+    public   void setLevel(){
 
         level = "0";
 
-        BigDecimal pm25 = new BigDecimal(this.pm25);
+        String pm25str = this.pm25.replaceAll("[^0-9.]", "").trim();
+        BigDecimal pm25 = new BigDecimal(pm25str);
 
         if (pm25.compareTo(StandardConstant.PM25_ug) > 0 ){
             level = "1";
@@ -86,7 +72,9 @@ public class DashAirVO {
             level = "2";
         }
 
-        BigDecimal pm10 = new BigDecimal(this.pm10);
+
+        String pm10str = this.pm10.replaceAll("[^0-9.]", "").trim();
+        BigDecimal pm10 = new BigDecimal(pm10str);
 
         if (pm10.compareTo(StandardConstant.PM10_ug) > 0 ){
             level = "1";
@@ -96,13 +84,15 @@ public class DashAirVO {
             level = "2";
         }
 
-        BigDecimal tvoc = new BigDecimal(this.tvoc);
+        String tvocstr = this.tvoc.replaceAll("[^0-9.]", "").trim();
+        BigDecimal tvoc = new BigDecimal(tvocstr);
 
         if (tvoc.compareTo(StandardConstant.TVOC_ppb) > 0 ){
             level = "2";
         }
 
-        BigDecimal co2 = new BigDecimal(this.co2);
+        String co2str = this.co2.replaceAll("[^0-9.]", "").trim();
+        BigDecimal co2 = new BigDecimal(co2str);
 
         if (co2.compareTo(StandardConstant.CO2_ppm) > 0 ){
             level = "2";
@@ -110,8 +100,10 @@ public class DashAirVO {
 
         tempLevel = "0";
 
-        BigDecimal temp = new BigDecimal( this.temp);
-        BigDecimal humd = new BigDecimal( this.humidity);
+        String tempstr = this.temp.replaceAll("[^0-9.]", "").trim();
+        BigDecimal temp = new BigDecimal( tempstr);
+        String humdstr = this.humidity.replaceAll("[^0-9.]", "").trim();
+        BigDecimal humd = new BigDecimal( humdstr);
 
         if (humd.compareTo(StandardConstant.humidity_wet) > 0 ){
             tempLevel = "3";

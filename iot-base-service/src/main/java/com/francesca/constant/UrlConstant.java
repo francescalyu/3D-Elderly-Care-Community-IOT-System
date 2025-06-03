@@ -20,6 +20,11 @@ public class UrlConstant {
          */
         public static final String Dashboard_Power = Dashboard + "/power";
 
+        /**
+         * dashboard - power
+         */
+        public static final String Dashboard_Air = Dashboard + "/air";
+
 
     /**
      * subsystem
