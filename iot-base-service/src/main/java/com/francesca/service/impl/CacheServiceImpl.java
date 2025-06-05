@@ -2,11 +2,11 @@ package com.francesca.service.impl;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.core.util.StrUtil;
 import com.francesca.dao.DeviceDao;
 import com.francesca.model.DTO.DeviceEntity;
 import com.francesca.model.VO.Device.Device;
 import com.francesca.model.VO.dash.DashAirVO;
+import com.francesca.model.VO.dash.DashPowerVO;
 import com.francesca.mqtt.ustoneMsg.UStone10AOutlet;
 import com.francesca.mqtt.ustoneMsg.UStoneAirSixSensorStatus;
 import com.francesca.mqtt.ustoneMsg.UStoneSmokeSensorStatus;
@@ -17,12 +17,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-public class MemoryCacheService implements CacheService {
+public class CacheServiceImpl implements CacheService {
 
     private final Map<BigInteger, Device> cache = new ConcurrentHashMap<>();
 
@@ -32,8 +33,10 @@ public class MemoryCacheService implements CacheService {
 
     private final  Map<BigInteger, UStoneAirSixSensorStatus> uStoneAirSixSensorStatusLast = new ConcurrentHashMap<>();
 
-    private final  List<UStone10AOutlet> uStone10AOutlet5min = Collections.synchronizedList(new ArrayList<>());
-    private final  DashAirVO dashAirVO = new DashAirVO() ;
+
+    private static volatile   DashAirVO dashAirVO = new DashAirVO() ;
+
+    private static volatile   DashPowerVO dashPowerVO = new DashPowerVO();
 
 
     @Autowired
@@ -83,7 +86,34 @@ public class MemoryCacheService implements CacheService {
 
     @Override
     public void putUStone10AOutlet(BigInteger id ,UStone10AOutlet uStone10AOutlet) {
-        this.uStone10AOutletLast.put(id , uStone10AOutlet);
+        if (this.uStone10AOutletLast.isEmpty()) {
+
+             this.uStone10AOutletLast.put(id, uStone10AOutlet);
+             return;
+        }
+
+        BigDecimal energy = new BigDecimal(uStone10AOutlet.getEnergyToday());
+
+        if (energy.equals(0)) {
+
+            UStone10AOutlet uStone10AOutlet1 =  this.uStone10AOutletLast.get(id);
+            uStone10AOutlet.countMinEnergyWhen0();
+
+            //add energy
+            BigDecimal energy1 = new BigDecimal(uStone10AOutlet1.getEnergyToday());
+            energy = energy.add(energy1);
+
+            uStone10AOutlet.setEnergyToday(energy.toString());
+
+            this.uStone10AOutletLast.put(id , uStone10AOutlet);
+        }
+
+
+    }
+
+    @Override
+    public List<UStone10AOutlet> getAllUStone10AOutletStatus() {
+        return (List<UStone10AOutlet>) this.uStone10AOutletLast.values();
     }
 
     @Override
@@ -122,5 +152,15 @@ public class MemoryCacheService implements CacheService {
     @Override
     public DashAirVO getCurrentAir() {
         return this.dashAirVO;
+    }
+
+    @Override
+    public DashPowerVO getCurrentPower() {
+        return this.dashPowerVO;
+    }
+
+    @Override
+    public void putDashPower(DashPowerVO dashPowerVO) {
+         this.dashPowerVO = dashPowerVO;
     }
 }

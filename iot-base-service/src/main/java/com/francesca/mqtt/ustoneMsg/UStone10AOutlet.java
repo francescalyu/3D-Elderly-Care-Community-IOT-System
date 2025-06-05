@@ -48,7 +48,7 @@ public class UStone10AOutlet {
 
     private BigDecimal count1minEnergy;
 
-    private void countMinEnergyWhen0(){
+    public void countMinEnergyWhen0(){
 
         BigDecimal energy = new BigDecimal(energyToday);
 

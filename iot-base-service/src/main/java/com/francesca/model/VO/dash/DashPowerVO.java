@@ -35,5 +35,5 @@ public class DashPowerVO {
     private String tree;
 
     @ApiModelProperty(" 电量趋势 ")
-    private List<DashPowerVO> powerList;
+    private List<DashPowerCountVO> powerList;
 }
