@@ -113,7 +113,7 @@ public class CacheServiceImpl implements CacheService {
 
     @Override
     public List<UStone10AOutlet> getAllUStone10AOutletStatus() {
-        return (List<UStone10AOutlet>) this.uStone10AOutletLast.values();
+        return new ArrayList<>( this.uStone10AOutletLast.values());
     }
 
     @Override

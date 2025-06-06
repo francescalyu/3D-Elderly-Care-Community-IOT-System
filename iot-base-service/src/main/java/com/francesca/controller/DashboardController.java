@@ -3,6 +3,7 @@ package com.francesca.controller;
 
 import com.francesca.constant.UrlConstant;
 import com.francesca.model.VO.dash.DashAirVO;
+import com.francesca.model.VO.dash.DashPowerVO;
 import com.francesca.service.CacheService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -32,10 +33,15 @@ public class DashboardController {
 
     @ApiOperation(value = "获取当前空气质量")
     @GetMapping( "getAir")
-    public DashAirVO getPower() {
+    public DashAirVO getAir() {
         return cacheService.getCurrentAir();
     }
 
+    @ApiOperation(value = "获取当日能源")
+    @GetMapping( "getPower")
+    public DashPowerVO getPower() {
+        return cacheService.getCurrentPower();
+    }
 
 
 }

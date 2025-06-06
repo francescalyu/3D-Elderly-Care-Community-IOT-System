@@ -23,7 +23,7 @@ public class StandardConstant {
     public static final BigDecimal PM10_ug_danger = new BigDecimal(70);
 
     //the TVOC <100 PPB base on  US EPA
-    public static final BigDecimal TVOC_ppb = new BigDecimal(100);
+    public static final BigDecimal TVOC_ppb = new BigDecimal(175);
 
     public static final BigDecimal CO2_ppm = new BigDecimal(1000);
 
@@ -35,6 +35,15 @@ public class StandardConstant {
 
     public static final BigDecimal temp_hot = new BigDecimal(28);
 
+
     public static final BigDecimal smoke_warn = new BigDecimal(100);
+
+
+    public static final BigDecimal co_warn = new BigDecimal(1);
+
+
+    public static final BigDecimal lpg_warn = new BigDecimal(1);
+
+
 
 }

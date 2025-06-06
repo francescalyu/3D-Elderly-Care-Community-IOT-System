@@ -48,10 +48,18 @@ public class UrlConstant {
     public static final String Device = iot_base + "/device";
 
     /**
-     * device
+     * point
      */
     public static final String Point = iot_base + "/point";
 
+    /**
+     * warn
+     */
+    public static final String Warn = iot_base + "/warn";
 
+    /**
+     * warn rule
+     */
+    public static final String WarnRule = Warn + "/rule";
 
 }

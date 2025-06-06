@@ -3,9 +3,7 @@ package com.francesca.controller;
 
 import com.francesca.constant.UrlConstant;
 import com.francesca.dao.AreaDao;
-import com.francesca.dao.SubsysDao;
 import com.francesca.model.DTO.AreaEntity;
-import com.francesca.model.DTO.SubsysEntity;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;

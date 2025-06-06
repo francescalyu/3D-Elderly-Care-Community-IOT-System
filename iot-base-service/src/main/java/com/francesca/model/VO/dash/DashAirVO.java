@@ -71,6 +71,18 @@ public class DashAirVO {
     @ApiModelProperty("温湿度  0 - 正常  1 - 高温   2 - 低温  3 - 潮湿  4 - 干燥    " )
     private String tempLevel;
 
+    @ApiModelProperty(" 液化气  单位PPM " )
+    private String lpg;
+
+
+    @ApiModelProperty(" 一氧化碳  单位PPM " )
+    private String co;
+
+
+    @ApiModelProperty("烟雾  单位PPM " )
+    private String smoke;
+
+
 
     public   void setLevel(){
 

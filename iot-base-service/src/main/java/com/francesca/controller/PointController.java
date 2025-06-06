@@ -5,10 +5,8 @@ import cn.hutool.core.util.ObjectUtil;
 import com.francesca.constant.UrlConstant;
 import com.francesca.dao.PointDao;
 import com.francesca.dao.ProductDao;
-import com.francesca.dao.SubsysDao;
 import com.francesca.model.DTO.PointEntity;
 import com.francesca.model.DTO.ProductEntity;
-import com.francesca.model.DTO.SubsysEntity;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -80,7 +78,7 @@ public class PointController {
         return true;
     }
 
-    @ApiOperation(value = "删除子系统")
+    @ApiOperation(value = "删除点位")
     @DeleteMapping( "delete")
     public boolean delete(@RequestParam int id) {
 

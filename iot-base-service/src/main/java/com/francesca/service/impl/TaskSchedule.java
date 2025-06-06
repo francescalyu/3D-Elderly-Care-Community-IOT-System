@@ -1,6 +1,7 @@
 package com.francesca.service.impl;
 
 
+import cn.hutool.core.util.ObjectUtil;
 import com.francesca.model.VO.dash.DashPowerVO;
 import com.francesca.mqtt.ustoneMsg.UStone10AOutlet;
 import com.francesca.service.CacheService;
@@ -26,8 +27,12 @@ public class TaskSchedule {
 
         DashPowerVO dashPowerVO = cacheService.getCurrentPower();
 
-        BigDecimal power = new BigDecimal(dashPowerVO.getCurrentPower());
-        BigDecimal todayPower = new BigDecimal(dashPowerVO.getTodayPower());
+        BigDecimal power = new BigDecimal(0);
+
+        BigDecimal todayPower = new BigDecimal(0);
+        if (ObjectUtil.isNotEmpty(dashPowerVO.getTodayPower())) {
+             todayPower = new BigDecimal(dashPowerVO.getTodayPower());
+        }
 
         for ( int i =0 ; i<uStone10AOutlets.size() ; i++ ){
             power = power.add( new BigDecimal(uStone10AOutlets.get(i).getActivePower()));
