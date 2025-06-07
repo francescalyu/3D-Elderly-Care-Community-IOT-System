@@ -1,8 +1,8 @@
 package com.francesca.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.francesca.model.DTO.AreaEntity;
-import com.francesca.model.DTO.WarnRuleEntity;
+import com.francesca.model.DTO.WarnEntity;
+import com.francesca.model.DTO.WarnRecordEntity;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -12,5 +12,5 @@ import org.apache.ibatis.annotations.Mapper;
  */
 
 @Mapper
-public interface WarnRuleMapper extends BaseMapper<WarnRuleEntity> {
+public interface WarnRecordMapper extends BaseMapper<WarnRecordEntity> {
 }

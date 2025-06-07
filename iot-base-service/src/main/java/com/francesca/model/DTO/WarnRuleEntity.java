@@ -10,7 +10,7 @@ import java.math.BigInteger;
 /**
  * @Author francesca
 
- * 2025-05-24
+ * 2025-06-07
  */
 
 @Data
@@ -53,6 +53,8 @@ public class WarnRuleEntity implements Serializable {
     private String descript;
 
     private Integer closewarn;
+
+    private Integer warnid;
 
 
     private static final long serialVersionUID = 1L;

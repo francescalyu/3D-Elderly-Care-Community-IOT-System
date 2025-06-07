@@ -4,15 +4,25 @@ import cn.hutool.core.util.ObjectUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.francesca.model.DTO.DeviceEntity;
+import com.francesca.model.DTO.WarnRuleEntity;
 import com.francesca.model.VO.Device.Device;
 import com.francesca.mqtt.ustoneMsg.*;
 import com.francesca.service.CacheService;
 import com.francesca.service.PointService;
+import com.francesca.service.WarnRuleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+import java.beans.PropertyDescriptor;
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -22,12 +32,17 @@ public class PointServiceImpl implements PointService {
     private CacheService cacheService;
 
 
-
+    @Autowired
+    private WarnRuleService warnRuleService;
 
     @Override
     public void handleMqttMsg(String topic, String msg) throws JsonProcessingException {
 
        Device device =  cacheService.getDeviceByTopic(topic);
+
+
+
+
        if (ObjectUtil.isEmpty(device)){
            log.info("============》》No Device find with this topic : " + topic  + " === msg :" + msg );
            return;
@@ -43,6 +58,11 @@ public class PointServiceImpl implements PointService {
            log.info("============》》rcv ustone 10A Outle Msg , device id : " + device.getManuId() );
            UStone10AOutlet uStone10AOutlet = uStone10AOutletMsg.getStatus();
            cacheService.putUStone10AOutlet(device.getId(), uStone10AOutletMsg.getStatus());
+
+           //first close warn ,then open warn
+           warnRuleService.execWarnRule(device, uStone10AOutletMsg.getStatus(), 0);
+           warnRuleService.execWarnRule(device, uStone10AOutletMsg.getStatus(), 1);
+
        }
 
        //ustone air 6 sensor
@@ -64,4 +84,8 @@ public class PointServiceImpl implements PointService {
         }
 
     }
+
+
+
+
 }

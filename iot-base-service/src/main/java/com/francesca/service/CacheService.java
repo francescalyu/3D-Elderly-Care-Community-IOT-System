@@ -1,5 +1,8 @@
 package com.francesca.service;
 
+import com.francesca.model.DTO.DeviceEntity;
+import com.francesca.model.DTO.WarnEntity;
+import com.francesca.model.DTO.WarnRuleEntity;
 import com.francesca.model.VO.Device.Device;
 import com.francesca.model.VO.dash.DashAirVO;
 import com.francesca.model.VO.dash.DashPowerVO;
@@ -18,6 +21,9 @@ public interface CacheService {
 
         Device getDeviceByTopic(String upTopic);
 
+        DeviceEntity getDevice (BigInteger id);
+
+
         void putUStone10AOutlet(BigInteger id , UStone10AOutlet uStone10AOutlet);
 
         List<UStone10AOutlet> getAllUStone10AOutletStatus();
@@ -33,5 +39,9 @@ public interface CacheService {
         DashPowerVO getCurrentPower();
 
         void putDashPower(DashPowerVO dashPowerVO);
+
+        List<WarnRuleEntity> readWarnRule(BigInteger prodId,   int closeOpen);
+
+        WarnEntity readWarn(BigInteger warn);
 
 }

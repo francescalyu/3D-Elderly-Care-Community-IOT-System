@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * @Author francesca
 
- * 2025-05-24
+ * 2025-06-07
  */
 
 public interface WarnRuleDao {
@@ -17,6 +17,8 @@ public interface WarnRuleDao {
     List<WarnRuleEntity> selectAll();
 
     WarnRuleEntity selectByUid(BigInteger id);
+
+    List<WarnRuleEntity> selectByProd(BigInteger prodId);
 
     void  insert(WarnRuleEntity entity);
 

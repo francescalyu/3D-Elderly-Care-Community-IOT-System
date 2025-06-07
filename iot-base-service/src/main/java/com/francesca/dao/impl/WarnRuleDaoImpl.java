@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * @Author francesca
 
- * 2025-05-24
+ * 2025-06-07
  */
 
 
@@ -43,6 +43,14 @@ public class WarnRuleDaoImpl extends ServiceImpl<WarnRuleMapper, WarnRuleEntity>
         wrapper.eq(WarnRuleEntity::getId, ""+uid)
                 .last("limit 1");
         return getOne(wrapper);
+    }
+
+    @Override
+    public List<WarnRuleEntity> selectByProd(BigInteger prodId) {
+        LambdaQueryWrapper<WarnRuleEntity> wrapper = Wrappers.lambdaQuery();
+        wrapper.eq(WarnRuleEntity::getProd, prodId);
+
+        return list(wrapper);
     }
 
     @Override

@@ -3,7 +3,11 @@ package com.francesca.service.impl;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.francesca.dao.DeviceDao;
+import com.francesca.dao.WarnDao;
+import com.francesca.dao.WarnRuleDao;
 import com.francesca.model.DTO.DeviceEntity;
+import com.francesca.model.DTO.WarnEntity;
+import com.francesca.model.DTO.WarnRuleEntity;
 import com.francesca.model.VO.Device.Device;
 import com.francesca.model.VO.dash.DashAirVO;
 import com.francesca.model.VO.dash.DashPowerVO;
@@ -27,12 +31,17 @@ public class CacheServiceImpl implements CacheService {
 
     private final Map<BigInteger, Device> cache = new ConcurrentHashMap<>();
 
+    private final Map<BigInteger, DeviceEntity> deviceEntityMap = new ConcurrentHashMap<>();
+
     private final Map<BigInteger, UStone10AOutlet> uStone10AOutletLast = new ConcurrentHashMap<>();
 
     private final Map<BigInteger, UStoneSmokeSensorStatus> uStoneSmokeSensorStatusLast = new ConcurrentHashMap<>();
 
     private final  Map<BigInteger, UStoneAirSixSensorStatus> uStoneAirSixSensorStatusLast = new ConcurrentHashMap<>();
 
+    private final  Map<BigInteger, List<WarnRuleEntity>> warnRuleMap = new ConcurrentHashMap<>();
+
+    private final Map<BigInteger, WarnEntity> warnMap = new ConcurrentHashMap<>();
 
     private static volatile   DashAirVO dashAirVO = new DashAirVO() ;
 
@@ -45,6 +54,12 @@ public class CacheServiceImpl implements CacheService {
     @Autowired
     private DeviceMsg deviceMsg;
 
+    @Autowired
+    private WarnRuleDao warnRuleDao;
+
+    @Autowired
+    private WarnDao warnDao;
+
     @PostConstruct
     public void initCache(){
         List<DeviceEntity> deviceEntityList = deviceDao.selectAll();
@@ -54,8 +69,39 @@ public class CacheServiceImpl implements CacheService {
         deviceEntityList.stream().forEach(
                 v-> {
                      cache.put(v.getId(), deviceMsg.setDevice(v) );
+                     deviceEntityMap.put(v.getId(), v);
                 }
         );
+
+        List<WarnRuleEntity> warnRuleEntities = warnRuleDao.selectAll();
+
+        if (ObjectUtil.isNotEmpty(warnRuleEntities)) {
+
+            warnRuleEntities.stream().forEach(v -> {
+
+               List<WarnRuleEntity> temp = warnRuleMap.get(BigInteger.valueOf(v.getProd()));
+                if (ObjectUtil.isEmpty(temp)){
+                    temp = new ArrayList<>();
+                }
+               temp.add(v);
+               warnRuleMap.put(BigInteger.valueOf(v.getProd()), temp);
+
+            });
+        }
+
+        List<WarnEntity> warnEntities = warnDao.selectAll();
+
+        if (ObjectUtil.isNotEmpty(warnEntities)) {
+
+            warnEntities.stream().forEach(v -> {
+
+                if (ObjectUtil.isNotEmpty(v)) {
+
+                    warnMap.put( v.getId(),v);
+                }
+
+            });
+        }
 
     }
 
@@ -78,10 +124,17 @@ public class CacheServiceImpl implements CacheService {
     @Override
     public Device getDeviceByTopic(String upTopic) {
 
-        return this.cache.values().stream()
+       return   this.cache.values().stream()
                 .filter(p -> p.getTopicUp() != null && upTopic.trim().equals(p.getTopicUp().trim()))
                 .findFirst()
                 .orElse(null);
+
+
+    }
+
+    @Override
+    public DeviceEntity getDevice(BigInteger id) {
+        return this.deviceEntityMap.get(id);
     }
 
     @Override
@@ -162,5 +215,34 @@ public class CacheServiceImpl implements CacheService {
     @Override
     public void putDashPower(DashPowerVO dashPowerVO) {
          this.dashPowerVO = dashPowerVO;
+    }
+
+    @Override
+    public List<WarnRuleEntity> readWarnRule(BigInteger prodId, int closeOpen) {
+
+        List<WarnRuleEntity> warnRuleEntities = this.warnRuleMap.get(prodId);
+
+
+        List<WarnRuleEntity> out = new ArrayList<>();
+
+        if (ObjectUtil.isNotEmpty(warnRuleEntities)){
+
+            warnRuleEntities.stream().forEach(
+                    v-> {
+                           if (v.getClosewarn() == closeOpen){
+                               out.add(v);
+                           }
+                    }
+            );
+
+        }
+
+        return out;
+
+    }
+
+    @Override
+    public WarnEntity readWarn(BigInteger warn) {
+        return this.warnMap.get(warn);
     }
 }
