@@ -69,17 +69,17 @@ public class WarnRecordEntity implements Serializable {
     /**
      * 规则ID
      */
-    private BigInteger ruleId;
+    private BigInteger ruleid;
 
     /**
      * 告警ID
      */
-    private BigInteger warnId;
+    private BigInteger warnid;
 
     /**
      * 设备ID
      */
-    private BigInteger devId;
+    private BigInteger devid;
 
     private BigInteger delay;
 

@@ -170,13 +170,30 @@ public class CacheServiceImpl implements CacheService {
     }
 
     @Override
+    public ConcurrentHashMap<BigInteger, UStone10AOutlet> getUStone10AOutlets() {
+        return (ConcurrentHashMap<BigInteger, UStone10AOutlet>) this.uStone10AOutletLast;
+    }
+
+    @Override
     public void putUStoneAirSixSensorStatus(BigInteger id , UStoneAirSixSensorStatus uStoneAirSixSensorStatus) {
+
+        this.uStoneAirSixSensorStatusLast.put(id, uStoneAirSixSensorStatus);
 
     }
 
     @Override
-    public void putUStoneSmokeSensorStatus(BigInteger id , UStoneSmokeSensorStatus uStoneSmokeSensorStatus) {
+    public ConcurrentHashMap<BigInteger, UStoneAirSixSensorStatus> getUstoneAirSixSensors() {
+        return (ConcurrentHashMap<BigInteger, UStoneAirSixSensorStatus>) this.uStoneAirSixSensorStatusLast;
+    }
 
+    @Override
+    public void putUStoneSmokeSensorStatus(BigInteger id , UStoneSmokeSensorStatus uStoneSmokeSensorStatus) {
+        this.uStoneSmokeSensorStatusLast.put(id , uStoneSmokeSensorStatus);
+    }
+
+    @Override
+    public ConcurrentHashMap<BigInteger, UStoneSmokeSensorStatus> getUstoneSmokeSensors() {
+        return (ConcurrentHashMap<BigInteger, UStoneSmokeSensorStatus>) this.uStoneSmokeSensorStatusLast;
     }
 
     @Override
@@ -221,7 +238,6 @@ public class CacheServiceImpl implements CacheService {
     public List<WarnRuleEntity> readWarnRule(BigInteger prodId, int closeOpen) {
 
         List<WarnRuleEntity> warnRuleEntities = this.warnRuleMap.get(prodId);
-
 
         List<WarnRuleEntity> out = new ArrayList<>();
 

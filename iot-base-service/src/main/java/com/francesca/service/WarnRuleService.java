@@ -26,6 +26,6 @@ public interface WarnRuleService{
 
     String formatWarnRule(List<String> pvs, List<WarnRuleEntity> warns , int area  , int subsys , int dev);
 
-    void execWarnRule(Device device , Object dev , int closeOpen );
+    void execWarnRule(BigInteger devId , BigInteger prod , Object dev , int closeOpen );
 
 }

@@ -45,7 +45,7 @@ public class WarnRecordDaoImpl extends ServiceImpl<WarnRecordMapper, WarnRecordE
     @Override
     public List<WarnRecordEntity> selectByDev(BigInteger dev , BigInteger warn) {
         LambdaQueryWrapper<WarnRecordEntity> wrapper = Wrappers.lambdaQuery();
-        wrapper.eq(WarnRecordEntity::getDevId, ""+dev).eq(WarnRecordEntity::getWarnId, warn ).gt(WarnRecordEntity::getStatus, 0);
+        wrapper.eq(WarnRecordEntity::getDevid, ""+dev).eq(WarnRecordEntity::getWarnid, warn ).gt(WarnRecordEntity::getStatus, 0);
 
         return list(wrapper);
     }

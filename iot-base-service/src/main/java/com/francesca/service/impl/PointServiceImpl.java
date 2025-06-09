@@ -32,8 +32,7 @@ public class PointServiceImpl implements PointService {
     private CacheService cacheService;
 
 
-    @Autowired
-    private WarnRuleService warnRuleService;
+
 
     @Override
     public void handleMqttMsg(String topic, String msg) throws JsonProcessingException {
@@ -59,9 +58,7 @@ public class PointServiceImpl implements PointService {
            UStone10AOutlet uStone10AOutlet = uStone10AOutletMsg.getStatus();
            cacheService.putUStone10AOutlet(device.getId(), uStone10AOutletMsg.getStatus());
 
-           //first close warn ,then open warn
-           warnRuleService.execWarnRule(device, uStone10AOutletMsg.getStatus(), 0);
-           warnRuleService.execWarnRule(device, uStone10AOutletMsg.getStatus(), 1);
+
 
        }
 
@@ -84,7 +81,6 @@ public class PointServiceImpl implements PointService {
         }
 
     }
-
 
 
 

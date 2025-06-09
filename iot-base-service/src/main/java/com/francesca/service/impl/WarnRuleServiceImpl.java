@@ -108,7 +108,7 @@ public class WarnRuleServiceImpl implements WarnRuleService {
                 out = out + " " + warnRule.getOp();
                 out = out + " " + warnRule.getPvalue() + " )";
 
-                if (warns.size() > i &&  i > 0 && ObjectUtil.isNotEmpty(warnRule.getConn())){
+                if ( ObjectUtil.isNotEmpty(warnRule.getConn())){
                     out = out + " " + warnRule.getConn() ;
                 }
 
@@ -153,10 +153,10 @@ public class WarnRuleServiceImpl implements WarnRuleService {
 
 
         @Override
-        public void execWarnRule(Device device , Object dev , int closeOpen ){
+        public void execWarnRule(BigInteger devId , BigInteger prod,  Object dev , int closeOpen ){
 
             // div warnRule by ruleId
-            List<WarnRuleEntity> warnOpen = cacheService.readWarnRule(BigInteger.valueOf(2),closeOpen);
+            List<WarnRuleEntity> warnOpen = cacheService.readWarnRule(prod,closeOpen);
             Map<BigInteger, List<WarnRuleEntity>> warnRuleByidMap = new HashMap<>();
 
 
@@ -173,35 +173,35 @@ public class WarnRuleServiceImpl implements WarnRuleService {
             warnRuleByidMap.entrySet().forEach(
                     v->{
 
+
                         List<String> points = getWarnPoint(v.getValue());
                         List<String> pvs = new ArrayList<>();
 
                         // read point value from device msg
-                        if (ObjectUtil.isNotEmpty(points) && ObjectUtil.isNotEmpty(cacheService.getDevice(device.getId()))){
+                        if (ObjectUtil.isNotEmpty(points) && ObjectUtil.isNotEmpty(cacheService.getDevice(devId))){
                             points.stream().forEach(s -> {
                                 try {
-                                    String pv = (String) getProperty(dev, s);
+                                    String pv = String.valueOf( getProperty(dev, s) );
                                     pvs.add(pv);
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
                             });
 
-                            DeviceEntity deviceEntity = cacheService.getDevice(device.getId());
+                            DeviceEntity deviceEntity = cacheService.getDevice(devId);
 
                             // format the warnRule condition
                             String warnIf = formatWarnRule(pvs,  v.getValue(),deviceEntity.getArea(),  deviceEntity.getSubsys(), deviceEntity.getId().intValue());
 
                             if (evaluateCondition(warnIf)){
-                                 if (closeOpen == 1) {
 
-                                     openWarn(v.getValue(), deviceEntity);
-                                 }else {
-                                     closeWarn(v.getValue(), deviceEntity);
-                                 }
+                                WarnEntity warn = cacheService.readWarn(BigInteger.valueOf(v.getValue().get(0).getWarnid()));
+
+                                openCloseWarn(v.getValue(), deviceEntity , warn.getLevel(),  closeOpen);
+
                             }
 
-                            log.info(String.valueOf(evaluateCondition(warnIf)));
+                            log.info("exec warn " + closeOpen + " rule: " + warnIf + " result : " +String.valueOf(evaluateCondition(warnIf)));
 
                         }
 
@@ -212,7 +212,7 @@ public class WarnRuleServiceImpl implements WarnRuleService {
 
         }
 
-    private  void openWarn(List<WarnRuleEntity> rules , DeviceEntity device){
+    private  void openCloseWarn(List<WarnRuleEntity> rules , DeviceEntity device , int level , int warn){
 
         if (ObjectUtil.isEmpty( rules)){
             return;
@@ -223,32 +223,58 @@ public class WarnRuleServiceImpl implements WarnRuleService {
             return;
         }
 
-        List<WarnRecordEntity> warns =  warnRecordDao.selectByDev(device.getId(), warnEntity.getId());
+        List<WarnRecordEntity> warns = warnRecordDao.selectByDev(device.getId(), warnEntity.getId());
 
-        if (ObjectUtil.isEmpty(warns)){
-            WarnRecordEntity warnRecordEntity = new WarnRecordEntity();
-            warnRecordEntity.setStatus( 1 );
-            warnRecordEntity.setArea(BigInteger.valueOf(device.getArea()));
-            warnRecordEntity.setLevel(warnEntity.getLevel());
-            warnRecordEntity.setName(warnEntity.getName());
-            warnRecordEntity.setAlias(warnEntity.getAlias());
-            warnRecordEntity.setCount(1);
-            warnRecordEntity.setRuleId(rules.get(0).getRuleid());
-            warnRecordEntity.setCreateTime(DateUtil.date());
-            warnRecordEntity.setSubsys(BigInteger.valueOf(device.getSubsys()));
+        // exec open warn
+        if (warn == 1) {
 
-            warnRecordEntity = isOpen(rules.get(0), warnRecordEntity);
-            warnRecordDao.insert(warnRecordEntity);
+            if (ObjectUtil.isEmpty(warns)) {
 
+                // open a new warn
+
+                WarnRecordEntity warnRecordEntity = new WarnRecordEntity();
+                warnRecordEntity.setId(BigInteger.valueOf(0));
+                warnRecordEntity.setStatus(1);
+                warnRecordEntity.setArea(BigInteger.valueOf(device.getArea()));
+                warnRecordEntity.setLevel(warnEntity.getLevel());
+                warnRecordEntity.setName(warnEntity.getName());
+                warnRecordEntity.setAlias(warnEntity.getAlias());
+                warnRecordEntity.setCount(0);
+                warnRecordEntity.setRuleid(rules.get(0).getRuleid());
+                warnRecordEntity.setCreateTime(DateUtil.date());
+                warnRecordEntity.setSubsys(BigInteger.valueOf(device.getSubsys()));
+                warnRecordEntity.setWarnid(BigInteger.valueOf(rules.get(0).getWarnid()));
+                warnRecordEntity.setDevid(device.getId());
+                warnRecordEntity.setLevel(level);
+
+                warnRecordEntity = isOpen(rules.get(0), warnRecordEntity);
+                warnRecordDao.insert(warnRecordEntity);
+
+            }else {
+
+                for (WarnRecordEntity warnRecordEntity : warns) {
+
+                    if (warnRecordEntity.getStatus() == 1) {
+                        warnRecordEntity = isOpen(rules.get(0), warnRecordEntity);
+
+                        if (warnRecordEntity.getStatus() > 1) {
+                            warnRecordDao.update(warnRecordEntity);
+                        }
+                    }
+
+                }
+            }
         }
 
-        for (WarnRecordEntity warnRecordEntity : warns){
 
-            if (warnRecordEntity.getStatus() == 1){
-                warnRecordEntity = isOpen(rules.get(0), warnRecordEntity);
+        if (warn == 0 ){
 
-                if (warnRecordEntity.getStatus() >  1){
-                    warnRecordDao.update(warnRecordEntity);
+            if(ObjectUtil.isNotEmpty(warns) &&  warns.size() > 0 ){
+
+                for(WarnRecordEntity warnRecordEntity : warns){
+
+                    warnRecordEntity.setStatus(0);
+                    warnRecordEntity.setCloseTime(DateUtil.date());
                 }
             }
 
@@ -258,33 +284,37 @@ public class WarnRuleServiceImpl implements WarnRuleService {
 
     private WarnRecordEntity isOpen(WarnRuleEntity rule , WarnRecordEntity record){
 
-        if (ObjectUtil.isNotEmpty(rule.getCount()) && rule.getCount() <= record.getCount() ){
-            record.setStatus(2);
+        // if rule is use count,  check count is exceed limit or not
 
+        if (ObjectUtil.isEmpty(record.getCount())){
+            record.setCount(0);
         }
+        record.setCount(record.getCount() + 1 );
+
+        if (ObjectUtil.isNotEmpty(rule.getCount())) {
+
+            if (rule.getCount() <= record.getCount() ){
+                record.setStatus(2);
+            }
+        }
+
+
+
+        // if rule is use time ,check time is  exceed time limit or not
 
         long last =  DateUtil.between( DateUtil.date(), record.getCreateTime() , DateUnit.MINUTE);
         BigInteger delay = BigInteger.valueOf(last);
         record.setDelay(delay);
 
         if(ObjectUtil.isNotEmpty(rule.getTime()) ){
-
-
-            if (rule.getTime() <= delay.intValue() ){
+          if (rule.getTime() <= delay.intValue() ){
                 record.setStatus(2);
             }
-
-
-        }
-
+       }
         return record;
     }
 
 
-    private void closeWarn(List<WarnRuleEntity> rules , DeviceEntity device){
-
-
-    }
 
 
     private static Object getProperty(Object obj, String propertyName) throws Exception {

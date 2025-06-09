@@ -12,6 +12,7 @@ import com.francesca.mqtt.ustoneMsg.UStoneSmokeSensorStatus;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 public interface CacheService {
 
@@ -28,9 +29,16 @@ public interface CacheService {
 
         List<UStone10AOutlet> getAllUStone10AOutletStatus();
 
+        ConcurrentHashMap<BigInteger , UStone10AOutlet > getUStone10AOutlets();
+
         void putUStoneAirSixSensorStatus(BigInteger id , UStoneAirSixSensorStatus uStoneAirSixSensorStatus);
 
+        ConcurrentHashMap<BigInteger , UStoneAirSixSensorStatus > getUstoneAirSixSensors();
+
         void putUStoneSmokeSensorStatus(BigInteger id , UStoneSmokeSensorStatus uStoneSmokeSensorStatus);
+
+        ConcurrentHashMap<BigInteger , UStoneSmokeSensorStatus > getUstoneSmokeSensors();
+
 
         void updateCurrentAir(UStoneAirSixSensorStatus uStoneAirSixSensorStatus);
 
