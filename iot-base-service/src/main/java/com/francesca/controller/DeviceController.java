@@ -32,6 +32,14 @@ public class DeviceController {
     @Autowired
     private DeviceDao deviceDao;
 
+
+    @ApiOperation(value = "列出指定设备当前点位值")
+    @GetMapping( "getdevpoint")
+    public List<DeviceEntity> getDevPoint() {
+
+        return deviceDao.selectAll();
+    }
+
     @ApiOperation(value = "列出所有设备")
     @GetMapping( "getall")
     public List<DeviceEntity> getall() {

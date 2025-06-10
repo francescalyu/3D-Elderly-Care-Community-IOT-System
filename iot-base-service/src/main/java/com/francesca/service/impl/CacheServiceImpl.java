@@ -3,9 +3,11 @@ package com.francesca.service.impl;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.francesca.dao.DeviceDao;
+import com.francesca.dao.ProductDao;
 import com.francesca.dao.WarnDao;
 import com.francesca.dao.WarnRuleDao;
 import com.francesca.model.DTO.DeviceEntity;
+import com.francesca.model.DTO.ProductEntity;
 import com.francesca.model.DTO.WarnEntity;
 import com.francesca.model.DTO.WarnRuleEntity;
 import com.francesca.model.VO.Device.Device;
@@ -33,6 +35,10 @@ public class CacheServiceImpl implements CacheService {
 
     private final Map<BigInteger, DeviceEntity> deviceEntityMap = new ConcurrentHashMap<>();
 
+
+    private final Map<BigInteger, ProductEntity> productEntityMap = new ConcurrentHashMap<>();
+
+    // deviceId, DeviceList
     private final Map<BigInteger, UStone10AOutlet> uStone10AOutletLast = new ConcurrentHashMap<>();
 
     private final Map<BigInteger, UStoneSmokeSensorStatus> uStoneSmokeSensorStatusLast = new ConcurrentHashMap<>();
@@ -60,6 +66,9 @@ public class CacheServiceImpl implements CacheService {
     @Autowired
     private WarnDao warnDao;
 
+    @Autowired
+    private ProductDao productDao;
+
     @PostConstruct
     public void initCache(){
         List<DeviceEntity> deviceEntityList = deviceDao.selectAll();
@@ -70,6 +79,16 @@ public class CacheServiceImpl implements CacheService {
                 v-> {
                      cache.put(v.getId(), deviceMsg.setDevice(v) );
                      deviceEntityMap.put(v.getId(), v);
+                }
+        );
+
+        List<ProductEntity> products  = productDao.selectAll();
+        if (ObjectUtil.isEmpty(products)){
+            return;
+        }
+        products.stream().forEach(
+                v-> {
+                    productEntityMap.put(v.getId(), v);
                 }
         );
 
@@ -135,6 +154,11 @@ public class CacheServiceImpl implements CacheService {
     @Override
     public DeviceEntity getDevice(BigInteger id) {
         return this.deviceEntityMap.get(id);
+    }
+
+    @Override
+    public ProductEntity getProduct(BigInteger id) {
+        return  this.productEntityMap.get(id);
     }
 
     @Override

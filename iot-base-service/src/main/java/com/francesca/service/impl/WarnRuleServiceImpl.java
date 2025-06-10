@@ -5,8 +5,8 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.francesca.dao.*;
 import com.francesca.model.DTO.*;
-import com.francesca.model.VO.Device.Device;
 import com.francesca.service.CacheService;
+import com.francesca.service.CommonService;
 import com.francesca.service.WarnRuleService;
 import com.francesca.util.CommonUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 @Slf4j
@@ -45,6 +46,9 @@ public class WarnRuleServiceImpl implements WarnRuleService {
 
     @Autowired
     private WarnRecordDao warnRecordDao;
+
+    @Autowired
+    private CommonService commonService;
 
 
     @Override
@@ -90,66 +94,57 @@ public class WarnRuleServiceImpl implements WarnRuleService {
         return points;
     }
 
-    @Override
-    public  String formatWarnRule(List<String> pvs, List<WarnRuleEntity> warns , int area  , int subsys , int dev){
-       // String out = " if  ";
+
+
+
+
+    public  String formatWarnRule(String pv , WarnRuleEntity warnRuleEntity , int area  , int subsys , int dev){
+
         String out = " ";
 
-        int i = 0;
-        for ( String pv : pvs){
-
-            WarnRuleEntity warnRule = warns.get(i);
-            if (ObjectUtil.isNotEmpty(warnRule.getPid()) ){
-
+            if (ObjectUtil.isNotEmpty( warnRuleEntity.getPid())){
                 pv = CommonUtil.toNumberStr(pv);
 
                 out = out + " (";
                 out = out + " " + pv;
-                out = out + " " + warnRule.getOp();
-                out = out + " " + warnRule.getPvalue() + " )";
+                out = out + " " + warnRuleEntity.getOp();
+                out = out + " " + warnRuleEntity.getPvalue() + " )";
 
-                if ( ObjectUtil.isNotEmpty(warnRule.getConn())){
-                    out = out + " " + warnRule.getConn() ;
+                if ( ObjectUtil.isNotEmpty(warnRuleEntity.getConn())){
+                    out = out + " " + warnRuleEntity.getConn() ;
                 }
 
-                i++;
+                return out;
 
             }
 
-        }
-
-        if (i >= warns.size()){
-            return  out;
-        }
-
-        for (int j = i+1 ; j<warns.size() ; j++){
 
             out = out  + " (";
 
-            WarnRuleEntity warnRule = warns.get(j);
 
-            if (ObjectUtil.isNotEmpty(warnRule.getArea()) && warnRule.getArea() > 0 ){
-                 out = out + area + " = " + warnRule.getOp();
+            if (ObjectUtil.isNotEmpty(warnRuleEntity.getArea()) && warnRuleEntity.getArea() > 0 ){
+                 out = out + area + " == " + warnRuleEntity.getPvalue();
             }
 
 
-            if (ObjectUtil.isNotEmpty(warnRule.getSubsys()) && warnRule.getSubsys() > 0 ){
-                out = out + subsys + " = " + warnRule.getOp();
+            if (ObjectUtil.isNotEmpty(warnRuleEntity.getSubsys()) && warnRuleEntity.getSubsys() > 0 ){
+                out = out + subsys + " == " + warnRuleEntity.getOp();
             }
 
-            if (ObjectUtil.isNotEmpty(warnRule.getDev()) && warnRule.getDev() > 0 ){
-                out = out + dev + " = " + warnRule.getOp();
+            if (ObjectUtil.isNotEmpty(warnRuleEntity.getDev()) && warnRuleEntity.getDev() > 0 ){
+                out = out + dev + " == " + warnRuleEntity.getPvalue();
             }
 
-            if (ObjectUtil.isNotEmpty(warnRule.getConn())){
-                out = out + " " + warnRule.getConn();
+            out = out + " ) ";
+
+            if (ObjectUtil.isNotEmpty(warnRuleEntity.getConn())){
+                out = out + " " + warnRuleEntity.getConn();
             }
+
+            return out;
 
         }
 
-        return out;
-
-        }
 
 
         @Override
@@ -170,45 +165,77 @@ public class WarnRuleServiceImpl implements WarnRuleService {
             }
 
             //exec warn by warn rule
-            warnRuleByidMap.entrySet().forEach(
-                    v->{
 
 
-                        List<String> points = getWarnPoint(v.getValue());
-                        List<String> pvs = new ArrayList<>();
+            DeviceEntity device = cacheService.getDevice(devId);
+            for (Map.Entry<BigInteger, List<WarnRuleEntity>> entry : warnRuleByidMap.entrySet()) {
 
-                        // read point value from device msg
-                        if (ObjectUtil.isNotEmpty(points) && ObjectUtil.isNotEmpty(cacheService.getDevice(devId))){
-                            points.stream().forEach(s -> {
-                                try {
-                                    String pv = String.valueOf( getProperty(dev, s) );
-                                    pvs.add(pv);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            });
 
-                            DeviceEntity deviceEntity = cacheService.getDevice(devId);
+                List<WarnRuleEntity> warnRules = entry.getValue();
+                List<String> outs = new ArrayList<>();
 
-                            // format the warnRule condition
-                            String warnIf = formatWarnRule(pvs,  v.getValue(),deviceEntity.getArea(),  deviceEntity.getSubsys(), deviceEntity.getId().intValue());
+                for (WarnRuleEntity warnRuleEntity : warnRules) {
+                    String out = "";
 
-                            if (evaluateCondition(warnIf)){
+                    // 规则产品与当前设备产品不同时， 取所有指定产品的值与规则值比较，取AND
+                    if (ObjectUtil.isNotEmpty(warnRuleEntity.getProd()) && warnRuleEntity.getProd() > 0 && warnRuleEntity.getProd() != prod.intValue()) {
+                        Map<BigInteger, String> pvalues = commonService.getPointValueByProd(BigInteger.valueOf(warnRuleEntity.getProd()), warnRuleEntity.getPid());
 
-                                WarnEntity warn = cacheService.readWarn(BigInteger.valueOf(v.getValue().get(0).getWarnid()));
+                        int i = 0;
+                        for (String pv : pvalues.values()) {
 
-                                openCloseWarn(v.getValue(), deviceEntity , warn.getLevel(),  closeOpen);
+                            if (ObjectUtil.isNotEmpty(pvalues)) {
+                                out = out + "(";
 
+                                out = out + CommonUtil.toNumberStr(pvalues.get(i));
+
+                                out = out + warnRuleEntity.getOp();
+
+                                out = out + warnRuleEntity.getPvalue();
+
+                                out = out + " && ";
                             }
-
-                            log.info("exec warn " + closeOpen + " rule: " + warnIf + " result : " +String.valueOf(evaluateCondition(warnIf)));
 
                         }
 
+                        //去掉最后的" && "
+                        if (out.length() > 4) {
+                            out = out.substring(0, out.length() - 4);
+                        }
 
+                    } else {
+
+
+                        if (ObjectUtil.isNotEmpty(device)) {
+                            String pv = commonService.getPointValue(devId, warnRuleEntity.getPid());
+
+                            out = formatWarnRule(pv, warnRuleEntity, device.getArea(), device.getSubsys(), device.getId().intValue());
+
+                        }
                     }
-            );
 
+                    outs.add(out);
+                }
+
+
+                String out = "";
+                if (ObjectUtil.isNotEmpty(outs)){
+                    for (String v : outs){
+                        out = out + v;
+                    }
+                }
+
+
+                if (evaluateCondition(out)) {
+
+                    WarnEntity warn = cacheService.readWarn(BigInteger.valueOf(entry.getValue().get(0).getWarnid()));
+
+                    openCloseWarn(entry.getValue(), device, warn.getLevel(), closeOpen);
+                }
+
+                log.info("exec warn " + closeOpen + " rule: " + out + " result : " + String.valueOf(evaluateCondition(out)));
+
+            }
 
         }
 

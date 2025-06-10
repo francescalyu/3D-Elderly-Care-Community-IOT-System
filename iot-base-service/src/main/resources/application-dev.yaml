@@ -7,7 +7,7 @@ app:
 spring:
   # datasource 数据源配置内容，对应 DataSourceProperties 配置属性类
   datasource:
-    url: jdbc:mysql://124.71.174.115:9088/s3eccis?characterEncoding=utf-8&useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true
+    url: jdbc:mysql://124.71.174.115:9088/s3eccis?characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&rewriteBatchedStatements=true
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: a12bCd3_W45pUq6

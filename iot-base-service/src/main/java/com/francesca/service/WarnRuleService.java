@@ -24,7 +24,6 @@ public interface WarnRuleService{
 
     List<String> getWarnPoint(List<WarnRuleEntity> warnRuleEntities );
 
-    String formatWarnRule(List<String> pvs, List<WarnRuleEntity> warns , int area  , int subsys , int dev);
 
     void execWarnRule(BigInteger devId , BigInteger prod , Object dev , int closeOpen );
 

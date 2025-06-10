@@ -1,6 +1,7 @@
 package com.francesca.service;
 
 import com.francesca.model.DTO.DeviceEntity;
+import com.francesca.model.DTO.ProductEntity;
 import com.francesca.model.DTO.WarnEntity;
 import com.francesca.model.DTO.WarnRuleEntity;
 import com.francesca.model.VO.Device.Device;
@@ -24,6 +25,7 @@ public interface CacheService {
 
         DeviceEntity getDevice (BigInteger id);
 
+        ProductEntity getProduct (BigInteger id);
 
         void putUStone10AOutlet(BigInteger id , UStone10AOutlet uStone10AOutlet);
 
