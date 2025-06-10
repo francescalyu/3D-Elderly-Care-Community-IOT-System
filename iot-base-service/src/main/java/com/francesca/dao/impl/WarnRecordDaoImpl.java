@@ -51,6 +51,15 @@ public class WarnRecordDaoImpl extends ServiceImpl<WarnRecordMapper, WarnRecordE
     }
 
     @Override
+    public List<WarnRecordEntity> selectBySubsys(int subsys , int status) {
+        LambdaQueryWrapper<WarnRecordEntity> wrapper = Wrappers.lambdaQuery();
+        wrapper.eq(WarnRecordEntity::getSubsys, ""+subsys).eq(WarnRecordEntity::getStatus, status );
+
+        return list(wrapper);
+
+    }
+
+    @Override
     public void insert(WarnRecordEntity entity) {
            save(entity);
     }

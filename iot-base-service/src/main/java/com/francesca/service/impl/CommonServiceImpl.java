@@ -1,12 +1,11 @@
 package com.francesca.service.impl;
 
 import cn.hutool.core.util.ObjectUtil;
-import com.francesca.dao.DeviceDao;
 import com.francesca.dao.PointDao;
-import com.francesca.dao.ProductDao;
+import com.francesca.dao.WarnRuleDao;
 import com.francesca.model.DTO.DeviceEntity;
 import com.francesca.model.DTO.PointEntity;
-import com.francesca.model.DTO.ProductEntity;
+import com.francesca.model.DTO.WarnRuleEntity;
 import com.francesca.service.CacheService;
 import com.francesca.service.CommonService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +13,10 @@ import org.springframework.stereotype.Service;
 
 import java.beans.PropertyDescriptor;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 
 @Service
@@ -30,6 +30,9 @@ public class CommonServiceImpl implements CommonService {
     @Autowired
     private CacheService cacheService;
 
+    @Autowired
+    private WarnRuleDao warnRuleDao;
+
     @Override
     public String getPointValue(BigInteger devId , BigInteger pointId ) {
 
@@ -39,7 +42,7 @@ public class CommonServiceImpl implements CommonService {
             return  null;
         }
 
-        PointEntity pointEntity = pointDao.selectByUid(pointId.intValue());
+        PointEntity pointEntity = cacheService.getPoint(pointId);
 
         if (ObjectUtil.isEmpty(pointEntity)){
             return null;
@@ -118,6 +121,45 @@ public class CommonServiceImpl implements CommonService {
         return pd.getReadMethod().invoke(obj);
     }
 
+    @Override
+    public Map<Integer, List<PointEntity>> getPointByWarnRule() {
 
+        List<WarnRuleEntity> warnRuleEntities = warnRuleDao.selectAll();
+
+        if (warnRuleEntities.isEmpty()){
+            return null;
+        }
+
+        Map<Integer, List<PointEntity>> out = new HashMap<>();
+
+        for(WarnRuleEntity warnRule : warnRuleEntities  ){
+
+
+
+            List<PointEntity> temp = new ArrayList<>();
+
+
+                if (ObjectUtil.isNotEmpty(warnRule.getPid())  ){
+                    PointEntity pointEntity = cacheService.getPoint(warnRule.getPid());
+                    if (ObjectUtil.isNotEmpty(pointEntity)){
+                        temp.add(pointEntity);
+                    }
+
+                }
+
+            if (ObjectUtil.isEmpty(out) ||  ObjectUtil.isEmpty(out.get(warnRule.getRuleid())) ){
+
+                out.put(warnRule.getRuleid().intValue(), temp);
+            }else {
+                List<PointEntity> ones = out.get(warnRule.getRuleid());
+                ones.addAll(temp);
+
+            }
+
+
+        }
+
+        return out;
+    }
 
 }

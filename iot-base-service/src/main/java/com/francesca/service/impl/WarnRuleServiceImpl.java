@@ -29,12 +29,6 @@ import java.util.concurrent.atomic.AtomicReference;
 public class WarnRuleServiceImpl implements WarnRuleService {
 
     @Autowired
-    private ProductDao productDao;
-
-    @Autowired
-    private PointDao pointDao;
-
-    @Autowired
     private WarnRuleDao warnRuleDao;
 
     @Autowired
@@ -43,7 +37,6 @@ public class WarnRuleServiceImpl implements WarnRuleService {
     @Autowired
     private WarnDao warnDao;
 
-
     @Autowired
     private WarnRecordDao warnRecordDao;
 
@@ -51,7 +44,6 @@ public class WarnRuleServiceImpl implements WarnRuleService {
     private CommonService commonService;
 
 
-    @Override
     public Map<Integer, List<WarnRuleEntity>> selectWarnRuleByProd(){
 
              Map<Integer, List<WarnRuleEntity>> out = new HashMap<>();
@@ -81,7 +73,7 @@ public class WarnRuleServiceImpl implements WarnRuleService {
 
         warnRuleEntities.stream().forEach(v -> {
             if (ObjectUtil.isNotEmpty(v.getPid())){
-                PointEntity pointEntity = pointDao.selectByUid(v.getPid().intValue());
+                PointEntity pointEntity = cacheService.getPoint(v.getPid());
 
                 if (ObjectUtil.isNotEmpty(pointEntity)){
                     points.add(pointEntity.getName());
@@ -283,10 +275,8 @@ public class WarnRuleServiceImpl implements WarnRuleService {
 
                     if (warnRecordEntity.getStatus() == 1) {
                         warnRecordEntity = isOpen(rules.get(0), warnRecordEntity);
+                        warnRecordDao.update(warnRecordEntity);
 
-                        if (warnRecordEntity.getStatus() > 1) {
-                            warnRecordDao.update(warnRecordEntity);
-                        }
                     }
 
                 }
@@ -339,14 +329,6 @@ public class WarnRuleServiceImpl implements WarnRuleService {
             }
        }
         return record;
-    }
-
-
-
-
-    private static Object getProperty(Object obj, String propertyName) throws Exception {
-        PropertyDescriptor pd = new PropertyDescriptor(propertyName, obj.getClass());
-        return pd.getReadMethod().invoke(obj);
     }
 
     private static boolean evaluateCondition(String condition) {

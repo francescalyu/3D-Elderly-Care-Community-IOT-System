@@ -20,7 +20,6 @@ import java.util.Map;
 
 public interface WarnRuleService{
 
-    Map<Integer, List<WarnRuleEntity>> selectWarnRuleByProd();
 
     List<String> getWarnPoint(List<WarnRuleEntity> warnRuleEntities );
 

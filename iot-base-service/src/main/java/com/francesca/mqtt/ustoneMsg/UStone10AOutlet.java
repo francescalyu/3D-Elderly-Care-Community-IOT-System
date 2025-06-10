@@ -3,6 +3,7 @@ package com.francesca.mqtt.ustoneMsg;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 
 /**
@@ -44,6 +45,7 @@ public class UStone10AOutlet {
     @JsonProperty("date_time")
     private LocalDateTime dateTime;
 
+    @JsonProperty("power1")
     private int power1;
 
     private BigDecimal count1minEnergy;
@@ -53,18 +55,20 @@ public class UStone10AOutlet {
         BigDecimal energy = new BigDecimal(energyToday);
 
         //处理时钟有问题的10A插座, 计算1分钟电量
-        if (energy.equals(0)){
+        if (energy.compareTo(BigDecimal.ZERO) == 0){
             BigDecimal aPower = new BigDecimal(activePower);
 
             // 1min = 1/60 hours
-            BigDecimal oneMin = new BigDecimal("1").divide(new BigDecimal("60"));
+            BigDecimal oneMin = new BigDecimal("1").divide(new BigDecimal("60"), 10, RoundingMode.HALF_UP);
 
             BigDecimal energy1min = aPower.multiply(oneMin);
 
             // wh /1000 = kwh
-            energy1min = energy1min.divide(new BigDecimal("1000"));
+            energy1min = energy1min.divide(new BigDecimal("1000"), 10, RoundingMode.HALF_UP);
 
             this.setCount1minEnergy(energy1min);
+            this.setEnergyToday(String.valueOf(energy1min));
+
 
         }else {
             this.setCount1minEnergy(energy);

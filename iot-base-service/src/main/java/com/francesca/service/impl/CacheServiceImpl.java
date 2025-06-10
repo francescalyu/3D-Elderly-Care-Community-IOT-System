@@ -2,14 +2,8 @@ package com.francesca.service.impl;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
-import com.francesca.dao.DeviceDao;
-import com.francesca.dao.ProductDao;
-import com.francesca.dao.WarnDao;
-import com.francesca.dao.WarnRuleDao;
-import com.francesca.model.DTO.DeviceEntity;
-import com.francesca.model.DTO.ProductEntity;
-import com.francesca.model.DTO.WarnEntity;
-import com.francesca.model.DTO.WarnRuleEntity;
+import com.francesca.dao.*;
+import com.francesca.model.DTO.*;
 import com.francesca.model.VO.Device.Device;
 import com.francesca.model.VO.dash.DashAirVO;
 import com.francesca.model.VO.dash.DashPowerVO;
@@ -34,6 +28,8 @@ public class CacheServiceImpl implements CacheService {
     private final Map<BigInteger, Device> cache = new ConcurrentHashMap<>();
 
     private final Map<BigInteger, DeviceEntity> deviceEntityMap = new ConcurrentHashMap<>();
+
+    private final Map<BigInteger, PointEntity> pointEntityMap = new ConcurrentHashMap<>();
 
 
     private final Map<BigInteger, ProductEntity> productEntityMap = new ConcurrentHashMap<>();
@@ -67,6 +63,9 @@ public class CacheServiceImpl implements CacheService {
     private WarnDao warnDao;
 
     @Autowired
+    private PointDao pointDao;
+
+    @Autowired
     private ProductDao productDao;
 
     @PostConstruct
@@ -89,6 +88,16 @@ public class CacheServiceImpl implements CacheService {
         products.stream().forEach(
                 v-> {
                     productEntityMap.put(v.getId(), v);
+                }
+        );
+
+        List<PointEntity> pointEntities  = pointDao.selectAll();
+        if (ObjectUtil.isEmpty(pointEntities)){
+            return;
+        }
+        pointEntities.stream().forEach(
+                v-> {
+                    pointEntityMap.put(v.getId(), v);
                 }
         );
 
@@ -157,35 +166,59 @@ public class CacheServiceImpl implements CacheService {
     }
 
     @Override
+    public List<Device> getAllDevice() {
+        return new ArrayList<>( this.cache.values() );
+    }
+
+    @Override
     public ProductEntity getProduct(BigInteger id) {
         return  this.productEntityMap.get(id);
+    }
+
+    @Override
+    public PointEntity getPoint(BigInteger id) {
+        return this.pointEntityMap.get(id);
     }
 
     @Override
     public void putUStone10AOutlet(BigInteger id ,UStone10AOutlet uStone10AOutlet) {
         if (this.uStone10AOutletLast.isEmpty()) {
 
+             uStone10AOutlet.countMinEnergyWhen0();
              this.uStone10AOutletLast.put(id, uStone10AOutlet);
              return;
         }
 
-        BigDecimal energy = new BigDecimal(uStone10AOutlet.getEnergyToday());
-
-        if (energy.equals(0)) {
-
             UStone10AOutlet uStone10AOutlet1 =  this.uStone10AOutletLast.get(id);
-            uStone10AOutlet.countMinEnergyWhen0();
+            if (ObjectUtil.isEmpty(uStone10AOutlet1)){
+                uStone10AOutlet.countMinEnergyWhen0();
+                this.uStone10AOutletLast.put(id, uStone10AOutlet);
+                return;
+            }
 
+            //exec power 0 error outlets;
             //add energy
-            BigDecimal energy1 = new BigDecimal(uStone10AOutlet1.getEnergyToday());
-            energy = energy.add(energy1);
+        BigDecimal energy = new BigDecimal(uStone10AOutlet.getEnergyToday());
+        if (energy.compareTo(BigDecimal.ZERO) == 0) {
 
+            uStone10AOutlet.countMinEnergyWhen0();
+            energy = new BigDecimal(uStone10AOutlet.getEnergyToday());
+            BigDecimal energy1 = new BigDecimal(uStone10AOutlet1.getEnergyToday());
+
+            energy = energy.add(energy1);
             uStone10AOutlet.setEnergyToday(energy.toString());
 
-            this.uStone10AOutletLast.put(id , uStone10AOutlet);
         }
+        this.uStone10AOutletLast.put(id , uStone10AOutlet);
 
+    }
 
+    private UStone10AOutlet execPower0(UStone10AOutlet uStone10AOutlet){
+        BigDecimal energy = new BigDecimal(uStone10AOutlet.getEnergyToday());
+        if (energy.compareTo(BigDecimal.ZERO) == 0) {
+            uStone10AOutlet.countMinEnergyWhen0();
+        }
+        return uStone10AOutlet;
     }
 
     @Override
@@ -244,6 +277,13 @@ public class CacheServiceImpl implements CacheService {
     }
 
     @Override
+    public void updateSmoke(DashAirVO dishair) {
+        this.dashAirVO.setSmokeLevel(dishair.getSmokeLevel());
+        this.dashAirVO.setLpgLevel(dishair.getLpgLevel());
+        this.dashAirVO.setCoLevel(dishair.getCoLevel());
+    }
+
+    @Override
     public DashAirVO getCurrentAir() {
         return this.dashAirVO;
     }
@@ -285,4 +325,6 @@ public class CacheServiceImpl implements CacheService {
     public WarnEntity readWarn(BigInteger warn) {
         return this.warnMap.get(warn);
     }
+
+
 }

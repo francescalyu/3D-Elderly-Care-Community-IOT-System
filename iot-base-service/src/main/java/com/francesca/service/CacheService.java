@@ -1,9 +1,6 @@
 package com.francesca.service;
 
-import com.francesca.model.DTO.DeviceEntity;
-import com.francesca.model.DTO.ProductEntity;
-import com.francesca.model.DTO.WarnEntity;
-import com.francesca.model.DTO.WarnRuleEntity;
+import com.francesca.model.DTO.*;
 import com.francesca.model.VO.Device.Device;
 import com.francesca.model.VO.dash.DashAirVO;
 import com.francesca.model.VO.dash.DashPowerVO;
@@ -13,6 +10,7 @@ import com.francesca.mqtt.ustoneMsg.UStoneSmokeSensorStatus;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public interface CacheService {
@@ -25,7 +23,11 @@ public interface CacheService {
 
         DeviceEntity getDevice (BigInteger id);
 
+        List<Device> getAllDevice();
+
         ProductEntity getProduct (BigInteger id);
+
+        PointEntity getPoint(BigInteger id);
 
         void putUStone10AOutlet(BigInteger id , UStone10AOutlet uStone10AOutlet);
 
@@ -44,6 +46,8 @@ public interface CacheService {
 
         void updateCurrentAir(UStoneAirSixSensorStatus uStoneAirSixSensorStatus);
 
+        void updateSmoke(DashAirVO dashAirVO);
+
         DashAirVO getCurrentAir();
 
         DashPowerVO getCurrentPower();
@@ -53,5 +57,7 @@ public interface CacheService {
         List<WarnRuleEntity> readWarnRule(BigInteger prodId,   int closeOpen);
 
         WarnEntity readWarn(BigInteger warn);
+
+
 
 }

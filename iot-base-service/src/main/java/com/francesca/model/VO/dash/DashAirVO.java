@@ -74,13 +74,22 @@ public class DashAirVO {
     @ApiModelProperty(" 液化气  单位PPM " )
     private String lpg;
 
+    @ApiModelProperty(" 液化气  0-正常  1-告警  2-严重 " )
+    private String lpgLevel;
+
 
     @ApiModelProperty(" 一氧化碳  单位PPM " )
     private String co;
 
+    @ApiModelProperty(" 一氧化碳   0-正常  1-告警  2-严重 " )
+    private String coLevel;
+
 
     @ApiModelProperty("烟雾  单位PPM " )
     private String smoke;
+
+    @ApiModelProperty(" 烟雾  0-正常  1-告警  2-严重 " )
+    private String smokeLevel ;
 
 
 

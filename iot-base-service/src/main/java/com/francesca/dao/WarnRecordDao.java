@@ -19,6 +19,8 @@ public interface WarnRecordDao {
 
     List<WarnRecordEntity> selectByDev(BigInteger dev , BigInteger warn);
 
+    List<WarnRecordEntity> selectBySubsys(int subsys , int status);
+
     void  insert(WarnRecordEntity entity);
 
     void  update(WarnRecordEntity entity);

@@ -56,7 +56,7 @@ public class PointServiceImpl implements PointService {
            UStone10AOutletMsg uStone10AOutletMsg = mapper.readValue(msg,UStone10AOutletMsg.class);
            log.info("============》》rcv ustone 10A Outle Msg , device id : " + device.getManuId() );
            UStone10AOutlet uStone10AOutlet = uStone10AOutletMsg.getStatus();
-           cacheService.putUStone10AOutlet(device.getId(), uStone10AOutletMsg.getStatus());
+           cacheService.putUStone10AOutlet(device.getId(), uStone10AOutlet);
 
 
 

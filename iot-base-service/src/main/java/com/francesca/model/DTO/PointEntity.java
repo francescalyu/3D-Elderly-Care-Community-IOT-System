@@ -54,5 +54,27 @@ public class PointEntity implements Serializable {
     private Integer type;
 
 
+    /**
+     * point use
+     */
+    private Integer ptuse;
+
+
+    /**
+     * cmd description
+     */
+    private String cmd;
+
+    /**
+     * cmd low limit
+     */
+
+    private Float low;
+
+    private Float high;
+
+    private Float step;
+
+
     private static final long serialVersionUID = 1L;
 }
