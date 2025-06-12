@@ -57,8 +57,8 @@ public class MqttInboundConfig {
             String topic = (String) message.getHeaders().get("mqtt_receivedTopic");
             String payload = message.getPayload().toString();
 
-            log.info("============》》接收消息主题 : " + topic);
-            log.info("============》》接收消息内容原始内容 : " + new String(payload));
+//            log.info("============》》接收消息主题 : " + topic);
+//            log.info("============》》接收消息内容原始内容 : " + new String(payload));
 
             try {
                 pointService.handleMqttMsg(topic , payload);

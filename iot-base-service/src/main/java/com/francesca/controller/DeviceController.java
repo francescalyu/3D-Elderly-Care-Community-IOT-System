@@ -81,6 +81,23 @@ public class DeviceController {
             prodPoint.setValue(pv);
             prodPoint.setUnit(pointEntity.getUnit());
             prodPoint.setId(String.valueOf(pointEntity.getId()));
+            prodPoint.setPtUse(String.valueOf(pointEntity.getPtuse()));
+            prodPoint.setType(String.valueOf(pointEntity.getType()));
+
+            if(ObjectUtil.isNotEmpty(pointEntity.getCmd())) {
+                prodPoint.setCmd(pointEntity.getCmd());
+            }
+            if(ObjectUtil.isNotEmpty(pointEntity.getLow())) {
+                prodPoint.setLow(String.valueOf(pointEntity.getLow()));
+            }
+
+            if(ObjectUtil.isNotEmpty(pointEntity.getHigh())) {
+                prodPoint.setHigh(String.valueOf(pointEntity.getHigh()));
+            }
+
+            if(ObjectUtil.isNotEmpty(pointEntity.getStep())){
+                prodPoint.setStep(String.valueOf(pointEntity.getStep()));
+            }
 
             points.add(prodPoint);
         }

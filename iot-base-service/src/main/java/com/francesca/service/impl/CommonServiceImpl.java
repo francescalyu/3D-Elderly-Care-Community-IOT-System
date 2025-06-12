@@ -61,6 +61,9 @@ public class CommonServiceImpl implements CommonService {
             case 4:
                 dev = cacheService.getUstoneSmokeSensors().get(devId);
                 break;
+            case 7:
+                dev = cacheService.getDashDoor();
+                break;
             default:
                 dev = null;
                 break;

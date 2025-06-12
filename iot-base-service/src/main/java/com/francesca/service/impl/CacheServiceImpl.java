@@ -6,7 +6,9 @@ import com.francesca.dao.*;
 import com.francesca.model.DTO.*;
 import com.francesca.model.VO.Device.Device;
 import com.francesca.model.VO.dash.DashAirVO;
+import com.francesca.model.VO.dash.DashDoorVO;
 import com.francesca.model.VO.dash.DashPowerVO;
+import com.francesca.mqtt.bluetouth.HealthBandEvent;
 import com.francesca.mqtt.ustoneMsg.UStone10AOutlet;
 import com.francesca.mqtt.ustoneMsg.UStoneAirSixSensorStatus;
 import com.francesca.mqtt.ustoneMsg.UStoneSmokeSensorStatus;
@@ -48,6 +50,12 @@ public class CacheServiceImpl implements CacheService {
     private static volatile   DashAirVO dashAirVO = new DashAirVO() ;
 
     private static volatile   DashPowerVO dashPowerVO = new DashPowerVO();
+
+    private static volatile HealthBandEvent healthBandEvent = new HealthBandEvent();
+
+    private static volatile DashDoorVO dashDoorVO = new DashDoorVO();
+
+
 
 
     @Autowired
@@ -324,6 +332,18 @@ public class CacheServiceImpl implements CacheService {
     @Override
     public WarnEntity readWarn(BigInteger warn) {
         return this.warnMap.get(warn);
+    }
+
+    @Override
+    public DashDoorVO getDashDoor() {
+        return this.dashDoorVO;
+    }
+
+    @Override
+    public void setDashDoor(DashDoorVO dashDoor) {
+
+        this.dashDoorVO.setChangeDate(dashDoor.getChangeDate());
+        this.dashDoorVO.setStatus(dashDoor.getStatus());
     }
 
 

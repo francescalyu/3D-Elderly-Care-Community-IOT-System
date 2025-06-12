@@ -3,6 +3,7 @@ package com.francesca.service;
 import com.francesca.model.DTO.*;
 import com.francesca.model.VO.Device.Device;
 import com.francesca.model.VO.dash.DashAirVO;
+import com.francesca.model.VO.dash.DashDoorVO;
 import com.francesca.model.VO.dash.DashPowerVO;
 import com.francesca.mqtt.ustoneMsg.UStone10AOutlet;
 import com.francesca.mqtt.ustoneMsg.UStoneAirSixSensorStatus;
@@ -58,6 +59,8 @@ public interface CacheService {
 
         WarnEntity readWarn(BigInteger warn);
 
+        DashDoorVO getDashDoor();
 
+        void setDashDoor(DashDoorVO dashDoorVO);
 
 }

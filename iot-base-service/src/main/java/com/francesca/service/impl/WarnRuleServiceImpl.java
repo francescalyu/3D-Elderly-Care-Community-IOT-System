@@ -169,7 +169,7 @@ public class WarnRuleServiceImpl implements WarnRuleService {
                 for (WarnRuleEntity warnRuleEntity : warnRules) {
                     String out = "";
 
-                    // 规则产品与当前设备产品不同时， 取所有指定产品的值与规则值比较，取AND
+                    // 规则产品与当前设备产品不同时， 取所有指定产品的值与规则值比较，取or
                     if (ObjectUtil.isNotEmpty(warnRuleEntity.getProd()) && warnRuleEntity.getProd() > 0 && warnRuleEntity.getProd() != prod.intValue()) {
                         Map<BigInteger, String> pvalues = commonService.getPointValueByProd(BigInteger.valueOf(warnRuleEntity.getProd()), warnRuleEntity.getPid());
 
@@ -185,7 +185,7 @@ public class WarnRuleServiceImpl implements WarnRuleService {
 
                                 out = out + warnRuleEntity.getPvalue();
 
-                                out = out + " && ";
+                                out = out + " || ";
                             }
 
                         }
