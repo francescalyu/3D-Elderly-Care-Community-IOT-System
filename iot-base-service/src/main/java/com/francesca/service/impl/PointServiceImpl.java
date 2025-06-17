@@ -1,5 +1,6 @@
 package com.francesca.service.impl;
 
+import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -8,10 +9,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.francesca.model.VO.Device.Device;
 import com.francesca.model.VO.dash.DashDoorVO;
+import com.francesca.model.VO.dash.DashSosVO;
+import com.francesca.model.VO.dash.HealthVO;
 import com.francesca.mqtt.bluetouth.*;
 import com.francesca.mqtt.ustoneMsg.*;
 import com.francesca.service.CacheService;
 import com.francesca.service.PointService;
+import com.francesca.util.CommonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -97,10 +101,102 @@ public class PointServiceImpl implements PointService {
                 switch (event.getEventType()) {
                     case "healthBand":
                         HealthBandEvent healthBandEvent = (HealthBandEvent) event;
-                        log.info("========== rcv bluetooth healthBand msg  mac : " + msg);
+                        HealthVO health = cacheService.getHealth();
+
+                        if(ObjectUtil.isNotEmpty(healthBandEvent) ){
+
+                            // if heart rate = 255, 手环测量中，手环每5分钟测量一次
+                            if(ObjectUtil.isEmpty(health.getHeart_rate())){
+                                health.setHeart_rate("测量中");
+                            }else {
+                                int heart = Integer.parseInt(healthBandEvent.getHeart_rate());
+                                if ( heart > 0 && heart != 255  ){
+                                    health.setHeart_rate(healthBandEvent.getHeart_rate());
+                                }
+                            }
+
+                            if(ObjectUtil.isNotEmpty(healthBandEvent.getBlood_pressure())){
+                                int blood = Integer.parseInt(healthBandEvent.getBlood_pressure());
+
+                                if (blood > 0 && blood < 255){
+                                    health.setBlood_pressure(healthBandEvent.getBlood_pressure());
+                                }
+                            }
+
+                            if (ObjectUtil.isNotEmpty(healthBandEvent.getFalling_alert())){
+                                health.setFalling_alert(healthBandEvent.getFalling_alert());
+                            }
+
+                            if(ObjectUtil.isNotEmpty(healthBandEvent.getBody_temperature())){
+                                health.setBody_temperature(healthBandEvent.getBody_temperature());
+                            }
+
+                            if(ObjectUtil.isNotEmpty(healthBandEvent.getNot_wearing_alert())){
+                                health.setNot_wearing_alert(healthBandEvent.getNot_wearing_alert());
+                            }
+
+                            if(ObjectUtil.isNotEmpty(healthBandEvent.getTotal_calories())){
+                                health.setTotal_calories(healthBandEvent.getTotal_calories());
+                            }
+
+                            if(ObjectUtil.isNotEmpty(healthBandEvent.getTotal_sleep())){
+                                health.setTotal_sleep(healthBandEvent.getTotal_sleep());
+                            }
+
+                            if(ObjectUtil.isNotEmpty(healthBandEvent.getTotal_steps())){
+                                health.setTotal_steps(healthBandEvent.getTotal_steps());
+                            }
+
+                            if(ObjectUtil.isNotEmpty(healthBandEvent.getBattery_percentage())){
+                                health.setBattery_percentage(healthBandEvent.getBattery_percentage());
+                            }
+
+                            cacheService.setHealth(health);
+                        }
+
+                        //log.info("========== rcv bluetooth healthBand msg  mac : " + msg);
                         break;
                     case "button":
                         ButtonEvent buttonEvent = (ButtonEvent) event;
+                        DashSosVO dashSosVO = cacheService.getSos();
+
+                        if(ObjectUtil.isNotEmpty(buttonEvent)){
+
+                             if(buttonEvent.getButton2() == "1"){
+
+                                 //如果呼救器按下计数 > 0
+                                 if(ObjectUtil.isNotEmpty(dashSosVO.getCount())  && Integer.parseInt(dashSosVO.getCount()) > 0 ){
+
+                                    int min = Math.toIntExact(DateUtil.between(DateUtil.parseDate(dashSosVO.getPressTime()), DateUtil.date(), DateUnit.MINUTE));
+
+                                    //按下呼救 时间间隔大于5分钟，上次为误按
+                                    if (min > 5){
+                                        dashSosVO.setPressTime(DateUtil.now());
+                                        dashSosVO.setCount("1");
+
+                                    }else {
+                                        int count = Integer.parseInt(dashSosVO.getCount());
+
+                                        if (count >= 5){
+
+                                            dashSosVO.setStatus("1");
+                                            dashSosVO.setSosTime(DateUtil.now());
+                                        }
+
+                                        count = count + 1;
+                                        dashSosVO.setPressTime(DateUtil.now());
+                                        dashSosVO.setCount(String.valueOf(count));
+
+                                    }
+
+                                 }
+
+                             }
+
+                        }
+
+                        cacheService.setSos(dashSosVO);
+
                         //log.info("========== rcv unKnow bluetooth msg : " + buttonEvent.getMac());
                         break;
                     case "doorSensor":
@@ -117,6 +213,8 @@ public class PointServiceImpl implements PointService {
                             dashDoorVO.setChangeDate(DateUtil.now());
                         }
 
+                        cacheService.setDashDoor(dashDoorVO);
+
                         //log.info("========== rcv unKnow bluetooth msg : " + doorSensorEvent.getMac());
                         break;
                     case "multiButton":
@@ -125,6 +223,26 @@ public class PointServiceImpl implements PointService {
                         break;
                     case "lightSensor":
                         LightSensorEvent lightSensorEvent = (LightSensorEvent) event;
+                        DashDoorVO dashDoor = cacheService.getDashDoor();
+
+                        if(ObjectUtil.isNotEmpty(lightSensorEvent)){
+
+                            if(ObjectUtil.isNotEmpty(lightSensorEvent.getHumidity())){
+                                dashDoor.setHumidity(CommonUtil.toNumberStr(lightSensorEvent.getHumidity()));
+                            }
+
+                            if(ObjectUtil.isNotEmpty(lightSensorEvent.getIlluminance())){
+                                dashDoor.setIlluminance(CommonUtil.toNumberStr(lightSensorEvent.getIlluminance()));
+                            }
+
+                            if(ObjectUtil.isNotEmpty(lightSensorEvent.getTemperature())){
+                                dashDoor.setTemperature(CommonUtil.toNumberStr(lightSensorEvent.getTemperature()));
+                            }
+
+                        }
+
+                        cacheService.setDashDoor(dashDoor);
+
                         //log.info("========== rcv unKnow bluetooth msg : " + device.getManuId());
                         break;
                     default:

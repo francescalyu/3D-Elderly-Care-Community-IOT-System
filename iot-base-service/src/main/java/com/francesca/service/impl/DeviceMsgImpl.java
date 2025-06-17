@@ -57,7 +57,6 @@ public class DeviceMsgImpl implements DeviceMsg {
             return null;
         }
 
-
         Device device = new Device();
 
         device.setId(entity.getId());
@@ -75,8 +74,6 @@ public class DeviceMsgImpl implements DeviceMsg {
         device.setProduct(productEntity.getAlias());
 
         return device;
-
     }
-
 
 }

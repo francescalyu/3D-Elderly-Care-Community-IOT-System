@@ -2,9 +2,8 @@ package com.francesca.service;
 
 import com.francesca.model.DTO.*;
 import com.francesca.model.VO.Device.Device;
-import com.francesca.model.VO.dash.DashAirVO;
-import com.francesca.model.VO.dash.DashDoorVO;
-import com.francesca.model.VO.dash.DashPowerVO;
+import com.francesca.model.VO.dash.*;
+import com.francesca.mqtt.bluetouth.HealthBandEvent;
 import com.francesca.mqtt.ustoneMsg.UStone10AOutlet;
 import com.francesca.mqtt.ustoneMsg.UStoneAirSixSensorStatus;
 import com.francesca.mqtt.ustoneMsg.UStoneSmokeSensorStatus;
@@ -62,5 +61,13 @@ public interface CacheService {
         DashDoorVO getDashDoor();
 
         void setDashDoor(DashDoorVO dashDoorVO);
+
+        HealthVO getHealth();
+
+        void setHealth(HealthVO healthVO);
+
+        DashSosVO getSos();
+
+        void setSos(DashSosVO dashSosVO);
 
 }

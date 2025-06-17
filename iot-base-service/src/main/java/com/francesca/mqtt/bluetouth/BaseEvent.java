@@ -20,8 +20,8 @@ public abstract class BaseEvent {
     private String rssi;
     @JsonProperty("gid")
     private String gid;
-    @JsonProperty("batteryPercentage")
-    private String batteryPercentage;
+    @JsonProperty("battery_percentage")
+    private String battery_percentage;
 
     public abstract String getEventType();
 }

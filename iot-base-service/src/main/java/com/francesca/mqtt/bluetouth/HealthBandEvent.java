@@ -9,24 +9,24 @@ public class HealthBandEvent extends BaseEvent {
     private String name;
     @JsonProperty("did")
     private String did;
-    @JsonProperty("heartRate")
-    private String heartRate;
-    @JsonProperty("bloodPressure")
-    private String bloodPressure;
-    @JsonProperty("notWearingAlert")
-    private String notWearingAlert;
-    @JsonProperty("sosAlert")
-    private String sosAlert;
-    @JsonProperty("fallingAlert")
-    private String fallingAlert;
-    @JsonProperty("bodyTemperature")
-    private String bodyTemperature;
-    @JsonProperty("totalCalories")
-    private String totalCalories;
-    @JsonProperty("totalSleep")
-    private String totalSleep;
-    @JsonProperty("totalSteps")
-    private String totalSteps;
+    @JsonProperty("heart_rate")
+    private String heart_rate;
+    @JsonProperty("blood_pressure")
+    private String blood_pressure;
+    @JsonProperty("not_wearing_alert")
+    private String not_wearing_alert;
+    @JsonProperty("sos_alert")
+    private String sos_alert;
+    @JsonProperty("falling_alert")
+    private String falling_alert;
+    @JsonProperty("body_temperature")
+    private String body_temperature;
+    @JsonProperty("total_calories")
+    private String total_calories;
+    @JsonProperty("total_sleep")
+    private String total_sleep;
+    @JsonProperty("total_steps")
+    private String total_steps;
 
     @Override
     public String getEventType() {

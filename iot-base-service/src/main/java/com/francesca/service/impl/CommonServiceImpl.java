@@ -10,7 +10,6 @@ import com.francesca.service.CacheService;
 import com.francesca.service.CommonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.beans.PropertyDescriptor;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -25,7 +24,6 @@ public class CommonServiceImpl implements CommonService {
 
     @Autowired
     private PointDao pointDao;
-
 
     @Autowired
     private CacheService cacheService;
@@ -112,7 +110,6 @@ public class CommonServiceImpl implements CommonService {
                 );
                 break;
 
-
         }
 
         return out;
@@ -136,32 +133,22 @@ public class CommonServiceImpl implements CommonService {
         Map<Integer, List<PointEntity>> out = new HashMap<>();
 
         for(WarnRuleEntity warnRule : warnRuleEntities  ){
-
-
-
             List<PointEntity> temp = new ArrayList<>();
-
 
                 if (ObjectUtil.isNotEmpty(warnRule.getPid())  ){
                     PointEntity pointEntity = cacheService.getPoint(warnRule.getPid());
                     if (ObjectUtil.isNotEmpty(pointEntity)){
                         temp.add(pointEntity);
                     }
-
                 }
 
             if (ObjectUtil.isEmpty(out) ||  ObjectUtil.isEmpty(out.get(warnRule.getRuleid())) ){
-
                 out.put(warnRule.getRuleid().intValue(), temp);
             }else {
                 List<PointEntity> ones = out.get(warnRule.getRuleid());
                 ones.addAll(temp);
-
             }
-
-
         }
-
         return out;
     }
 

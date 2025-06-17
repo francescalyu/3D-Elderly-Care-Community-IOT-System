@@ -3,7 +3,9 @@ package com.francesca.controller;
 
 import com.francesca.constant.UrlConstant;
 import com.francesca.model.VO.dash.DashAirVO;
+import com.francesca.model.VO.dash.DashDoorVO;
 import com.francesca.model.VO.dash.DashPowerVO;
+import com.francesca.model.VO.dash.HealthVO;
 import com.francesca.service.CacheService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -41,6 +43,18 @@ public class DashboardController {
     @GetMapping( "getPower")
     public DashPowerVO getPower() {
         return cacheService.getCurrentPower();
+    }
+
+    @ApiOperation(value = "获取健康数据")
+    @GetMapping( "getHealth")
+    public HealthVO getHealth() {
+        return cacheService.getHealth();
+    }
+
+    @ApiOperation(value = "获取门禁及户外数据")
+    @GetMapping( "getOutDoor")
+    public DashDoorVO getOutDoor() {
+        return cacheService.getDashDoor();
     }
 
 

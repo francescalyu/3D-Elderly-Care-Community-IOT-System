@@ -5,10 +5,9 @@ import cn.hutool.core.util.ObjectUtil;
 import com.francesca.dao.*;
 import com.francesca.model.DTO.*;
 import com.francesca.model.VO.Device.Device;
-import com.francesca.model.VO.dash.DashAirVO;
-import com.francesca.model.VO.dash.DashDoorVO;
-import com.francesca.model.VO.dash.DashPowerVO;
+import com.francesca.model.VO.dash.*;
 import com.francesca.mqtt.bluetouth.HealthBandEvent;
+import com.francesca.mqtt.bluetouth.LightSensorEvent;
 import com.francesca.mqtt.ustoneMsg.UStone10AOutlet;
 import com.francesca.mqtt.ustoneMsg.UStoneAirSixSensorStatus;
 import com.francesca.mqtt.ustoneMsg.UStoneSmokeSensorStatus;
@@ -51,12 +50,12 @@ public class CacheServiceImpl implements CacheService {
 
     private static volatile   DashPowerVO dashPowerVO = new DashPowerVO();
 
-    private static volatile HealthBandEvent healthBandEvent = new HealthBandEvent();
+    private static volatile HealthVO healthVO = new HealthVO();
 
-    private static volatile DashDoorVO dashDoorVO = new DashDoorVO();
+    private static volatile   DashDoorVO dashDoorVO = new DashDoorVO();
 
 
-
+    private static volatile DashSosVO dashSosVO = new DashSosVO();
 
     @Autowired
     private DeviceDao deviceDao;
@@ -164,8 +163,6 @@ public class CacheServiceImpl implements CacheService {
                 .filter(p -> p.getTopicUp() != null && upTopic.trim().equals(p.getTopicUp().trim()))
                 .findFirst()
                 .orElse(null);
-
-
     }
 
     @Override
@@ -344,6 +341,45 @@ public class CacheServiceImpl implements CacheService {
 
         this.dashDoorVO.setChangeDate(dashDoor.getChangeDate());
         this.dashDoorVO.setStatus(dashDoor.getStatus());
+        this.dashDoorVO.setTemperature(dashDoor.getTemperature());
+        this.dashDoorVO.setHumidity(dashDoor.getHumidity());
+        this.dashDoorVO.setIlluminance(dashDoor.getIlluminance());
+    }
+
+    @Override
+    public HealthVO getHealth() {
+        return this.healthVO;
+    }
+
+    @Override
+    public void setHealth(HealthVO healthVO) {
+        this.healthVO.setTotal_steps(healthVO.getTotal_steps());
+        this.healthVO.setOnline("1");
+        this.healthVO.setBlood_pressure(healthVO.getBlood_pressure());
+        this.healthVO.setHeart_rate(healthVO.getHeart_rate());
+        this.healthVO.setFalling_alert(healthVO.getFalling_alert());
+        this.healthVO.setBody_temperature(healthVO.getBody_temperature());
+        this.healthVO.setTotal_calories(healthVO.getTotal_calories());
+        this.healthVO.setUpdateTime(DateUtil.now());
+        this.healthVO.setTotal_sleep(healthVO.getTotal_sleep());
+        this.healthVO.setNot_wearing_alert(healthVO.getNot_wearing_alert());
+
+
+    }
+
+    @Override
+    public DashSosVO getSos() {
+        return this.dashSosVO;
+    }
+
+    @Override
+    public void setSos(DashSosVO dashSosVO) {
+
+        this.dashSosVO.setSosTime(dashSosVO.getSosTime());
+        this.dashSosVO.setStatus(dashSosVO.getStatus());
+        this.dashSosVO.setCount(dashSosVO.getCount());
+        this.dashSosVO.setPressTime(dashSosVO.getPressTime());
+
     }
 
 
