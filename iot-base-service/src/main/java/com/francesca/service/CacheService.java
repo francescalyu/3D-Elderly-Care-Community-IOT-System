@@ -4,7 +4,9 @@ import com.francesca.model.DTO.*;
 import com.francesca.model.VO.Device.Device;
 import com.francesca.model.VO.dash.*;
 import com.francesca.mqtt.bluetouth.HealthBandEvent;
+import com.francesca.mqtt.geekopen.GeekOpen16AOutlet;
 import com.francesca.mqtt.ustoneMsg.UStone10AOutlet;
+import com.francesca.mqtt.ustoneMsg.UStone3WaySwitch;
 import com.francesca.mqtt.ustoneMsg.UStoneAirSixSensorStatus;
 import com.francesca.mqtt.ustoneMsg.UStoneSmokeSensorStatus;
 
@@ -30,6 +32,14 @@ public interface CacheService {
         PointEntity getPoint(BigInteger id);
 
         void putUStone10AOutlet(BigInteger id , UStone10AOutlet uStone10AOutlet);
+
+        void putGeekOpen16AOutlet(BigInteger id , GeekOpen16AOutlet geekOpen16AOutlet);
+
+        void putUStone3WaySwitch(BigInteger id , UStone3WaySwitch uStone3WaySwitch);
+
+        ConcurrentHashMap<BigInteger , UStone3WaySwitch > getUStone3WaySwitch();
+
+        ConcurrentHashMap<BigInteger , GeekOpen16AOutlet > getGeekOpen16AOutlet();
 
         List<UStone10AOutlet> getAllUStone10AOutletStatus();
 

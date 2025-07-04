@@ -12,6 +12,7 @@ import com.francesca.model.VO.dash.DashDoorVO;
 import com.francesca.model.VO.dash.DashSosVO;
 import com.francesca.model.VO.dash.HealthVO;
 import com.francesca.mqtt.bluetouth.*;
+import com.francesca.mqtt.geekopen.GeekOpen16AOutlet;
 import com.francesca.mqtt.ustoneMsg.*;
 import com.francesca.service.CacheService;
 import com.francesca.service.PointService;
@@ -43,6 +44,17 @@ public class PointServiceImpl implements PointService {
            return;
        }
 
+       //Geekopen 10A outlet
+        if (device.getPid() == BigInteger.valueOf(1)) {
+            ObjectMapper mapper = new ObjectMapper();
+
+            GeekOpen16AOutlet geekOpen16AOutlet = mapper.readValue(msg,GeekOpen16AOutlet.class);
+            log.info("============》》rcv geekOpen 10A Outle Msg , device id : " + device.getManuId() );
+            cacheService.putGeekOpen16AOutlet(device.getId(), geekOpen16AOutlet);
+
+        }
+
+
        //ustone 10A outlet
        if (device.getPid() == BigInteger.valueOf(2)) {
            ObjectMapper mapper = new ObjectMapper();
@@ -53,10 +65,18 @@ public class PointServiceImpl implements PointService {
            log.info("============》》rcv ustone 10A Outle Msg , device id : " + device.getManuId() );
            UStone10AOutlet uStone10AOutlet = uStone10AOutletMsg.getStatus();
            cacheService.putUStone10AOutlet(device.getId(), uStone10AOutlet);
+      }
 
+        //ustone 3 way Switcher
+        if (device.getPid() == BigInteger.valueOf(9)) {
+            ObjectMapper mapper = new ObjectMapper();
+            UStone3WaySwitchMsg switchData = mapper.readValue(msg, UStone3WaySwitchMsg.class);
 
+            log.info("============》》rcv ustone 3 way switch Msg , device id : " + device.getManuId() );
+            UStone3WaySwitch uStone3WaySwitch = switchData.getStatus();
+            cacheService.putUStone3WaySwitch(device.getId(), uStone3WaySwitch);
 
-       }
+        }
 
        //ustone air 6 sensor
        if(device.getPid() == BigInteger.valueOf(3)){
@@ -250,10 +270,7 @@ public class PointServiceImpl implements PointService {
 
                 }
             }
-
-
         }
-
 
     }
 

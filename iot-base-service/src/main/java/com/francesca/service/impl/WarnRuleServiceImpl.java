@@ -187,8 +187,7 @@ public class WarnRuleServiceImpl implements WarnRuleService {
 
                                 out = out + " || ";
                             }
-
-                        }
+                       }
 
                         //去掉最后的" && "
                         if (out.length() > 4) {

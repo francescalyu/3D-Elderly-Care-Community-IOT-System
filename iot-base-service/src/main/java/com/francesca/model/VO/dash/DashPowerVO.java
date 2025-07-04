@@ -36,4 +36,14 @@ public class DashPowerVO {
 
     @ApiModelProperty(" 电量趋势 ")
     private List<DashPowerCountVO> powerList;
+
+    @ApiModelProperty(" 空调用电量  " )
+    private String acPower;
+
+    @ApiModelProperty(" 照明用电量  " )
+    private String lightPower;
+
+    @ApiModelProperty(" 厨电用电量  " )
+    private String electPower;
+
 }

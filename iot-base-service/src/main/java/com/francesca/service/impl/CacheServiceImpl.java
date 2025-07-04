@@ -8,7 +8,9 @@ import com.francesca.model.VO.Device.Device;
 import com.francesca.model.VO.dash.*;
 import com.francesca.mqtt.bluetouth.HealthBandEvent;
 import com.francesca.mqtt.bluetouth.LightSensorEvent;
+import com.francesca.mqtt.geekopen.GeekOpen16AOutlet;
 import com.francesca.mqtt.ustoneMsg.UStone10AOutlet;
+import com.francesca.mqtt.ustoneMsg.UStone3WaySwitch;
 import com.francesca.mqtt.ustoneMsg.UStoneAirSixSensorStatus;
 import com.francesca.mqtt.ustoneMsg.UStoneSmokeSensorStatus;
 import com.francesca.service.CacheService;
@@ -32,11 +34,14 @@ public class CacheServiceImpl implements CacheService {
 
     private final Map<BigInteger, PointEntity> pointEntityMap = new ConcurrentHashMap<>();
 
-
     private final Map<BigInteger, ProductEntity> productEntityMap = new ConcurrentHashMap<>();
 
     // deviceId, DeviceList
     private final Map<BigInteger, UStone10AOutlet> uStone10AOutletLast = new ConcurrentHashMap<>();
+
+    private final Map<BigInteger, GeekOpen16AOutlet> geekOpen16AOutletLast = new ConcurrentHashMap<>();
+
+    private final Map<BigInteger, UStone3WaySwitch> uStone3WaySwitchLast = new ConcurrentHashMap<>();
 
     private final Map<BigInteger, UStoneSmokeSensorStatus> uStoneSmokeSensorStatusLast = new ConcurrentHashMap<>();
 
@@ -216,6 +221,75 @@ public class CacheServiceImpl implements CacheService {
         }
         this.uStone10AOutletLast.put(id , uStone10AOutlet);
 
+    }
+
+    @Override
+    public void putGeekOpen16AOutlet(BigInteger id, GeekOpen16AOutlet geekOpen16AOutlet) {
+        if (this.geekOpen16AOutletLast.isEmpty()) {
+
+            geekOpen16AOutlet.countMinEnergyWhen0();
+            this.geekOpen16AOutletLast.put(id, geekOpen16AOutlet);
+            return;
+        }
+
+        GeekOpen16AOutlet geekOpen16AOutlet1 =  this.geekOpen16AOutletLast.get(id);
+        if (ObjectUtil.isEmpty(geekOpen16AOutlet1)){
+            geekOpen16AOutlet.countMinEnergyWhen0();
+            this.geekOpen16AOutletLast.put(id, geekOpen16AOutlet);
+            return;
+        }
+
+        //exec power 0 error outlets;
+        //add energy
+        if (geekOpen16AOutlet.getEnergyToday().compareTo(BigDecimal.ZERO) == 0) {
+
+            geekOpen16AOutlet.countMinEnergyWhen0();
+            geekOpen16AOutlet.setEnergyToday( geekOpen16AOutlet.getEnergyToday().add(geekOpen16AOutlet1.getEnergyToday())  );
+
+        }
+        this.geekOpen16AOutletLast.put(id , geekOpen16AOutlet);
+    }
+
+    @Override
+    public void putUStone3WaySwitch(BigInteger id, UStone3WaySwitch uStone3WaySwitch) {
+        if (this.uStone3WaySwitchLast.isEmpty()) {
+
+            uStone3WaySwitch.countMinEnergyWhen0();
+            this.uStone3WaySwitchLast.put(id, uStone3WaySwitch);
+            return;
+        }
+
+        UStone3WaySwitch uStone3WaySwitch1 =  this.uStone3WaySwitchLast.get(id);
+        if (ObjectUtil.isEmpty(uStone3WaySwitch1)){
+            uStone3WaySwitch.countMinEnergyWhen0();
+            this.uStone3WaySwitchLast.put(id, uStone3WaySwitch);
+            return;
+        }
+
+        //exec power 0 error outlets;
+        //add energy
+        BigDecimal energy = new BigDecimal(uStone3WaySwitch.getEnergyToday());
+        if (energy.compareTo(BigDecimal.ZERO) == 0) {
+
+            uStone3WaySwitch.countMinEnergyWhen0();
+            energy = new BigDecimal(uStone3WaySwitch.getEnergyToday());
+            BigDecimal energy1 = new BigDecimal(uStone3WaySwitch1.getEnergyToday());
+
+            energy = energy.add(energy1);
+            uStone3WaySwitch.setEnergyToday(energy.toString());
+
+        }
+        this.uStone3WaySwitchLast.put(id , uStone3WaySwitch);
+    }
+
+    @Override
+    public ConcurrentHashMap<BigInteger, UStone3WaySwitch> getUStone3WaySwitch() {
+        return (ConcurrentHashMap<BigInteger, UStone3WaySwitch>) this.uStone3WaySwitchLast;
+    }
+
+    @Override
+    public ConcurrentHashMap<BigInteger, GeekOpen16AOutlet> getGeekOpen16AOutlet() {
+        return (ConcurrentHashMap<BigInteger, GeekOpen16AOutlet>) this.geekOpen16AOutletLast;
     }
 
     private UStone10AOutlet execPower0(UStone10AOutlet uStone10AOutlet){

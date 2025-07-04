@@ -10,7 +10,9 @@ import com.francesca.model.DTO.WarnRecordEntity;
 import com.francesca.model.DTO.WarnRuleEntity;
 import com.francesca.model.VO.dash.DashAirVO;
 import com.francesca.model.VO.dash.DashPowerVO;
+import com.francesca.mqtt.geekopen.GeekOpen16AOutlet;
 import com.francesca.mqtt.ustoneMsg.UStone10AOutlet;
+import com.francesca.mqtt.ustoneMsg.UStone3WaySwitch;
 import com.francesca.mqtt.ustoneMsg.UStoneAirSixSensorStatus;
 import com.francesca.mqtt.ustoneMsg.UStoneSmokeSensorStatus;
 import com.francesca.service.CacheService;
@@ -23,6 +25,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -50,15 +53,29 @@ public class TaskSchedule {
     public void countPowerEverMin() {
 
         List<UStone10AOutlet> uStone10AOutlets = cacheService.getAllUStone10AOutletStatus();
+        List<GeekOpen16AOutlet> geekOpen16AOutlets = new ArrayList<>(cacheService.getGeekOpen16AOutlet().values());
+        List<UStone3WaySwitch> uStone3WaySwitches = new ArrayList<>(cacheService.getUStone3WaySwitch().values());
 
         DashPowerVO dashPowerVO = cacheService.getCurrentPower();
 
         BigDecimal power = new BigDecimal(0);
 
         BigDecimal todayPower = new BigDecimal(0);
+        BigDecimal acPower = new BigDecimal(0);
+        BigDecimal lightPower = new BigDecimal(0);
+
         if (ObjectUtil.isNotEmpty(dashPowerVO.getTodayPower())) {
              todayPower = new BigDecimal(dashPowerVO.getTodayPower());
         }
+
+        if (ObjectUtil.isNotEmpty(dashPowerVO.getAcPower())){
+            acPower = new BigDecimal(dashPowerVO.getAcPower());
+        }
+
+        if (ObjectUtil.isNotEmpty(dashPowerVO.getLightPower())){
+            lightPower = new BigDecimal(dashPowerVO.getLightPower());
+        }
+
 
         for ( int i =0 ; i<uStone10AOutlets.size() ; i++ ){
 
@@ -70,8 +87,35 @@ public class TaskSchedule {
 
         }
 
+        //ac power
+        for ( int i =0 ; i<geekOpen16AOutlets.size() ; i++ ){
+
+            GeekOpen16AOutlet geekOpen16AOutlet = geekOpen16AOutlets.get(i);
+            power = power.add( new BigDecimal(geekOpen16AOutlet.getPower()));
+
+            BigDecimal temp = geekOpen16AOutlet.getEnergyToday();
+            todayPower = todayPower.add( temp );
+            acPower = acPower.min(temp);
+
+        }
+
+        for ( int i =0 ; i<uStone3WaySwitches.size() ; i++ ){
+
+            UStone3WaySwitch uStone3WaySwitch = uStone3WaySwitches.get(i);
+            power = power.add( new BigDecimal(uStone3WaySwitch.getActivePower()));
+
+            BigDecimal temp = new BigDecimal(uStone3WaySwitch.getEnergyToday());
+            todayPower = todayPower.add( temp );
+            lightPower = lightPower.add(temp);
+
+        }
+
+
         dashPowerVO.setCurrentPower(String.valueOf(power));
         dashPowerVO.setTodayPower(String.valueOf(todayPower));
+        dashPowerVO.setAcPower(String.valueOf(acPower));
+        dashPowerVO.setLightPower(String.valueOf(lightPower));
+        dashPowerVO.setElectPower(String.valueOf(todayPower.subtract(acPower).subtract(lightPower)));
 
         cacheService.putDashPower(dashPowerVO);
 
