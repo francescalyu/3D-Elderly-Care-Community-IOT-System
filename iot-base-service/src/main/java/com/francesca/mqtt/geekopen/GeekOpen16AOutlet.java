@@ -45,10 +45,19 @@ public class GeekOpen16AOutlet {
 
             // wh /1000 = kwh
             energy1min = energy1min.divide(new BigDecimal("1000"), 10, RoundingMode.HALF_UP);
-            this.setCount1minEnergy(energy1min);
+
+            if(ObjectUtil.isEmpty(this.count1minEnergy)){
+                this.count1minEnergy = new BigDecimal(0);
+            }
+
+            this.count1minEnergy = this.count1minEnergy.add(energy1min);
+
             if (ObjectUtil.isEmpty(energyToday)){
                 energyToday = new BigDecimal(0);
             }
+
+
+            energyToday = energyToday.add(energy1min);
 
     }
 

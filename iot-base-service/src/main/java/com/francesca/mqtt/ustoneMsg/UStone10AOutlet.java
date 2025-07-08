@@ -1,5 +1,6 @@
 package com.francesca.mqtt.ustoneMsg;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.math.BigDecimal;
@@ -54,6 +55,10 @@ public class UStone10AOutlet {
 
         BigDecimal energy = new BigDecimal(energyToday);
 
+        if(ObjectUtil.isEmpty(this.count1minEnergy)){
+            this.count1minEnergy = new BigDecimal(0);
+        }
+
         //处理时钟有问题的10A插座, 计算1分钟电量
         if (energy.compareTo(BigDecimal.ZERO) == 0){
             BigDecimal aPower = new BigDecimal(activePower);
@@ -66,8 +71,8 @@ public class UStone10AOutlet {
             // wh /1000 = kwh
             energy1min = energy1min.divide(new BigDecimal("1000"), 10, RoundingMode.HALF_UP);
 
-            this.setCount1minEnergy(energy1min);
-            this.setEnergyToday(String.valueOf(energy1min));
+            this.count1minEnergy = this.count1minEnergy.add(energy1min);
+            this.setEnergyToday(String.valueOf(count1minEnergy));
 
 
         }else {

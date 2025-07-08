@@ -1,5 +1,6 @@
 package com.francesca.mqtt.ustoneMsg;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
@@ -66,8 +67,12 @@ public  class UStone3WaySwitch {
             // wh /1000 = kwh
             energy1min = energy1min.divide(new BigDecimal("1000"), 10, RoundingMode.HALF_UP);
 
-            this.setCount1minEnergy(energy1min);
-            this.setEnergyToday(String.valueOf(energy1min));
+            if(ObjectUtil.isEmpty(this.count1minEnergy)){
+                this.count1minEnergy = new BigDecimal(0);
+            }
+
+            this.count1minEnergy = this.count1minEnergy.add(energy1min);
+            this.setEnergyToday(String.valueOf(this.count1minEnergy));
 
 
         }else {

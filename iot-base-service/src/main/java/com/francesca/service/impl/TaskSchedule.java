@@ -3,11 +3,9 @@ package com.francesca.service.impl;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.francesca.dao.PointDao;
+import com.francesca.dao.Power5minDao;
 import com.francesca.dao.WarnRecordDao;
-import com.francesca.model.DTO.DeviceEntity;
-import com.francesca.model.DTO.PointEntity;
-import com.francesca.model.DTO.WarnRecordEntity;
-import com.francesca.model.DTO.WarnRuleEntity;
+import com.francesca.model.DTO.*;
 import com.francesca.model.VO.dash.DashAirVO;
 import com.francesca.model.VO.dash.DashPowerVO;
 import com.francesca.mqtt.geekopen.GeekOpen16AOutlet;
@@ -47,6 +45,9 @@ public class TaskSchedule {
     @Autowired
     private CommonService commonService;
 
+    @Autowired
+    private Power5minDao power5minDao;
+
 
     // count power every 1 min
     @Scheduled(fixedRate = 1000 * 60)
@@ -82,8 +83,10 @@ public class TaskSchedule {
             UStone10AOutlet uStone10AOutlet = uStone10AOutlets.get(i);
             power = power.add( new BigDecimal(uStone10AOutlet.getActivePower()));
 
-            BigDecimal temp = new BigDecimal(uStone10AOutlet.getEnergyToday());
-            todayPower = todayPower.add( temp );
+            BigDecimal temp = uStone10AOutlet.getCount1minEnergy();
+            if(ObjectUtil.isNotEmpty(temp)) {
+                todayPower = todayPower.add(temp);
+            }
 
         }
 
@@ -93,9 +96,11 @@ public class TaskSchedule {
             GeekOpen16AOutlet geekOpen16AOutlet = geekOpen16AOutlets.get(i);
             power = power.add( new BigDecimal(geekOpen16AOutlet.getPower()));
 
-            BigDecimal temp = geekOpen16AOutlet.getEnergyToday();
-            todayPower = todayPower.add( temp );
-            acPower = acPower.min(temp);
+            BigDecimal temp = geekOpen16AOutlet.getCount1minEnergy();
+            if(ObjectUtil.isNotEmpty(temp)) {
+                todayPower = todayPower.add(temp);
+                acPower = acPower.add(temp);
+            }
 
         }
 
@@ -104,9 +109,11 @@ public class TaskSchedule {
             UStone3WaySwitch uStone3WaySwitch = uStone3WaySwitches.get(i);
             power = power.add( new BigDecimal(uStone3WaySwitch.getActivePower()));
 
-            BigDecimal temp = new BigDecimal(uStone3WaySwitch.getEnergyToday());
-            todayPower = todayPower.add( temp );
-            lightPower = lightPower.add(temp);
+            BigDecimal temp =uStone3WaySwitch.getCount1minEnergy();
+            if (ObjectUtil.isNotEmpty(temp)) {
+                todayPower = todayPower.add(temp);
+                lightPower = lightPower.add(temp);
+            }
 
         }
 
@@ -119,6 +126,29 @@ public class TaskSchedule {
 
         cacheService.putDashPower(dashPowerVO);
 
+    }
+
+
+    //save power data to database every 5 mini
+    @Scheduled(fixedRate = 1000 * 60 * 5)
+    public void savePowerData() {
+
+        if (ObjectUtil.isNotEmpty(cacheService.getCurrentPower().getTodayPower())) {
+
+            Power5minEntity power5minEntity = new Power5minEntity();
+
+            power5minEntity.setId(BigInteger.valueOf(0));
+            power5minEntity.setCurrentpower(cacheService.getCurrentPower().getCurrentPower());
+            power5minEntity.setEnergytoday(cacheService.getCurrentPower().getTodayPower());
+            power5minEntity.setAcpower(cacheService.getCurrentPower().getAcPower());
+            power5minEntity.setLightpower(cacheService.getCurrentPower().getLightPower());
+            power5minEntity.setPowersave(cacheService.getCurrentPower().getPowerSave());
+            power5minEntity.setCo2(cacheService.getCurrentPower().getCo2());
+            power5minEntity.setTree(cacheService.getCurrentPower().getTree());
+            power5minEntity.setElectpower(cacheService.getCurrentPower().getElectPower());
+
+            power5minDao.insert(power5minEntity);
+        }
     }
 
     //exec warn rule every 30 seconds
@@ -154,12 +184,7 @@ public class TaskSchedule {
               warnRuleService.execWarnRule(v.getKey(),BigInteger.valueOf(4) , v.getValue(), 0);
               warnRuleService.execWarnRule(v.getKey(),BigInteger.valueOf(4) , v.getValue(),1);
           });
-
-
-
       }
-
-
     }
 
     //exec smoke status

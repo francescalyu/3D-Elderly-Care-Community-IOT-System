@@ -212,11 +212,13 @@ public class CacheServiceImpl implements CacheService {
         if (energy.compareTo(BigDecimal.ZERO) == 0) {
 
             uStone10AOutlet.countMinEnergyWhen0();
-            energy = new BigDecimal(uStone10AOutlet.getEnergyToday());
-            BigDecimal energy1 = new BigDecimal(uStone10AOutlet1.getEnergyToday());
+            BigDecimal temp = uStone10AOutlet1.getCount1minEnergy();
+            if (ObjectUtil.isEmpty(temp)){
+                temp = new BigDecimal(0);
+            }
+            temp = temp.add(uStone10AOutlet.getCount1minEnergy());
 
-            energy = energy.add(energy1);
-            uStone10AOutlet.setEnergyToday(energy.toString());
+            uStone10AOutlet.setCount1minEnergy(temp);
 
         }
         this.uStone10AOutletLast.put(id , uStone10AOutlet);
@@ -239,14 +241,20 @@ public class CacheServiceImpl implements CacheService {
             return;
         }
 
-        //exec power 0 error outlets;
-        //add energy
-        if (geekOpen16AOutlet.getEnergyToday().compareTo(BigDecimal.ZERO) == 0) {
-
             geekOpen16AOutlet.countMinEnergyWhen0();
-            geekOpen16AOutlet.setEnergyToday( geekOpen16AOutlet.getEnergyToday().add(geekOpen16AOutlet1.getEnergyToday())  );
+            BigDecimal temp = geekOpen16AOutlet1.getCount1minEnergy();
+            if (ObjectUtil.isEmpty(temp)){
+                temp = new BigDecimal(0);
+            }
 
-        }
+            temp = temp.add(geekOpen16AOutlet.getCount1minEnergy());
+            geekOpen16AOutlet.setCount1minEnergy(  temp );
+
+            BigDecimal today = geekOpen16AOutlet.getEnergyToday();
+            today = today.add(geekOpen16AOutlet1.getEnergyToday());
+            geekOpen16AOutlet.setEnergyToday(today );
+
+        //renew the device data
         this.geekOpen16AOutletLast.put(id , geekOpen16AOutlet);
     }
 
@@ -260,6 +268,7 @@ public class CacheServiceImpl implements CacheService {
         }
 
         UStone3WaySwitch uStone3WaySwitch1 =  this.uStone3WaySwitchLast.get(id);
+
         if (ObjectUtil.isEmpty(uStone3WaySwitch1)){
             uStone3WaySwitch.countMinEnergyWhen0();
             this.uStone3WaySwitchLast.put(id, uStone3WaySwitch);
@@ -272,13 +281,17 @@ public class CacheServiceImpl implements CacheService {
         if (energy.compareTo(BigDecimal.ZERO) == 0) {
 
             uStone3WaySwitch.countMinEnergyWhen0();
-            energy = new BigDecimal(uStone3WaySwitch.getEnergyToday());
-            BigDecimal energy1 = new BigDecimal(uStone3WaySwitch1.getEnergyToday());
+            BigDecimal temp = uStone3WaySwitch1.getCount1minEnergy();
+            if(ObjectUtil.isEmpty(temp)){
+                temp = new BigDecimal(0);
+            }
+            //加上上一次设备记录对象的1分钟电量值
 
-            energy = energy.add(energy1);
-            uStone3WaySwitch.setEnergyToday(energy.toString());
+            temp = temp.add(uStone3WaySwitch.getCount1minEnergy());
+            uStone3WaySwitch.setCount1minEnergy(temp);
 
         }
+
         this.uStone3WaySwitchLast.put(id , uStone3WaySwitch);
     }
 

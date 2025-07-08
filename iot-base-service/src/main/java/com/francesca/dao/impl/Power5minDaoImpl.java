@@ -41,5 +41,4 @@ public class Power5minDaoImpl extends ServiceImpl<Power5minMapper, Power5minEnti
           save(entity);
     }
 
-
 }
