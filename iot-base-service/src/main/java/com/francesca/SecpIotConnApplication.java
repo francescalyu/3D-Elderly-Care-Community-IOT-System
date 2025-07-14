@@ -27,7 +27,7 @@ import java.util.TimeZone;
 public class SecpIotConnApplication {
 
     public static void main(String[] args) {
-        TimeZone.setDefault(TimeZone.getTimeZone("GMT+8"));
+        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Shanghai"));
         new SpringApplicationBuilder().bannerMode(Banner.Mode.OFF)
                 .sources(SecpIotConnApplication.class)
                 .run(args);

@@ -37,7 +37,7 @@ import java.util.List;
 @RestController
 @RequestMapping(UrlConstant.Device)
 @Validated
-@Api(tags = "Device")
+@Api(tags = "设备")
 public class DeviceController {
 
     @Autowired

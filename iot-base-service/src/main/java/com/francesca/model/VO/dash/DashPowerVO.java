@@ -46,4 +46,13 @@ public class DashPowerVO {
     @ApiModelProperty(" 厨电用电量  " )
     private String electPower;
 
+    public  void   clear(){
+        todayPower = "0";
+        currentPower = "0 ";
+        acPower = "0";
+        lightPower = "0";
+        electPower = "0";
+    }
+
+
 }

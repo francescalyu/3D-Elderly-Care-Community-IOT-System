@@ -27,7 +27,7 @@ import java.util.List;
 @RestController
 @RequestMapping(UrlConstant.Point)
 @Validated
-@Api(tags = "Point")
+@Api(tags = "物模型")
 public class PointController {
 
     @Autowired

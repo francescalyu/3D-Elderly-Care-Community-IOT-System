@@ -3,6 +3,7 @@ package com.francesca.mqtt.ustoneMsg;
 import cn.hutool.core.util.ObjectUtil;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -61,7 +62,6 @@ public  class UStone3WaySwitch {
 
             // 1min = 1/60 hours
             BigDecimal oneMin = new BigDecimal("1").divide(new BigDecimal("60"), 10, RoundingMode.HALF_UP);
-
             BigDecimal energy1min = aPower.multiply(oneMin);
 
             // wh /1000 = kwh
@@ -76,7 +76,7 @@ public  class UStone3WaySwitch {
 
 
         }else {
-            this.setCount1minEnergy(energy);
+            //this.setCount1minEnergy(energy);
         }
 
     }

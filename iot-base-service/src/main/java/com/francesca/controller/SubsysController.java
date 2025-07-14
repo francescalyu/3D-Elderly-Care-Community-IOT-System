@@ -24,7 +24,7 @@ import java.util.List;
 @RestController
 @RequestMapping(UrlConstant.Subsys)
 @Validated
-@Api(tags = "Subsys")
+@Api(tags = "子系统")
 public class SubsysController {
 
     @Autowired

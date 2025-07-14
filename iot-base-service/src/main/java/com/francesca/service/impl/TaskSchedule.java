@@ -2,12 +2,11 @@ package com.francesca.service.impl;
 
 
 import cn.hutool.core.util.ObjectUtil;
-import com.francesca.dao.PointDao;
-import com.francesca.dao.Power5minDao;
-import com.francesca.dao.WarnRecordDao;
+import com.francesca.dao.*;
 import com.francesca.model.DTO.*;
 import com.francesca.model.VO.dash.DashAirVO;
 import com.francesca.model.VO.dash.DashPowerVO;
+import com.francesca.model.VO.dash.HealthVO;
 import com.francesca.mqtt.geekopen.GeekOpen16AOutlet;
 import com.francesca.mqtt.ustoneMsg.UStone10AOutlet;
 import com.francesca.mqtt.ustoneMsg.UStone3WaySwitch;
@@ -24,6 +23,7 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -48,9 +48,15 @@ public class TaskSchedule {
     @Autowired
     private Power5minDao power5minDao;
 
+    @Autowired
+    private Health1hDao health1hDao;
 
-    // count power every 1 min
-    @Scheduled(fixedRate = 1000 * 60)
+    @Autowired
+    private Power5minTotalDao power5minTotalDao;
+
+
+    // count power every 1 hour
+    @Scheduled(fixedRate = 1000 * 60 * 1)
     public void countPowerEverMin() {
 
         List<UStone10AOutlet> uStone10AOutlets = cacheService.getAllUStone10AOutletStatus();
@@ -65,29 +71,19 @@ public class TaskSchedule {
         BigDecimal acPower = new BigDecimal(0);
         BigDecimal lightPower = new BigDecimal(0);
 
-        if (ObjectUtil.isNotEmpty(dashPowerVO.getTodayPower())) {
-             todayPower = new BigDecimal(dashPowerVO.getTodayPower());
-        }
-
-        if (ObjectUtil.isNotEmpty(dashPowerVO.getAcPower())){
-            acPower = new BigDecimal(dashPowerVO.getAcPower());
-        }
-
-        if (ObjectUtil.isNotEmpty(dashPowerVO.getLightPower())){
-            lightPower = new BigDecimal(dashPowerVO.getLightPower());
-        }
-
-
         for ( int i =0 ; i<uStone10AOutlets.size() ; i++ ){
 
             UStone10AOutlet uStone10AOutlet = uStone10AOutlets.get(i);
             power = power.add( new BigDecimal(uStone10AOutlet.getActivePower()));
 
             BigDecimal temp = uStone10AOutlet.getCount1minEnergy();
+            log.info("device ustone 10a :" + i + "  1 min energy :"  + temp  );
             if(ObjectUtil.isNotEmpty(temp)) {
                 todayPower = todayPower.add(temp);
+            }else {
+                todayPower = todayPower.add(new BigDecimal(uStone10AOutlet.getEnergyToday()));
             }
-
+            //log.info("today power:" + todayPower);
         }
 
         //ac power
@@ -97,6 +93,7 @@ public class TaskSchedule {
             power = power.add( new BigDecimal(geekOpen16AOutlet.getPower()));
 
             BigDecimal temp = geekOpen16AOutlet.getCount1minEnergy();
+            log.info("device geekopen 16a :" + i  + " 1min enerygy:" + temp);
             if(ObjectUtil.isNotEmpty(temp)) {
                 todayPower = todayPower.add(temp);
                 acPower = acPower.add(temp);
@@ -110,9 +107,14 @@ public class TaskSchedule {
             power = power.add( new BigDecimal(uStone3WaySwitch.getActivePower()));
 
             BigDecimal temp =uStone3WaySwitch.getCount1minEnergy();
+
+            //log.info("device 3way switch :" + i  + " 1min enerygy:" + temp);
             if (ObjectUtil.isNotEmpty(temp)) {
                 todayPower = todayPower.add(temp);
                 lightPower = lightPower.add(temp);
+            }else {
+                todayPower = todayPower.add(new BigDecimal(uStone3WaySwitch.getEnergyToday()));
+                lightPower = lightPower.add(new BigDecimal(uStone3WaySwitch.getEnergyToday()));
             }
 
         }
@@ -122,7 +124,13 @@ public class TaskSchedule {
         dashPowerVO.setTodayPower(String.valueOf(todayPower));
         dashPowerVO.setAcPower(String.valueOf(acPower));
         dashPowerVO.setLightPower(String.valueOf(lightPower));
-        dashPowerVO.setElectPower(String.valueOf(todayPower.subtract(acPower).subtract(lightPower)));
+
+        BigDecimal epower = todayPower.subtract(acPower);
+
+        epower = epower.subtract(lightPower);
+        dashPowerVO.setElectPower(String.valueOf(epower));
+
+        //log.info("today power:" + todayPower);
 
         cacheService.putDashPower(dashPowerVO);
 
@@ -133,23 +141,221 @@ public class TaskSchedule {
     @Scheduled(fixedRate = 1000 * 60 * 5)
     public void savePowerData() {
 
-        if (ObjectUtil.isNotEmpty(cacheService.getCurrentPower().getTodayPower())) {
+        DashPowerVO dashPower5minVO = cacheService.get5minPower();
+        savePower(dashPower5minVO, 1);
+        cacheService.set5minPower(cacheService.getCurrentPower());
+        log.info("save power 5min:" + dashPower5minVO.getTodayPower());
 
+    }
+
+    //save power total data to database every 5 min
+    @Scheduled(fixedRate = 1000 * 60 * 5)
+    public void savePowerTotalData() {
+
+       savePowerTotal(1);
+
+
+    }
+
+    //save power total data to database every 5 min
+    @Scheduled(fixedRate = 1000 * 60 * 60)
+    public void savePowerTotal1hData() {
+
+        savePowerTotal(2);
+
+
+    }
+
+
+
+    private void savePowerTotal(int ptype){
+
+        DashPowerVO dashPowerVO = cacheService.getCurrentPower();
+
+        Power5minTotalEntity power5minTotalEntity = new Power5minTotalEntity();
+
+        if (ObjectUtil.isNotEmpty(dashPowerVO)) {
+
+            power5minTotalEntity.setId(BigInteger.valueOf(0));
+            power5minTotalEntity.setCurrentpower(dashPowerVO.getCurrentPower());
+            power5minTotalEntity.setEnergytoday(dashPowerVO.getTodayPower());
+            power5minTotalEntity.setAcpower(dashPowerVO.getAcPower());
+            power5minTotalEntity.setLightpower(dashPowerVO.getLightPower());
+            power5minTotalEntity.setPowersave(dashPowerVO.getPowerSave());
+            power5minTotalEntity.setCo2(dashPowerVO.getCo2());
+            power5minTotalEntity.setTree(dashPowerVO.getTree());
+            power5minTotalEntity.setElectpower(dashPowerVO.getElectPower());
+            power5minTotalEntity.setPtype(ptype);
+            power5minTotalEntity.setTime(new Date());
+
+
+            power5minTotalDao.insert(power5minTotalEntity);
+
+            if (ptype == 2) {
+
+                log.info("save power total data 1 h :" + power5minTotalEntity.getEnergytoday());
+            }else {
+                log.info("save power total data 5 min :" + power5minTotalEntity.getEnergytoday());
+            }
+        }
+
+
+    }
+
+    @Scheduled(fixedRate = 1000 * 60 * 60)
+    public void savePower1hData() {
+
+        DashPowerVO dashPower1hVO = cacheService.get1hPower();
+        savePower(dashPower1hVO, 2);
+        cacheService.set1hPower(cacheService.getCurrentPower());
+        log.info("save power 1h:" + dashPower1hVO.getTodayPower());
+
+    }
+
+    // 每天午夜执行  清零当日电量
+    @Scheduled(cron = "58 59 12 * * ?")
+    public void executeAtMidnight() {
+
+        DashPowerVO dashPower5minVO = cacheService.get5minPower();
+        dashPower5minVO.setTodayPower(null);
+
+        savePower(dashPower5minVO, 3);
+
+        DashPowerVO dashPowerVO = cacheService.getCurrentPower();
+        log.info(" start clear today power : " + dashPowerVO.getTodayPower() );
+        dashPowerVO.setTodayPower("0");
+        dashPowerVO.setCurrentPower("0");
+        dashPowerVO.setLightPower("0");
+        dashPowerVO.setElectPower("0");
+        dashPowerVO.setAcPower("0");
+
+       cacheService.set5minPower(dashPowerVO);
+       cacheService.set1hPower(dashPowerVO);
+
+        log.info(" save & clear today power : " + dashPowerVO.getTodayPower() );
+
+    }
+
+
+    @Scheduled(fixedRate = 1000 * 60 * 5)
+    public void saveHealth1hData() {
+
+        HealthVO healthVO = cacheService.getHealth();
+
+        HealthVO health1hVO = cacheService.getHealth1h();
+
+        if (ObjectUtil.isNotEmpty(healthVO) && ObjectUtil.isNotEmpty(healthVO.getHeart_rate())) {
+
+            if (ObjectUtil.isEmpty(health1hVO) || ObjectUtil.isEmpty(health1hVO.getTotal_steps())) {
+
+                Health1hEntity health1hEntity = new Health1hEntity();
+
+                health1hEntity.setBloodpressure(healthVO.getBlood_pressure());
+                health1hEntity.setStep(healthVO.getTotal_steps());
+                health1hEntity.setBodytemp(healthVO.getBody_temperature());
+                health1hEntity.setHeartrate(healthVO.getHeart_rate());
+                health1hEntity.setCalories(healthVO.getTotal_calories());
+                health1hEntity.setSleep(healthVO.getTotal_sleep());
+                health1hEntity.setTime(new Date());
+
+                health1hDao.insert(health1hEntity);
+
+            } else {
+
+                Health1hEntity health1hEntity = new Health1hEntity();
+                health1hEntity.setBloodpressure(healthVO.getBlood_pressure());
+                health1hEntity.setBodytemp(healthVO.getBody_temperature());
+                health1hEntity.setHeartrate(healthVO.getHeart_rate());
+                health1hEntity.setSleep(countPower(healthVO.getTotal_sleep(), health1hVO.getTotal_sleep()));
+                health1hEntity.setStep(countPower(healthVO.getTotal_steps(), health1hVO.getTotal_steps()));
+                health1hEntity.setCalories(countPower(healthVO.getTotal_calories(), health1hVO.getTotal_calories()));
+                health1hEntity.setTime(new Date());
+
+                health1hDao.insert(health1hEntity);
+
+            }
+
+            cacheService.setHealth1h(healthVO);
+            log.info("save health data 1 hour, step:" + healthVO.getTotal_steps());
+        }
+
+    }
+
+
+    private void  savePower (DashPowerVO timePower , int type ){
+
+        if (ObjectUtil.isNotEmpty(cacheService.getCurrentPower().getTodayPower())  ) {
+
+            DashPowerVO dashPowerVO = cacheService.getCurrentPower();
+
+
+            double power = Double.parseDouble(dashPowerVO.getTodayPower());
             Power5minEntity power5minEntity = new Power5minEntity();
 
-            power5minEntity.setId(BigInteger.valueOf(0));
-            power5minEntity.setCurrentpower(cacheService.getCurrentPower().getCurrentPower());
-            power5minEntity.setEnergytoday(cacheService.getCurrentPower().getTodayPower());
-            power5minEntity.setAcpower(cacheService.getCurrentPower().getAcPower());
-            power5minEntity.setLightpower(cacheService.getCurrentPower().getLightPower());
-            power5minEntity.setPowersave(cacheService.getCurrentPower().getPowerSave());
-            power5minEntity.setCo2(cacheService.getCurrentPower().getCo2());
-            power5minEntity.setTree(cacheService.getCurrentPower().getTree());
-            power5minEntity.setElectpower(cacheService.getCurrentPower().getElectPower());
 
-            power5minDao.insert(power5minEntity);
+
+            if ( ObjectUtil.isEmpty(timePower.getTodayPower()) || power == 0  ) {
+
+                power5minEntity.setId(BigInteger.valueOf(0));
+                power5minEntity.setCurrentpower(dashPowerVO.getCurrentPower());
+                power5minEntity.setEnergytoday(dashPowerVO.getTodayPower());
+                power5minEntity.setAcpower(dashPowerVO.getAcPower());
+                power5minEntity.setLightpower(dashPowerVO.getLightPower());
+                power5minEntity.setPowersave(dashPowerVO.getPowerSave());
+                power5minEntity.setCo2(dashPowerVO.getCo2());
+                power5minEntity.setTree(dashPowerVO.getTree());
+                power5minEntity.setElectpower(dashPowerVO.getElectPower());
+                power5minEntity.setPtype(type);
+                power5minEntity.setTime(new Date());
+
+                power5minDao.insert(power5minEntity);
+
+
+            }else {
+
+                power5minEntity.setId(BigInteger.valueOf(0));
+                power5minEntity.setCurrentpower(dashPowerVO.getCurrentPower());
+                power5minEntity.setEnergytoday( countPower(dashPowerVO.getTodayPower(), timePower.getTodayPower()));
+                power5minEntity.setAcpower(countPower(dashPowerVO.getAcPower(), timePower.getAcPower()));
+                power5minEntity.setLightpower(countPower(dashPowerVO.getLightPower(), timePower.getLightPower()));
+                power5minEntity.setPowersave(dashPowerVO.getPowerSave());
+                power5minEntity.setCo2(dashPowerVO.getCo2());
+                power5minEntity.setTree(dashPowerVO.getTree());
+                power5minEntity.setElectpower(countPower(dashPowerVO.getElectPower(),timePower.getElectPower()));
+                power5minEntity.setPtype(type);
+                power5minEntity.setTime(new Date());
+
+                power5minDao.insert(power5minEntity);
+
+            }
         }
+
+
     }
+
+    private String countPower(String power, String power5min ){
+
+       if(ObjectUtil.isEmpty(power)){
+           power = "0";
+       }
+
+       if(ObjectUtil.isEmpty(power5min)){
+           power5min = "0";
+       }
+
+        BigDecimal pn = new BigDecimal(power);
+        BigDecimal pn5 = new BigDecimal(power5min);
+
+        if (pn.compareTo(pn5) <= 0 ){
+            return "0";
+        }
+
+        return String.valueOf(pn.subtract(pn5));
+
+
+    }
+
+
 
     //exec warn rule every 30 seconds
     @Scheduled(fixedRate = 1000 * 30)

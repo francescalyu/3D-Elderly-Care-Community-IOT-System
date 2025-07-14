@@ -16,6 +16,7 @@ import com.francesca.mqtt.ustoneMsg.UStoneSmokeSensorStatus;
 import com.francesca.service.CacheService;
 import com.francesca.service.DeviceMsg;
 import com.francesca.util.CommonUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,6 +27,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
+@Slf4j
 public class CacheServiceImpl implements CacheService {
 
     private final Map<BigInteger, Device> cache = new ConcurrentHashMap<>();
@@ -55,7 +57,13 @@ public class CacheServiceImpl implements CacheService {
 
     private static volatile   DashPowerVO dashPowerVO = new DashPowerVO();
 
+    private static volatile  DashPowerVO dashPower5minVO = new DashPowerVO();
+
+    private static volatile  DashPowerVO dashPower1hVO = new DashPowerVO();
+
     private static volatile HealthVO healthVO = new HealthVO();
+
+    private static volatile HealthVO health1hVO = null;
 
     private static volatile   DashDoorVO dashDoorVO = new DashDoorVO();
 
@@ -213,10 +221,15 @@ public class CacheServiceImpl implements CacheService {
 
             uStone10AOutlet.countMinEnergyWhen0();
             BigDecimal temp = uStone10AOutlet1.getCount1minEnergy();
+
+            log.info( "ustone 10a  "  +  "last 1 min energy" + temp + "   power :" + uStone10AOutlet1.getActivePower());
+
             if (ObjectUtil.isEmpty(temp)){
                 temp = new BigDecimal(0);
             }
             temp = temp.add(uStone10AOutlet.getCount1minEnergy());
+
+            log.info( "ustone 10a  "  +  " 1 min energy" + temp + "   power :" + uStone10AOutlet.getActivePower());
 
             uStone10AOutlet.setCount1minEnergy(temp);
 
@@ -241,18 +254,25 @@ public class CacheServiceImpl implements CacheService {
             return;
         }
 
+
+
             geekOpen16AOutlet.countMinEnergyWhen0();
             BigDecimal temp = geekOpen16AOutlet1.getCount1minEnergy();
             if (ObjectUtil.isEmpty(temp)){
                 temp = new BigDecimal(0);
             }
 
+             log.info( "geek 16a "  +  "last 1 min energy" + temp + "   power :" + geekOpen16AOutlet.getPower());
+
             temp = temp.add(geekOpen16AOutlet.getCount1minEnergy());
             geekOpen16AOutlet.setCount1minEnergy(  temp );
 
             BigDecimal today = geekOpen16AOutlet.getEnergyToday();
             today = today.add(geekOpen16AOutlet1.getEnergyToday());
-            geekOpen16AOutlet.setEnergyToday(today );
+
+          log.info( "geek 16a "  +  "1 min energy" + temp + "   power :" + geekOpen16AOutlet.getPower());
+
+        geekOpen16AOutlet.setEnergyToday(today );
 
         //renew the device data
         this.geekOpen16AOutletLast.put(id , geekOpen16AOutlet);
@@ -282,6 +302,9 @@ public class CacheServiceImpl implements CacheService {
 
             uStone3WaySwitch.countMinEnergyWhen0();
             BigDecimal temp = uStone3WaySwitch1.getCount1minEnergy();
+
+            log.info( "3way switch" + id +  "last 1 min" + temp + "  power :" + uStone3WaySwitch1.getActivePower());
+
             if(ObjectUtil.isEmpty(temp)){
                 temp = new BigDecimal(0);
             }
@@ -289,6 +312,7 @@ public class CacheServiceImpl implements CacheService {
 
             temp = temp.add(uStone3WaySwitch.getCount1minEnergy());
             uStone3WaySwitch.setCount1minEnergy(temp);
+            log.info( "3way switch" + id +  "new 1 min energy" + temp + "  power :" + uStone3WaySwitch.getActivePower());
 
         }
 
@@ -386,6 +410,44 @@ public class CacheServiceImpl implements CacheService {
     }
 
     @Override
+    public DashPowerVO get5minPower() {
+        return this.dashPower5minVO;
+    }
+
+    @Override
+    public DashPowerVO get1hPower() {
+        return  dashPower1hVO;
+    }
+
+    @Override
+    public void  set5minPower(DashPowerVO in){
+
+        dashPower5minVO.setTodayPower(in.getTodayPower());
+        dashPower5minVO.setAcPower(in.getAcPower());
+        dashPower5minVO.setElectPower(in.getElectPower());
+        dashPower5minVO.setCurrentPower(in.getCurrentPower());
+        dashPower5minVO.setLightPower(in.getLightPower());
+        dashPower5minVO.setCo2(in.getCo2());
+        dashPower5minVO.setTree(in.getTree());
+        dashPower5minVO.setPowerSave(in.getPowerSave());
+
+    }
+
+    @Override
+    public void  set1hPower(DashPowerVO in){
+
+        dashPower1hVO.setTodayPower(in.getTodayPower());
+        dashPower1hVO.setAcPower(in.getAcPower());
+        dashPower1hVO.setElectPower(in.getElectPower());
+        dashPower1hVO.setCurrentPower(in.getCurrentPower());
+        dashPower1hVO.setLightPower(in.getLightPower());
+        dashPower1hVO.setCo2(in.getCo2());
+        dashPower1hVO.setTree(in.getTree());
+        dashPower1hVO.setPowerSave(in.getPowerSave());
+
+    }
+
+    @Override
     public void putDashPower(DashPowerVO dashPowerVO) {
          this.dashPowerVO = dashPowerVO;
     }
@@ -439,6 +501,11 @@ public class CacheServiceImpl implements CacheService {
     }
 
     @Override
+    public HealthVO getHealth1h() {
+        return this.health1hVO;
+    }
+
+    @Override
     public void setHealth(HealthVO healthVO) {
         this.healthVO.setTotal_steps(healthVO.getTotal_steps());
         this.healthVO.setOnline("1");
@@ -450,6 +517,27 @@ public class CacheServiceImpl implements CacheService {
         this.healthVO.setUpdateTime(DateUtil.now());
         this.healthVO.setTotal_sleep(healthVO.getTotal_sleep());
         this.healthVO.setNot_wearing_alert(healthVO.getNot_wearing_alert());
+
+
+    }
+
+    @Override
+    public void setHealth1h(HealthVO healthVO) {
+        if (ObjectUtil.isEmpty(health1hVO)){
+            health1hVO = new HealthVO();
+        }
+
+
+        this.health1hVO.setTotal_steps(healthVO.getTotal_steps());
+        this.health1hVO.setOnline("1");
+        this.health1hVO.setBlood_pressure(healthVO.getBlood_pressure());
+        this.health1hVO.setHeart_rate(healthVO.getHeart_rate());
+        this.health1hVO.setFalling_alert(healthVO.getFalling_alert());
+        this.health1hVO.setBody_temperature(healthVO.getBody_temperature());
+        this.health1hVO.setTotal_calories(healthVO.getTotal_calories());
+        this.health1hVO.setUpdateTime(DateUtil.now());
+        this.health1hVO.setTotal_sleep(healthVO.getTotal_sleep());
+        this.health1hVO.setNot_wearing_alert(healthVO.getNot_wearing_alert());
 
 
     }

@@ -3,11 +3,13 @@ package com.francesca.mqtt.geekopen;
 import cn.hutool.core.util.ObjectUtil;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 @Data
+
 public class GeekOpen16AOutlet {
 
 
@@ -55,7 +57,6 @@ public class GeekOpen16AOutlet {
             if (ObjectUtil.isEmpty(energyToday)){
                 energyToday = new BigDecimal(0);
             }
-
 
             energyToday = energyToday.add(energy1min);
 

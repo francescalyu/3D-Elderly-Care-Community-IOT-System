@@ -3,7 +3,6 @@ package com.francesca.service;
 import com.francesca.model.DTO.*;
 import com.francesca.model.VO.Device.Device;
 import com.francesca.model.VO.dash.*;
-import com.francesca.mqtt.bluetouth.HealthBandEvent;
 import com.francesca.mqtt.geekopen.GeekOpen16AOutlet;
 import com.francesca.mqtt.ustoneMsg.UStone10AOutlet;
 import com.francesca.mqtt.ustoneMsg.UStone3WaySwitch;
@@ -12,7 +11,6 @@ import com.francesca.mqtt.ustoneMsg.UStoneSmokeSensorStatus;
 
 import java.math.BigInteger;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public interface CacheService {
@@ -62,6 +60,14 @@ public interface CacheService {
 
         DashPowerVO getCurrentPower();
 
+        DashPowerVO get5minPower();
+
+        void set5minPower(DashPowerVO dashPowerVO);
+
+        DashPowerVO get1hPower();
+
+        void set1hPower(DashPowerVO dashPowerVO);
+
         void putDashPower(DashPowerVO dashPowerVO);
 
         List<WarnRuleEntity> readWarnRule(BigInteger prodId,   int closeOpen);
@@ -73,6 +79,10 @@ public interface CacheService {
         void setDashDoor(DashDoorVO dashDoorVO);
 
         HealthVO getHealth();
+
+        HealthVO getHealth1h();
+
+        void setHealth1h(HealthVO healthVO);
 
         void setHealth(HealthVO healthVO);
 

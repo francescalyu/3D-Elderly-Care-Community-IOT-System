@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(UrlConstant.Dashboard)
 @Validated
-@Api(tags = "Dashboard")
+@Api(tags = "看板")
 public class DashboardController {
 
     @Autowired

@@ -24,7 +24,7 @@ import java.util.List;
 @RestController
 @RequestMapping(UrlConstant.Area)
 @Validated
-@Api(tags = "area")
+@Api(tags = "空间")
 public class AreaController {
 
     @Autowired

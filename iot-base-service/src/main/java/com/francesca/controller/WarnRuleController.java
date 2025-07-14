@@ -28,7 +28,7 @@ import java.util.List;
 @RestController
 @RequestMapping(UrlConstant.WarnRule)
 @Validated
-@Api(tags = "WarnRule")
+@Api(tags = "告警规则")
 public class WarnRuleController {
 
     @Autowired

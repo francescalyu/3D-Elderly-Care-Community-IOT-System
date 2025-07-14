@@ -12,12 +12,12 @@ import java.util.Date;
 /**
  * @Author francesca
 
- * 2025-07-03
+ * 2025-07-14
  */
 
 @Data
-@TableName("power5min")
-public class Power5minEntity implements Serializable {
+@TableName("power5mintotal")
+public class Power5minTotalEntity implements Serializable {
     /**
      * id
      */

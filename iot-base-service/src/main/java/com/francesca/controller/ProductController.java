@@ -33,7 +33,7 @@ import java.util.List;
 @RestController
 @RequestMapping(UrlConstant.Product)
 @Validated
-@Api(tags = "Product")
+@Api(tags = "产品")
 public class ProductController {
 
     @Autowired

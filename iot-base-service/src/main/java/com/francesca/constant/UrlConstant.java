@@ -25,6 +25,11 @@ public class UrlConstant {
          */
         public static final String Dashboard_Air = Dashboard + "/air";
 
+    /**
+     * people
+     */
+    public static final String Query = iot_base + "/query" ;
+
 
     /**
      * subsystem

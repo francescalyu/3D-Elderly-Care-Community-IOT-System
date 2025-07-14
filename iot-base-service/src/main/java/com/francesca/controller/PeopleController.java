@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping(UrlConstant.People)
 @Validated
-@Api(tags = "people")
+@Api(tags = "人员")
 public class PeopleController {
 
     @Autowired
