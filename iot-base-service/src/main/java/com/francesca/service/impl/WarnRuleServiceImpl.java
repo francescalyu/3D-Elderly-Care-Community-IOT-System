@@ -146,7 +146,8 @@ public class WarnRuleServiceImpl implements WarnRuleService {
             List<WarnRuleEntity> warnOpen = cacheService.readWarnRule(prod,closeOpen);
             Map<BigInteger, List<WarnRuleEntity>> warnRuleByidMap = new HashMap<>();
 
-
+            //将告警规则按ruleid 放入map
+            //同一ruleid存在多个条件
             for(WarnRuleEntity warnRuleEntity : warnOpen){
                 List<WarnRuleEntity> temp = warnRuleByidMap.get(warnRuleEntity.getRuleid());
                 if (ObjectUtil.isEmpty(temp)){
@@ -158,10 +159,10 @@ public class WarnRuleServiceImpl implements WarnRuleService {
 
             //exec warn by warn rule
 
-
             DeviceEntity device = cacheService.getDevice(devId);
-            for (Map.Entry<BigInteger, List<WarnRuleEntity>> entry : warnRuleByidMap.entrySet()) {
 
+            //按规则id map获取告警规则，并将设备当前点位值代入条件，组装成判断语句
+            for (Map.Entry<BigInteger, List<WarnRuleEntity>> entry : warnRuleByidMap.entrySet()) {
 
                 List<WarnRuleEntity> warnRules = entry.getValue();
                 List<String> outs = new ArrayList<>();
@@ -169,7 +170,7 @@ public class WarnRuleServiceImpl implements WarnRuleService {
                 for (WarnRuleEntity warnRuleEntity : warnRules) {
                     String out = "";
 
-                    // 规则产品与当前设备产品不同时， 取所有指定产品的值与规则值比较，取or
+                    // 规则条件产品与当前设备产品不同时， 取所有此产品的设备的点位值与规则值比较，取or
                     if (ObjectUtil.isNotEmpty(warnRuleEntity.getProd()) && warnRuleEntity.getProd() > 0 && warnRuleEntity.getProd() != prod.intValue()) {
                         Map<BigInteger, String> pvalues = commonService.getPointValueByProd(BigInteger.valueOf(warnRuleEntity.getProd()), warnRuleEntity.getPid());
 
@@ -178,13 +179,9 @@ public class WarnRuleServiceImpl implements WarnRuleService {
 
                             if (ObjectUtil.isNotEmpty(pvalues)) {
                                 out = out + "(";
-
                                 out = out + CommonUtil.toNumberStr(pvalues.get(i));
-
                                 out = out + warnRuleEntity.getOp();
-
                                 out = out + warnRuleEntity.getPvalue();
-
                                 out = out + " || ";
                             }
                        }
@@ -195,19 +192,14 @@ public class WarnRuleServiceImpl implements WarnRuleService {
                         }
 
                     } else {
-
-
+                        // 规则条件产品与当前设备产品相同时， 取当前设备的点位值与规则值比较
                         if (ObjectUtil.isNotEmpty(device)) {
                             String pv = commonService.getPointValue(devId, warnRuleEntity.getPid());
-
                             out = formatWarnRule(pv, warnRuleEntity, device.getArea(), device.getSubsys(), device.getId().intValue());
-
                         }
                     }
-
                     outs.add(out);
                 }
-
 
                 String out = "";
                 if (ObjectUtil.isNotEmpty(outs)){
@@ -216,18 +208,18 @@ public class WarnRuleServiceImpl implements WarnRuleService {
                     }
                 }
 
-
-                if (evaluateCondition(out)) {
-
-                    WarnEntity warn = cacheService.readWarn(BigInteger.valueOf(entry.getValue().get(0).getWarnid()));
-
-                    openCloseWarn(entry.getValue(), device, warn.getLevel(), closeOpen);
+                out = out.trim();
+                if (out.charAt(out.length() - 1) == '&' ||out.charAt(out.length() - 1) == '|' ){
+                    out = out.substring(0, out.length() - 2);
                 }
 
+                //规则为真，写入告警或消警到数据库
+                if (evaluateCondition(out)) {
+                    WarnEntity warn = cacheService.readWarn(BigInteger.valueOf(entry.getValue().get(0).getWarnid()));
+                    openCloseWarn(entry.getValue(), device, warn.getLevel(), closeOpen);
+                }
                 log.info("exec warn " + closeOpen + " rule: " + out + " result : " + String.valueOf(evaluateCondition(out)));
-
             }
-
         }
 
     private  void openCloseWarn(List<WarnRuleEntity> rules , DeviceEntity device , int level , int warn){
@@ -271,50 +263,38 @@ public class WarnRuleServiceImpl implements WarnRuleService {
             }else {
 
                 for (WarnRecordEntity warnRecordEntity : warns) {
-
                     if (warnRecordEntity.getStatus() == 1) {
                         warnRecordEntity = isOpen(rules.get(0), warnRecordEntity);
                         warnRecordDao.update(warnRecordEntity);
-
                     }
-
                 }
             }
         }
 
-
         if (warn == 0 ){
-
             if(ObjectUtil.isNotEmpty(warns) &&  warns.size() > 0 ){
 
                 for(WarnRecordEntity warnRecordEntity : warns){
-
                     warnRecordEntity.setStatus(0);
                     warnRecordEntity.setCloseTime(DateUtil.date());
                 }
             }
-
         }
-
     }
 
     private WarnRecordEntity isOpen(WarnRuleEntity rule , WarnRecordEntity record){
 
         // if rule is use count,  check count is exceed limit or not
-
         if (ObjectUtil.isEmpty(record.getCount())){
             record.setCount(0);
         }
         record.setCount(record.getCount() + 1 );
 
         if (ObjectUtil.isNotEmpty(rule.getCount())) {
-
             if (rule.getCount() <= record.getCount() ){
                 record.setStatus(2);
             }
         }
-
-
 
         // if rule is use time ,check time is  exceed time limit or not
 

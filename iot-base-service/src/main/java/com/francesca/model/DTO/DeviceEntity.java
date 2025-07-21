@@ -83,5 +83,8 @@ public class DeviceEntity implements Serializable {
      */
     private String  mqttdowntopic;
 
+
+    private String twinuid;
+
     private static final long serialVersionUID = 1L;
 }

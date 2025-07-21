@@ -4,12 +4,15 @@ package com.francesca.controller;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.francesca.constant.UrlConstant;
-import com.francesca.dao.*;
+import com.francesca.dao.AreaDao;
+import com.francesca.dao.SubsysDao;
 import com.francesca.dao.WarnDao;
-import com.francesca.model.DTO.*;
+import com.francesca.dao.WarnRecordDao;
+import com.francesca.model.DTO.AreaEntity;
+import com.francesca.model.DTO.SubsysEntity;
 import com.francesca.model.DTO.WarnEntity;
+import com.francesca.model.DTO.WarnRecordEntity;
 import com.francesca.model.VO.Device.Device;
-import com.francesca.model.VO.Warn.Warn;
 import com.francesca.model.VO.dash.WarnRecordVO;
 import com.francesca.service.CacheService;
 import io.swagger.annotations.Api;
@@ -84,7 +87,6 @@ public class WarnController {
                     if (ObjectUtil.isNotEmpty(areaEntity)){
                         warnRecordVO.setArea(areaEntity.getAlias());
                     }
-
                 }
 
                 warnRecordVO.setCount(warnRecordEntity.getCount());
@@ -104,21 +106,13 @@ public class WarnController {
                     if (ObjectUtil.isNotEmpty(subsysEntity)){
                         warnRecordVO.setSubsys(subsysEntity.getAlias());
                     }
-
-
                 }
 
                 Device device =  cacheService.get(warnRecordEntity.getDevid());
                 warnRecordVO.setDevName(device.getAlias());
                 warns.add(warnRecordVO);
-
             }
-
-
-
         }
-
-
         return warns;
 
     }

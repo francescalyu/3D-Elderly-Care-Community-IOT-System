@@ -172,7 +172,9 @@ public class PointServiceImpl implements PointService {
                             }
 
                             cacheService.setHealth(health);
+                            cacheService.putUStoneHealthBand(BigInteger.valueOf(10),healthBandEvent);
                         }
+
 
                         //log.info("========== rcv bluetooth healthBand msg  mac : " + msg);
                         break;
@@ -206,9 +208,7 @@ public class PointServiceImpl implements PointService {
                                         count = count + 1;
                                         dashSosVO.setPressTime(DateUtil.now());
                                         dashSosVO.setCount(String.valueOf(count));
-
                                     }
-
                                  }
 
                              }
@@ -216,6 +216,7 @@ public class PointServiceImpl implements PointService {
                         }
 
                         cacheService.setSos(dashSosVO);
+                        cacheService.putUStoneBlueToothButton(BigInteger.valueOf(18),buttonEvent);
 
                         //log.info("========== rcv unKnow bluetooth msg : " + buttonEvent.getMac());
                         break;
@@ -231,9 +232,11 @@ public class PointServiceImpl implements PointService {
                         if (dashDoorVO.getStatus() != doorSensorEvent.getWindoor_open()){
                             dashDoorVO.setStatus(doorSensorEvent.getWindoor_open());
                             dashDoorVO.setChangeDate(DateUtil.now());
+                            doorSensorEvent.setChangeDate(DateUtil.now());
                         }
 
                         cacheService.setDashDoor(dashDoorVO);
+                        cacheService.putUStoneDoorSensor(BigInteger.valueOf(11),doorSensorEvent);
 
                         //log.info("========== rcv unKnow bluetooth msg : " + doorSensorEvent.getMac());
                         break;
@@ -262,6 +265,7 @@ public class PointServiceImpl implements PointService {
                         }
 
                         cacheService.setDashDoor(dashDoor);
+                        cacheService.putUStoneLightSensor(BigInteger.valueOf(19),lightSensorEvent);
 
                         //log.info("========== rcv unKnow bluetooth msg : " + device.getManuId());
                         break;

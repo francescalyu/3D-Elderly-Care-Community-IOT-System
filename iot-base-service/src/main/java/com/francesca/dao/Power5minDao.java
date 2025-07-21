@@ -15,8 +15,10 @@ import java.util.List;
 
 public interface Power5minDao {
 
-    List<Power5minEntity> selectbydate(LocalDate defDate);
+    List<Power5minEntity> selectbydate(LocalDate defDate, int ptype);
 
     void  insert(Power5minEntity entity);
+
+    List<Power5minEntity> selectByMonth(String yearMonth , int ptype);
 
 }

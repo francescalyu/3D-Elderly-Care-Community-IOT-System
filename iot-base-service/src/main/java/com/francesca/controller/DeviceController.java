@@ -2,6 +2,7 @@ package com.francesca.controller;
 
 
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import com.francesca.constant.UrlConstant;
 import com.francesca.dao.DeviceDao;
 import com.francesca.dao.PointDao;
@@ -108,6 +109,84 @@ public class DeviceController {
         devStatus.setId(String.valueOf(devId));
         devStatus.setManu(device1.getManu());
         devStatus.setProdName(device1.getProduct());
+        devStatus.setStatus(points);
+
+        return devStatus;
+
+    }
+
+    @ApiOperation(value = "以孪生uuid查询设备当前点位值")
+    @GetMapping( "gettwinpoint")
+    public DevStatus getTwinPoint(@RequestParam String uuid) {
+
+        if (ObjectUtil.isEmpty(uuid) || uuid.length() < 5){
+            return  null;
+        }
+
+       List<Device> alldev =  cacheService.getAllDevice();
+
+       Device find = null;
+
+       for (Device device : alldev){
+
+           String tuid = device.getTwinuid();
+           if(ObjectUtil.isNotEmpty(tuid)){
+
+               if (tuid.trim().equalsIgnoreCase(uuid.trim())){
+                   find = device;
+                   break;
+               }
+           }
+       }
+
+
+        if(ObjectUtil.isEmpty(find)){
+            return null;
+        }
+
+        List<PointEntity> pointEntities = pointDao.selectByProduct(find.getPid().intValue());
+
+        if(ObjectUtil.isEmpty(pointEntities)){
+            return null;
+        }
+
+        List<ProdPoint> points = new ArrayList<>();
+        for (PointEntity pointEntity : pointEntities){
+            ProdPoint prodPoint = new ProdPoint();
+
+            String pv = commonService.getPointValue(find.getId(), pointEntity.getId());
+
+            prodPoint.setName(pointEntity.getName());
+            prodPoint.setAlias(pointEntity.getAlias());
+            prodPoint.setProdid(String.valueOf(pointEntity.getProdid()));
+            prodPoint.setValue(pv);
+            prodPoint.setUnit(pointEntity.getUnit());
+            prodPoint.setId(String.valueOf(pointEntity.getId()));
+            prodPoint.setPtUse(String.valueOf(pointEntity.getPtuse()));
+            prodPoint.setType(String.valueOf(pointEntity.getType()));
+
+            if(ObjectUtil.isNotEmpty(pointEntity.getCmd())) {
+                prodPoint.setCmd(pointEntity.getCmd());
+            }
+            if(ObjectUtil.isNotEmpty(pointEntity.getLow())) {
+                prodPoint.setLow(String.valueOf(pointEntity.getLow()));
+            }
+
+            if(ObjectUtil.isNotEmpty(pointEntity.getHigh())) {
+                prodPoint.setHigh(String.valueOf(pointEntity.getHigh()));
+            }
+
+            if(ObjectUtil.isNotEmpty(pointEntity.getStep())){
+                prodPoint.setStep(String.valueOf(pointEntity.getStep()));
+            }
+
+            points.add(prodPoint);
+        }
+
+        DevStatus devStatus = new DevStatus();
+        devStatus.setId(String.valueOf(find.getId()));
+        devStatus.setManu(find.getManu());
+        devStatus.setProdName(find.getProduct());
         devStatus.setStatus(points);
 
         return devStatus;

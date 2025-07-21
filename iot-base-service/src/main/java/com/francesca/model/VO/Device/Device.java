@@ -60,4 +60,7 @@ public class Device {
     @ApiModelProperty("备注" )
     private String desc;
 
+    @ApiModelProperty("孪生uuid" )
+    private String twinuid;
+
 }

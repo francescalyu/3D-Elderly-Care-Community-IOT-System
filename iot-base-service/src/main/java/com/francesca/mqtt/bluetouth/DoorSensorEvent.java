@@ -8,6 +8,8 @@ public class DoorSensorEvent extends BaseEvent {
     @JsonProperty("windoor_open")
     private String windoor_open;
 
+    private String changeDate;
+
     @Override
     public String getEventType() {
         return "doorSensor";

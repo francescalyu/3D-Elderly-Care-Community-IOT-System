@@ -44,7 +44,6 @@ public class ProductEntity implements Serializable {
      */
     private String descript;
 
-
     /**
      *  subsys id
      */
@@ -60,12 +59,10 @@ public class ProductEntity implements Serializable {
      */
     private String  manu;
 
-
     /**
      *  manufacture serial number
      */
     private String  sn;
-
 
     private static final long serialVersionUID = 1L;
 }

@@ -3,7 +3,6 @@ package com.francesca.model.DTO;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
-
 import java.io.Serializable;
 import java.math.BigInteger;
 
@@ -22,7 +21,6 @@ public class AreaEntity implements Serializable {
     @TableId
     private BigInteger id;
 
-
     /**
      * name
      */
@@ -32,7 +30,6 @@ public class AreaEntity implements Serializable {
      * alias
      */
     private String alias;
-
 
     private static final long serialVersionUID = 1L;
 }

@@ -3,6 +3,10 @@ package com.francesca.service;
 import com.francesca.model.DTO.*;
 import com.francesca.model.VO.Device.Device;
 import com.francesca.model.VO.dash.*;
+import com.francesca.mqtt.bluetouth.ButtonEvent;
+import com.francesca.mqtt.bluetouth.DoorSensorEvent;
+import com.francesca.mqtt.bluetouth.HealthBandEvent;
+import com.francesca.mqtt.bluetouth.LightSensorEvent;
 import com.francesca.mqtt.geekopen.GeekOpen16AOutlet;
 import com.francesca.mqtt.ustoneMsg.UStone10AOutlet;
 import com.francesca.mqtt.ustoneMsg.UStone3WaySwitch;
@@ -89,5 +93,21 @@ public interface CacheService {
         DashSosVO getSos();
 
         void setSos(DashSosVO dashSosVO);
+
+        void putUStoneHealthBand(BigInteger devid , HealthBandEvent healthBandEvent);
+
+        ConcurrentHashMap<BigInteger,HealthBandEvent> getUStoneHealthBand();
+
+        void putUStoneDoorSensor(BigInteger devid, DoorSensorEvent doorSensorEvent);
+
+        ConcurrentHashMap<BigInteger,DoorSensorEvent> getUStoneDoorSensor();
+
+        void putUStoneLightSensor(BigInteger devid, LightSensorEvent lightSensorEvent);
+
+        ConcurrentHashMap<BigInteger,LightSensorEvent> getUStoneLightSensor();
+
+        void putUStoneBlueToothButton(BigInteger devid, ButtonEvent buttonEvent);
+
+        ConcurrentHashMap<BigInteger,ButtonEvent> getUStoneBlueToothButton();
 
 }

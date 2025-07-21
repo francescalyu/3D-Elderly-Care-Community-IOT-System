@@ -5,8 +5,10 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.francesca.constant.UrlConstant;
 import com.francesca.dao.AreaDao;
+import com.francesca.dao.Health1hDao;
 import com.francesca.dao.Power5minDao;
 import com.francesca.model.DTO.AreaEntity;
+import com.francesca.model.DTO.Health1hEntity;
 import com.francesca.model.DTO.Power5minEntity;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -38,10 +40,12 @@ public class QueryController {
 
     @Autowired
     private Power5minDao power5minDao;
+    @Autowired
+    private Health1hDao health1hDao;
 
     @ApiOperation(value = "按日期查询能源数据 YYYYMMDD")
-    @PostMapping( "getByDate")
-    public List<Power5minEntity> getByDate(@RequestParam String qdate) {
+    @PostMapping( "getPowerByDate")
+    public List<Power5minEntity> getPowerByDate(@RequestParam String qdate) {
 
         if(ObjectUtil.isEmpty(qdate) || qdate.length() < 8 ){
             return null;
@@ -50,7 +54,20 @@ public class QueryController {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         LocalDate localDate = LocalDate.parse(qdate, formatter);
 
-        return power5minDao.selectbydate(localDate);
+        return power5minDao.selectbydate(localDate , 1);
     }
 
-}
+    @ApiOperation(value = "按日期查询健康数据 YYYYMMDD")
+    @PostMapping( "getHealthByDate")
+    public List<Health1hEntity> getHealthByDate(@RequestParam String qdate) {
+        if(ObjectUtil.isEmpty(qdate) || qdate.length() < 8 ){
+            return null;
+        }
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        LocalDate localDate = LocalDate.parse(qdate, formatter);
+
+        return health1hDao.selectbydate(localDate);
+    }
+
+    }

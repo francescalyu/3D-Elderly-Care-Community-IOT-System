@@ -34,9 +34,6 @@ public class DashPowerVO {
     @ApiModelProperty("等效植树" )
     private String tree;
 
-    @ApiModelProperty(" 电量趋势 ")
-    private List<DashPowerCountVO> powerList;
-
     @ApiModelProperty(" 空调用电量  " )
     private String acPower;
 

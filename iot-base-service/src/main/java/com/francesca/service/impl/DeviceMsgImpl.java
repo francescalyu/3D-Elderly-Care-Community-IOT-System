@@ -72,6 +72,7 @@ public class DeviceMsgImpl implements DeviceMsg {
         device.setTopicDown(entity.getMqttdowntopic());
         device.setManuId(entity.getManuid());
         device.setProduct(productEntity.getAlias());
+        device.setTwinuid(entity.getTwinuid());
 
         return device;
     }

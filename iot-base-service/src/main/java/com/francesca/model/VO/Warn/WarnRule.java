@@ -32,7 +32,6 @@ public class WarnRule {
     @ApiModelProperty(" 关联产品 " )
     private String prod;
 
-
     @ApiModelProperty("告消警  0-消警  1-告警 " )
     private String closeWarn;
 
@@ -45,20 +44,17 @@ public class WarnRule {
     @ApiModelProperty("取值" )
     private String opValue;
 
-
     @ApiModelProperty("生效时间计量 > 分钟数" )
     private String time;
 
     @ApiModelProperty("生效计数计量 >  次 " )
     private String count;
 
-
     @ApiModelProperty(" 规则连接符  " )
     private String conn;
 
     @ApiModelProperty(" 是否限制 设备 " )
     private String dev;
-
 
     @ApiModelProperty(" 是否限制空间 " )
     private String area;

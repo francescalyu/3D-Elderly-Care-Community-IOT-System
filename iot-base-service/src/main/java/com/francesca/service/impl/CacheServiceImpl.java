@@ -6,6 +6,8 @@ import com.francesca.dao.*;
 import com.francesca.model.DTO.*;
 import com.francesca.model.VO.Device.Device;
 import com.francesca.model.VO.dash.*;
+import com.francesca.mqtt.bluetouth.ButtonEvent;
+import com.francesca.mqtt.bluetouth.DoorSensorEvent;
 import com.francesca.mqtt.bluetouth.HealthBandEvent;
 import com.francesca.mqtt.bluetouth.LightSensorEvent;
 import com.francesca.mqtt.geekopen.GeekOpen16AOutlet;
@@ -48,6 +50,14 @@ public class CacheServiceImpl implements CacheService {
     private final Map<BigInteger, UStoneSmokeSensorStatus> uStoneSmokeSensorStatusLast = new ConcurrentHashMap<>();
 
     private final  Map<BigInteger, UStoneAirSixSensorStatus> uStoneAirSixSensorStatusLast = new ConcurrentHashMap<>();
+
+    private final Map<BigInteger, ButtonEvent> uStoneBlueToothButtonLast = new ConcurrentHashMap<>();
+
+    private final Map<BigInteger, DoorSensorEvent> uStoneDoorSensorLast = new ConcurrentHashMap<>();
+
+    private final Map<BigInteger,HealthBandEvent> uStoneHealthBandLast = new ConcurrentHashMap<>();
+
+    private final Map<BigInteger,LightSensorEvent> uStoneLightSensor = new ConcurrentHashMap<>();
 
     private final  Map<BigInteger, List<WarnRuleEntity>> warnRuleMap = new ConcurrentHashMap<>();
 
@@ -142,12 +152,9 @@ public class CacheServiceImpl implements CacheService {
         if (ObjectUtil.isNotEmpty(warnEntities)) {
 
             warnEntities.stream().forEach(v -> {
-
                 if (ObjectUtil.isNotEmpty(v)) {
-
                     warnMap.put( v.getId(),v);
                 }
-
             });
         }
 
@@ -221,7 +228,6 @@ public class CacheServiceImpl implements CacheService {
 
             uStone10AOutlet.countMinEnergyWhen0();
             BigDecimal temp = uStone10AOutlet1.getCount1minEnergy();
-
             log.info( "ustone 10a  "  +  "last 1 min energy" + temp + "   power :" + uStone10AOutlet1.getActivePower());
 
             if (ObjectUtil.isEmpty(temp)){
@@ -230,7 +236,6 @@ public class CacheServiceImpl implements CacheService {
             temp = temp.add(uStone10AOutlet.getCount1minEnergy());
 
             log.info( "ustone 10a  "  +  " 1 min energy" + temp + "   power :" + uStone10AOutlet.getActivePower());
-
             uStone10AOutlet.setCount1minEnergy(temp);
 
         }
@@ -364,6 +369,7 @@ public class CacheServiceImpl implements CacheService {
         this.uStoneSmokeSensorStatusLast.put(id , uStoneSmokeSensorStatus);
     }
 
+
     @Override
     public ConcurrentHashMap<BigInteger, UStoneSmokeSensorStatus> getUstoneSmokeSensors() {
         return (ConcurrentHashMap<BigInteger, UStoneSmokeSensorStatus>) this.uStoneSmokeSensorStatusLast;
@@ -456,11 +462,9 @@ public class CacheServiceImpl implements CacheService {
     public List<WarnRuleEntity> readWarnRule(BigInteger prodId, int closeOpen) {
 
         List<WarnRuleEntity> warnRuleEntities = this.warnRuleMap.get(prodId);
-
         List<WarnRuleEntity> out = new ArrayList<>();
 
         if (ObjectUtil.isNotEmpty(warnRuleEntities)){
-
             warnRuleEntities.stream().forEach(
                     v-> {
                            if (v.getClosewarn() == closeOpen){
@@ -468,9 +472,7 @@ public class CacheServiceImpl implements CacheService {
                            }
                     }
             );
-
         }
-
         return out;
 
     }
@@ -555,6 +557,47 @@ public class CacheServiceImpl implements CacheService {
         this.dashSosVO.setCount(dashSosVO.getCount());
         this.dashSosVO.setPressTime(dashSosVO.getPressTime());
 
+    }
+
+    @Override
+    public void putUStoneHealthBand(BigInteger devid, HealthBandEvent healthBandEvent) {
+        this.uStoneHealthBandLast.put(devid,healthBandEvent);
+    }
+
+    @Override
+    public ConcurrentHashMap<BigInteger, HealthBandEvent> getUStoneHealthBand() {
+        return (ConcurrentHashMap<BigInteger, HealthBandEvent>) this.uStoneHealthBandLast;
+    }
+
+    @Override
+    public void putUStoneDoorSensor(BigInteger devid, DoorSensorEvent doorSensorEvent) {
+        this.uStoneDoorSensorLast.put(devid,doorSensorEvent);
+    }
+
+    @Override
+    public ConcurrentHashMap<BigInteger, DoorSensorEvent> getUStoneDoorSensor() {
+        return (ConcurrentHashMap<BigInteger, DoorSensorEvent>) this.uStoneDoorSensorLast;
+    }
+
+
+    @Override
+    public void putUStoneLightSensor(BigInteger devid, LightSensorEvent lightSensorEvent) {
+       this.uStoneLightSensor.put(devid,lightSensorEvent);
+    }
+
+    @Override
+    public ConcurrentHashMap<BigInteger, LightSensorEvent> getUStoneLightSensor() {
+        return (ConcurrentHashMap<BigInteger, LightSensorEvent>) this.uStoneLightSensor;
+    }
+
+    @Override
+    public void putUStoneBlueToothButton(BigInteger devid, ButtonEvent buttonEvent) {
+      this.uStoneBlueToothButtonLast.put(devid,buttonEvent);
+    }
+
+    @Override
+    public ConcurrentHashMap<BigInteger, ButtonEvent> getUStoneBlueToothButton() {
+        return (ConcurrentHashMap<BigInteger, ButtonEvent>) this.uStoneBlueToothButtonLast;
     }
 
 

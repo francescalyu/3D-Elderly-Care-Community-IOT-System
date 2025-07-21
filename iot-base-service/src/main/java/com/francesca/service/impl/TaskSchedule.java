@@ -154,7 +154,6 @@ public class TaskSchedule {
 
        savePowerTotal(1);
 
-
     }
 
     //save power total data to database every 5 min
@@ -162,7 +161,6 @@ public class TaskSchedule {
     public void savePowerTotal1hData() {
 
         savePowerTotal(2);
-
 
     }
 
@@ -187,18 +185,14 @@ public class TaskSchedule {
             power5minTotalEntity.setElectpower(dashPowerVO.getElectPower());
             power5minTotalEntity.setPtype(ptype);
             power5minTotalEntity.setTime(new Date());
-
-
             power5minTotalDao.insert(power5minTotalEntity);
 
             if (ptype == 2) {
-
                 log.info("save power total data 1 h :" + power5minTotalEntity.getEnergytoday());
             }else {
                 log.info("save power total data 5 min :" + power5minTotalEntity.getEnergytoday());
             }
         }
-
 
     }
 
@@ -237,7 +231,7 @@ public class TaskSchedule {
     }
 
 
-    @Scheduled(fixedRate = 1000 * 60 * 5)
+    @Scheduled(fixedRate = 1000 * 60 * 60)
     public void saveHealth1hData() {
 
         HealthVO healthVO = cacheService.getHealth();
@@ -349,12 +343,9 @@ public class TaskSchedule {
         if (pn.compareTo(pn5) <= 0 ){
             return "0";
         }
-
         return String.valueOf(pn.subtract(pn5));
 
-
     }
-
 
 
     //exec warn rule every 30 seconds
@@ -366,6 +357,7 @@ public class TaskSchedule {
       if(ObjectUtil.isNotEmpty(uStone10AOutlets)) {
           uStone10AOutlets.entrySet().forEach(v -> {
                       //first close warn ,then open warn
+                      //执行告警规则，设备ID,产品ID，设备对象, 告消警
                       warnRuleService.execWarnRule(v.getKey(), BigInteger.valueOf(2),  v.getValue(), 0);
                       warnRuleService.execWarnRule(v.getKey(), BigInteger.valueOf(2), v.getValue(), 1);
                   }
@@ -379,8 +371,6 @@ public class TaskSchedule {
               warnRuleService.execWarnRule(v.getKey(), BigInteger.valueOf(3) , v.getValue(), 0);
               warnRuleService.execWarnRule(v.getKey(), BigInteger.valueOf(3) , v.getValue(),1);
           });
-
-
       }
 
       ConcurrentHashMap<BigInteger, UStoneSmokeSensorStatus> uStoneSmokeSensors = cacheService.getUstoneSmokeSensors();
@@ -396,8 +386,7 @@ public class TaskSchedule {
     //exec smoke status
     @Scheduled(fixedRate = 1000 * 60)
     public void execSmokeStatus() {
-        DashAirVO dashAirVO = cacheService.getCurrentAir();
-
+         DashAirVO dashAirVO = cacheService.getCurrentAir();
          ConcurrentHashMap<BigInteger, UStoneSmokeSensorStatus> smokers = cacheService.getUstoneSmokeSensors();
 
          if (ObjectUtil.isNotEmpty(smokers)){
@@ -415,7 +404,6 @@ public class TaskSchedule {
         List<WarnRecordEntity> warnRecordEntities = warnRecordDao.selectBySubsys(3, 2);
 
         if(ObjectUtil.isEmpty(warnRecordEntities)){
-
             return;
         }
 
@@ -440,14 +428,9 @@ public class TaskSchedule {
                 if(ps.contains(BigInteger.valueOf(17))){
                     dashAirVO.setSmokeLevel(String.valueOf(warnRecordEntity.getLevel()));
                 }
-
             }
-
-
         }
-
         cacheService.updateSmoke(dashAirVO);
-
     }
 
 

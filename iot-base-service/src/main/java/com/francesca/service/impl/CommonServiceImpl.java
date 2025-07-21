@@ -50,6 +50,9 @@ public class CommonServiceImpl implements CommonService {
         Object dev = null;
 
         switch (pointEntity.getProdid()){
+            case 1:
+                dev = cacheService.getGeekOpen16AOutlet().get(devId);
+                break;
             case 2:
                 dev = cacheService.getUStone10AOutlets().get(devId);
                 break;
@@ -59,8 +62,20 @@ public class CommonServiceImpl implements CommonService {
             case 4:
                 dev = cacheService.getUstoneSmokeSensors().get(devId);
                 break;
+            case 6:
+                dev = cacheService.getUStoneHealthBand().get(devId);
+                break;
             case 7:
-                dev = cacheService.getDashDoor();
+                dev = cacheService.getUStoneDoorSensor().get(devId);
+                break;
+            case 8:
+                dev = cacheService.getUStoneLightSensor().get(devId);
+                break;
+            case 9:
+                dev = cacheService.getUStone3WaySwitch().get(devId);
+                break;
+            case 10:
+                dev = cacheService.getUStoneBlueToothButton().get(devId);
                 break;
             default:
                 dev = null;
