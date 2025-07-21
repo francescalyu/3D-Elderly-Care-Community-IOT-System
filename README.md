@@ -62,5 +62,9 @@ all the software in the S3ECCIS will give its link of source.
 - ### the 3D-view with the IOT device
 - ![img](https://github.com/francescalyu/3D-Elderly-Care-Community-IOT-System/blob/main/3D-FBX/room-mark.png)
 
+- ### the UI design of S3ECCIS
+- ![img](https://github.com/francescalyu/3D-Elderly-Care-Community-IOT-System/blob/main/UI&UX/dashboard-energy.JPG)
+
+
 ---
 
