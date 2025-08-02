@@ -77,6 +77,9 @@ public class CommonServiceImpl implements CommonService {
             case 10:
                 dev = cacheService.getUStoneBlueToothButton().get(devId);
                 break;
+            case 11:
+                dev = cacheService.getGeekOpenACController().get(devId.intValue());
+                break;
             default:
                 dev = null;
                 break;
@@ -165,6 +168,20 @@ public class CommonServiceImpl implements CommonService {
             }
         }
         return out;
+    }
+
+    @Override
+    public Integer getWarnRuleType(BigInteger ruleId) {
+
+
+        WarnRuleEntity rule = warnRuleDao.selectByUid(ruleId);
+
+        if (ObjectUtil.isNotEmpty(rule)){
+            return rule.getType();
+        }
+
+        return  0 ;
+
     }
 
 }

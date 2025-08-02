@@ -1,6 +1,7 @@
 package com.francesca.service.impl;
 
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.francesca.dao.*;
 import com.francesca.model.DTO.*;
@@ -14,6 +15,7 @@ import com.francesca.mqtt.ustoneMsg.UStoneAirSixSensorStatus;
 import com.francesca.mqtt.ustoneMsg.UStoneSmokeSensorStatus;
 import com.francesca.service.CacheService;
 import com.francesca.service.CommonService;
+import com.francesca.service.TicketRuleService;
 import com.francesca.service.WarnRuleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +55,12 @@ public class TaskSchedule {
 
     @Autowired
     private Power5minTotalDao power5minTotalDao;
+
+    @Autowired
+    private TicketRuleService ticketRuleService;
+
+    @Autowired
+    private WarnRuleDao warnRuleDao;
 
 
     // count power every 1 hour
@@ -432,6 +440,86 @@ public class TaskSchedule {
         }
         cacheService.updateSmoke(dashAirVO);
     }
+
+
+    @Scheduled(fixedRate = 1000 * 60)
+    public void execTicket() {
+
+        // exec open ticket
+        List<WarnRecordEntity> openWarns = warnRecordDao.selectByStatus(2);
+
+        List<WarnRuleEntity> rules = warnRuleDao.selectAll();
+
+        if (ObjectUtil.isNotEmpty(openWarns)){
+
+            for (WarnRecordEntity warn : openWarns) {
+
+                 WarnRuleEntity rule = rules.stream().filter(v -> v.getId().equals(warn.getRuleid())).findFirst().orElse(null);
+
+                 //处理节能告警, 如节能告警不是当天，直接关闭
+                 if (ObjectUtil.isNotEmpty(rule) && rule.getType() == 2 && ! DateUtil.isSameDay(warn.getCreateTime(), new Date())){
+                     warn.setStatus(0);
+                     warn.setCloseTime(new Date());
+
+                 }else {
+
+                     int result = ticketRuleService.execTicketRule(warn);
+                     warn.setStatus(result);
+
+                     if (result ==0 ){
+                         warn.setCloseTime(new Date());
+                     }
+
+                     warnRecordDao.update(warn);
+                 }
+
+            }
+
+        }
+
+
+        // exec has ticket warn
+        List<WarnRecordEntity> hasWarns = warnRecordDao.selectByStatus(3);
+
+        if (ObjectUtil.isNotEmpty(hasWarns)) {
+
+            for (WarnRecordEntity warn : hasWarns) {
+
+               int result =  ticketRuleService.execTicketInform(warn);
+
+                warn.setStatus(result);
+
+                if (result ==0 ){
+                    warn.setCloseTime(new Date());
+                }
+
+                warnRecordDao.update(warn);
+            }
+        }
+
+
+        //exec ticket expire
+        // exec has ticket warn
+        List<WarnRecordEntity> hasInform = warnRecordDao.selectByStatus(4);
+        if (ObjectUtil.isNotEmpty(hasInform)) {
+
+            for (WarnRecordEntity warn : hasWarns) {
+
+                int result =  ticketRuleService.execHasInform(warn);
+
+                warn.setStatus(result);
+
+                if (result ==0 ){
+                    warn.setCloseTime(new Date());
+                }
+
+                warnRecordDao.update(warn);
+            }
+        }
+
+
+    }
+
 
 
 }

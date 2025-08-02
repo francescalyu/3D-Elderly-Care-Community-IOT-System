@@ -1,7 +1,9 @@
 package com.francesca.model.DTO;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -26,16 +28,19 @@ public class ProductEntity implements Serializable {
     /**
      * name
      */
+    @ApiModelProperty("产品名")
     private String name;
 
     /**
      * alias
      */
+    @ApiModelProperty("产品别名")
     private String alias;
 
     /**
      * alias english
      */
+    @ApiModelProperty("产品英文名")
     private String aliasen;
 
 
@@ -52,6 +57,7 @@ public class ProductEntity implements Serializable {
     /**
      * flag of ctrl
      */
+    @ApiModelProperty("是否可控制")
     private int  isctrl;
 
     /**
@@ -64,5 +70,10 @@ public class ProductEntity implements Serializable {
      */
     private String  sn;
 
+    @ApiModelProperty("产品图片")
+    @TableField(value = "picurl")
+    private String picurl;
+
     private static final long serialVersionUID = 1L;
+
 }

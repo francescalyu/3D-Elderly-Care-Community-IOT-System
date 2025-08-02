@@ -56,6 +56,10 @@ public class WarnRuleEntity implements Serializable {
 
     private Integer warnid;
 
+    private Integer isenable;
+
+    private Integer type;
+
 
     private static final long serialVersionUID = 1L;
 }

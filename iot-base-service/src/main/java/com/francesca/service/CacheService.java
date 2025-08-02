@@ -8,6 +8,7 @@ import com.francesca.mqtt.bluetouth.DoorSensorEvent;
 import com.francesca.mqtt.bluetouth.HealthBandEvent;
 import com.francesca.mqtt.bluetouth.LightSensorEvent;
 import com.francesca.mqtt.geekopen.GeekOpen16AOutlet;
+import com.francesca.mqtt.geekopen.GeekOpenACController;
 import com.francesca.mqtt.ustoneMsg.UStone10AOutlet;
 import com.francesca.mqtt.ustoneMsg.UStone3WaySwitch;
 import com.francesca.mqtt.ustoneMsg.UStoneAirSixSensorStatus;
@@ -16,6 +17,15 @@ import com.francesca.mqtt.ustoneMsg.UStoneSmokeSensorStatus;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+
+/**
+ * 内部缓存
+ *
+ /**
+ * @Author francesca
+
+ * 2025-05-16
+ */
 
 public interface CacheService {
 
@@ -109,5 +119,9 @@ public interface CacheService {
         void putUStoneBlueToothButton(BigInteger devid, ButtonEvent buttonEvent);
 
         ConcurrentHashMap<BigInteger,ButtonEvent> getUStoneBlueToothButton();
+
+        ConcurrentHashMap<Integer, GeekOpenACController> getGeekOpenACController();
+
+        List<TkruleEntity> getTkRules();
 
 }

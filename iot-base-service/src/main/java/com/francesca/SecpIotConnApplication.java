@@ -1,6 +1,7 @@
 package com.francesca;
 
 import lombok.extern.slf4j.Slf4j;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.Banner;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -24,6 +25,7 @@ import java.util.TimeZone;
 @Slf4j
 @EnableScheduling
 @SpringBootApplication
+@MapperScan("com.francesca.mapper")
 public class SecpIotConnApplication {
 
     public static void main(String[] args) {

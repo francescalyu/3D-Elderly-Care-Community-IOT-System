@@ -7,6 +7,7 @@ import com.francesca.dao.*;
 import com.francesca.model.DTO.*;
 import com.francesca.service.CacheService;
 import com.francesca.service.CommonService;
+import com.francesca.service.TicketRuleService;
 import com.francesca.service.WarnRuleService;
 import com.francesca.util.CommonUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +43,9 @@ public class WarnRuleServiceImpl implements WarnRuleService {
 
     @Autowired
     private CommonService commonService;
+
+    @Autowired
+    private TicketRuleService ticketRuleService;
 
 
     public Map<Integer, List<WarnRuleEntity>> selectWarnRuleByProd(){
@@ -215,28 +219,30 @@ public class WarnRuleServiceImpl implements WarnRuleService {
 
                 //规则为真，写入告警或消警到数据库
                 if (evaluateCondition(out)) {
+                    //规则为真时，获取规则关联的warn 定义
                     WarnEntity warn = cacheService.readWarn(BigInteger.valueOf(entry.getValue().get(0).getWarnid()));
-                    openCloseWarn(entry.getValue(), device, warn.getLevel(), closeOpen);
+                    //执行告消警，传入告警规则，对应设备，告警级别，告消警
+                    openCloseWarn(entry.getValue(), device, warn, closeOpen);
                 }
                 log.info("exec warn " + closeOpen + " rule: " + out + " result : " + String.valueOf(evaluateCondition(out)));
             }
         }
 
-    private  void openCloseWarn(List<WarnRuleEntity> rules , DeviceEntity device , int level , int warn){
+    private  void openCloseWarn(List<WarnRuleEntity> rules , DeviceEntity device , WarnEntity warn , int closeOpen){
 
         if (ObjectUtil.isEmpty( rules)){
             return;
         }
-         WarnEntity warnEntity = cacheService.readWarn(BigInteger.valueOf(rules.get(0).getWarnid())) ;
 
-        if (ObjectUtil.isEmpty(warnEntity)){
+
+        if (ObjectUtil.isEmpty(warn)){
             return;
         }
 
-        List<WarnRecordEntity> warns = warnRecordDao.selectByDev(device.getId(), warnEntity.getId());
+        List<WarnRecordEntity> warns = warnRecordDao.selectByDev(device.getId(), warn.getId());
 
         // exec open warn
-        if (warn == 1) {
+        if (closeOpen == 1) {
 
             if (ObjectUtil.isEmpty(warns)) {
 
@@ -246,16 +252,15 @@ public class WarnRuleServiceImpl implements WarnRuleService {
                 warnRecordEntity.setId(BigInteger.valueOf(0));
                 warnRecordEntity.setStatus(1);
                 warnRecordEntity.setArea(BigInteger.valueOf(device.getArea()));
-                warnRecordEntity.setLevel(warnEntity.getLevel());
-                warnRecordEntity.setName(warnEntity.getName());
-                warnRecordEntity.setAlias(warnEntity.getAlias());
+                warnRecordEntity.setLevel(warn.getLevel());
+                warnRecordEntity.setName(warn.getName());
+                warnRecordEntity.setAlias(warn.getAlias());
                 warnRecordEntity.setCount(0);
                 warnRecordEntity.setRuleid(rules.get(0).getRuleid());
                 warnRecordEntity.setCreateTime(DateUtil.date());
                 warnRecordEntity.setSubsys(BigInteger.valueOf(device.getSubsys()));
                 warnRecordEntity.setWarnid(BigInteger.valueOf(rules.get(0).getWarnid()));
                 warnRecordEntity.setDevid(device.getId());
-                warnRecordEntity.setLevel(level);
 
                 warnRecordEntity = isOpen(rules.get(0), warnRecordEntity);
                 warnRecordDao.insert(warnRecordEntity);
@@ -266,17 +271,24 @@ public class WarnRuleServiceImpl implements WarnRuleService {
                     if (warnRecordEntity.getStatus() == 1) {
                         warnRecordEntity = isOpen(rules.get(0), warnRecordEntity);
                         warnRecordDao.update(warnRecordEntity);
+
+
                     }
                 }
             }
         }
 
-        if (warn == 0 ){
+        //处理消警
+        if (closeOpen == 0 ){
             if(ObjectUtil.isNotEmpty(warns) &&  warns.size() > 0 ){
 
                 for(WarnRecordEntity warnRecordEntity : warns){
                     warnRecordEntity.setStatus(0);
                     warnRecordEntity.setCloseTime(DateUtil.date());
+                    warnRecordDao.update(warnRecordEntity);
+
+                    ticketRuleService.closeTicket(warnRecordEntity);
+
                 }
             }
         }

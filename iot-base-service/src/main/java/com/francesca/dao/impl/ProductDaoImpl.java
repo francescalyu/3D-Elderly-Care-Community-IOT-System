@@ -37,6 +37,14 @@ public class ProductDaoImpl extends ServiceImpl<ProductMapper, ProductEntity> im
     }
 
     @Override
+    public List<ProductEntity> selectBySubSys(int subsys) {
+        LambdaQueryWrapper<ProductEntity> wrapper = Wrappers.lambdaQuery();
+        wrapper.eq(ProductEntity::getSubsys, subsys);
+        return list(wrapper);
+
+    }
+
+    @Override
     public ProductEntity selectByUid(int uid) {
         LambdaQueryWrapper<ProductEntity> wrapper = Wrappers.lambdaQuery();
         wrapper.eq(ProductEntity::getId, ""+uid)

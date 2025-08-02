@@ -7,11 +7,14 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.francesca.dao.WarnRecordDao;
 import com.francesca.mapper.WarnRecordMapper;
+import com.francesca.model.DTO.Power5minEntity;
 import com.francesca.model.DTO.WarnRecordEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigInteger;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -32,6 +35,35 @@ public class WarnRecordDaoImpl extends ServiceImpl<WarnRecordMapper, WarnRecordE
     @Override
     public List<WarnRecordEntity> selectAll() {
         return list(null);
+    }
+
+    @Override
+    public List<WarnRecordEntity> selectByMonth(String yearMonth) {
+        int year = Integer.parseInt(yearMonth.substring(0, 4));
+        int month = Integer.parseInt(yearMonth.substring(4));
+
+        LocalDateTime start = LocalDateTime.of(year, month, 1, 0, 0);
+        LocalDateTime end = start.plusMonths(1).minusSeconds(1);
+
+        LambdaQueryWrapper<WarnRecordEntity> wrapper = Wrappers.lambdaQuery();
+        wrapper.between(WarnRecordEntity::getCreateTime, start, end);
+
+        return list(wrapper);
+    }
+
+    @Override
+    public List<WarnRecordEntity> selectByDate(LocalDate defDate) {
+        return WarnRecordMapper.selectList(new LambdaQueryWrapper<WarnRecordEntity>()
+                .ge(WarnRecordEntity::getCreateTime, defDate.atStartOfDay())  // 大于等于当天开始时间
+                .lt(WarnRecordEntity::getCreateTime, defDate.plusDays(1).atStartOfDay())
+        );  // 小于下一天开始时间
+    }
+
+    @Override
+    public List<WarnRecordEntity> selectByStatus(int status) {
+        return WarnRecordMapper.selectList(new LambdaQueryWrapper<WarnRecordEntity>()
+                .ge(WarnRecordEntity::getStatus, status)
+        );
     }
 
     @Override

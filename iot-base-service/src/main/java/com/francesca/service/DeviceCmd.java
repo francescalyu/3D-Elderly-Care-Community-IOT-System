@@ -1,10 +1,11 @@
 package com.francesca.service;
 
 import com.francesca.model.DTO.DeviceEntity;
+import com.francesca.model.VO.Device.DevCmd;
 import com.francesca.model.VO.Device.Device;
 
 /**
- * 设备消息类服务
+ * 设备控制
  *
  /**
  * @Author francesca
@@ -12,8 +13,8 @@ import com.francesca.model.VO.Device.Device;
  * 2025-05-16
  */
 
-public interface DeviceMsg {
+public interface DeviceCmd {
 
-    Device setDevice(DeviceEntity entity);
+    String sndCmd(DevCmd devCmd);
 
 }

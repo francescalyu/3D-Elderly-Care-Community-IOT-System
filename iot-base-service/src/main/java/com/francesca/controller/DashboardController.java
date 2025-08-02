@@ -97,7 +97,9 @@ public class DashboardController {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         LocalDate localDate = LocalDate.parse(qdate, formatter);
 
-        return health1hDao.selectbydate(localDate);
+        List<Health1hEntity> res = health1hDao.selectbydate(localDate);
+
+        return  res;
 
     }
 

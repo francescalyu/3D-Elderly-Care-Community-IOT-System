@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 点位上报器
+ * 告警规则执行
  *
  /**
  * @Author francesca

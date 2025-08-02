@@ -3,6 +3,7 @@ package com.francesca.dao;
 import com.francesca.model.DTO.WarnRecordEntity;
 
 import java.math.BigInteger;
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -14,6 +15,12 @@ import java.util.List;
 public interface WarnRecordDao {
 
     List<WarnRecordEntity> selectAll();
+
+    List<WarnRecordEntity> selectByMonth(String yearMonth);
+
+    List<WarnRecordEntity> selectByDate(LocalDate localDate);
+
+    List<WarnRecordEntity> selectByStatus(int status);
 
     WarnRecordEntity selectByUid(BigInteger id);
 

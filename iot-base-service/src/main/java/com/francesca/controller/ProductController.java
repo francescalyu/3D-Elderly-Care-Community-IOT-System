@@ -5,10 +5,8 @@ import cn.hutool.core.util.ObjectUtil;
 import com.francesca.constant.UrlConstant;
 import com.francesca.dao.PointDao;
 import com.francesca.dao.ProductDao;
-import com.francesca.dao.SubsysDao;
 import com.francesca.model.DTO.PointEntity;
 import com.francesca.model.DTO.ProductEntity;
-import com.francesca.model.DTO.SubsysEntity;
 import com.francesca.model.VO.product.ProdPoint;
 import com.francesca.service.CacheService;
 import io.swagger.annotations.Api;
@@ -42,6 +40,8 @@ public class ProductController {
     @Autowired
     private PointDao pointDao;
 
+    @Autowired
+    private CacheService cacheService;
 
 
     @ApiOperation(value = "列出产品物模型")
@@ -95,6 +95,24 @@ public class ProductController {
         return productDao.selectAll();
     }
 
+    @ApiOperation(value = "列出指定产品")
+    @GetMapping( "getProd")
+    public ProductEntity getProd(@RequestParam int id) {
+
+        return   cacheService.getProduct(BigInteger.valueOf(id));
+    }
+
+    @ApiOperation(value = "按子系统查询产品")
+    @GetMapping( "getProdBySubsys")
+    public List<ProductEntity> getProdBySubsys(int subsysId) {
+
+        if(ObjectUtil.isEmpty(subsysId)){
+            return null;
+        }
+
+        return productDao.selectBySubSys(subsysId);
+    }
+
     @ApiOperation(value = "增加产品")
     @PostMapping( "add")
     public boolean add(@RequestBody ProductEntity entity) {
@@ -114,9 +132,7 @@ public class ProductController {
     @ApiOperation(value = "删除产品")
     @DeleteMapping( "delete")
     public boolean delete(@RequestParam int id) {
-
         return productDao.delete(id);
     }
-
 
 }

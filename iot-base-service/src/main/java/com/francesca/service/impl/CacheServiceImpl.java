@@ -11,6 +11,7 @@ import com.francesca.mqtt.bluetouth.DoorSensorEvent;
 import com.francesca.mqtt.bluetouth.HealthBandEvent;
 import com.francesca.mqtt.bluetouth.LightSensorEvent;
 import com.francesca.mqtt.geekopen.GeekOpen16AOutlet;
+import com.francesca.mqtt.geekopen.GeekOpenACController;
 import com.francesca.mqtt.ustoneMsg.UStone10AOutlet;
 import com.francesca.mqtt.ustoneMsg.UStone3WaySwitch;
 import com.francesca.mqtt.ustoneMsg.UStoneAirSixSensorStatus;
@@ -63,6 +64,10 @@ public class CacheServiceImpl implements CacheService {
 
     private final Map<BigInteger, WarnEntity> warnMap = new ConcurrentHashMap<>();
 
+    private final Map<Integer, GeekOpenACController> geekOpenACControllerMap = new ConcurrentHashMap<>();
+
+    private final List<TkruleEntity>  tkruleEntities = new ArrayList<>();
+
     private static volatile   DashAirVO dashAirVO = new DashAirVO() ;
 
     private static volatile   DashPowerVO dashPowerVO = new DashPowerVO();
@@ -98,18 +103,23 @@ public class CacheServiceImpl implements CacheService {
     @Autowired
     private ProductDao productDao;
 
+    @Autowired
+    private TkRuleDao tkRuleDao;
+
     @PostConstruct
     public void initCache(){
         List<DeviceEntity> deviceEntityList = deviceDao.selectAll();
-        if (ObjectUtil.isEmpty(deviceEntityList)){
-            return;
+        if (ObjectUtil.isNotEmpty(deviceEntityList)) {
+
+            deviceEntityList.stream().forEach(
+                    v -> {
+                        cache.put(v.getId(), deviceMsg.setDevice(v));
+                        deviceEntityMap.put(v.getId(), v);
+                    }
+            );
         }
-        deviceEntityList.stream().forEach(
-                v-> {
-                     cache.put(v.getId(), deviceMsg.setDevice(v) );
-                     deviceEntityMap.put(v.getId(), v);
-                }
-        );
+
+        tkruleEntities.addAll(tkRuleDao.selectAll());
 
         List<ProductEntity> products  = productDao.selectAll();
         if (ObjectUtil.isEmpty(products)){
@@ -157,6 +167,22 @@ public class CacheServiceImpl implements CacheService {
                 }
             });
         }
+
+        GeekOpenACController geekOpenACController = new GeekOpenACController();
+        geekOpenACController.setACtemp("26");
+        geekOpenACController.setAConoff("0");
+        geekOpenACController.setAChotcold("1");
+        geekOpenACController.setACwind("3");
+
+        this.geekOpenACControllerMap.put(20,geekOpenACController);
+
+        GeekOpenACController geekOpenACController1 = new GeekOpenACController();
+        geekOpenACController.setACtemp("26");
+        geekOpenACController.setAConoff("0");
+        geekOpenACController.setAChotcold("1");
+        geekOpenACController.setACwind("3");
+
+        this.geekOpenACControllerMap.put(21,geekOpenACController);
 
     }
 
@@ -598,6 +624,16 @@ public class CacheServiceImpl implements CacheService {
     @Override
     public ConcurrentHashMap<BigInteger, ButtonEvent> getUStoneBlueToothButton() {
         return (ConcurrentHashMap<BigInteger, ButtonEvent>) this.uStoneBlueToothButtonLast;
+    }
+
+    @Override
+    public ConcurrentHashMap<Integer, GeekOpenACController> getGeekOpenACController() {
+        return (ConcurrentHashMap<Integer, GeekOpenACController>) this.geekOpenACControllerMap;
+    }
+
+    @Override
+    public List<TkruleEntity> getTkRules() {
+        return this.tkruleEntities;
     }
 
 

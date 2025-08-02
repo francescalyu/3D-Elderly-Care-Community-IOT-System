@@ -15,6 +15,8 @@ public interface ProductDao {
 
     List<ProductEntity> selectAll();
 
+    List<ProductEntity> selectBySubSys(int subsys);
+
     ProductEntity selectByUid(int id);
 
     void  insert(ProductEntity entity);

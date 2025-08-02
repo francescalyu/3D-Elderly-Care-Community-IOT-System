@@ -6,11 +6,8 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.francesca.dao.AreaDao;
-import com.francesca.dao.SubsysDao;
 import com.francesca.mapper.AreaMapper;
-import com.francesca.mapper.SubsysMapper;
 import com.francesca.model.DTO.AreaEntity;
-import com.francesca.model.DTO.SubsysEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 

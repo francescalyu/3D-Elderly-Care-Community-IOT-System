@@ -100,6 +100,9 @@ public class WarnRecordVO  {
     @ApiModelProperty(" 持续时长   分钟 " )
     private BigInteger delay;
 
+    @ApiModelProperty(" 告警类型  1-告警  2-节能 ")
+    private Integer type;
+
 
     private static final long serialVersionUID = 1L;
 }

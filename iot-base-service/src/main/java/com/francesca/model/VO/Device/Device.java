@@ -45,6 +45,9 @@ public class Device {
     @ApiModelProperty("所在区域" )
     private String area;
 
+    @ApiModelProperty("子系统id" )
+    private String sysId;
+
     @ApiModelProperty("子系统" )
     private String sys;
 

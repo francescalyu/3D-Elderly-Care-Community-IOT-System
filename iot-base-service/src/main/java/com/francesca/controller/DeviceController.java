@@ -16,6 +16,7 @@ import com.francesca.model.VO.Device.Device;
 import com.francesca.model.VO.product.ProdPoint;
 import com.francesca.service.CacheService;
 import com.francesca.service.CommonService;
+import com.francesca.service.DeviceCmd;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -52,6 +54,81 @@ public class DeviceController {
 
     @Autowired
     private CommonService commonService;
+
+    @Autowired
+    private DeviceCmd deviceCmd;
+
+
+    @ApiOperation(value = "按子系统查询设备")
+    @GetMapping( "getDevBySubsys")
+    public List<Device> getDevBySubsys(int subsysId) {
+
+        if(ObjectUtil.isEmpty(subsysId)){
+            return null;
+        }
+
+         List<Device> res = cacheService.getAllDevice();
+
+         return  res.stream().filter(v -> Integer.parseInt(v.getSysId() )== subsysId).collect(Collectors.toList());
+
+    }
+
+
+    @ApiOperation(value = "查询设备指定点位值")
+    @GetMapping( "getdevonepoint")
+    public ProdPoint getDevOnePoint(@RequestParam int devId , int pointId) {
+
+        DeviceEntity device =  cacheService.getDevice(BigInteger.valueOf(devId));
+
+        if(ObjectUtil.isEmpty(device) || ObjectUtil.isEmpty(pointId)){
+            return null;
+        }
+
+        List<PointEntity> pointEntities = pointDao.selectByProduct(device.getProduct());
+
+        if(ObjectUtil.isEmpty(pointEntities)){
+            return null;
+        }
+
+        PointEntity pointEntity = pointEntities.stream().filter(v->v.getId().intValue() == pointId).findFirst().orElse(null);
+
+
+
+        if (ObjectUtil.isEmpty(pointEntity)){
+            return null;
+        }
+
+        ProdPoint prodPoint = new ProdPoint();
+
+        String pv = commonService.getPointValue(BigInteger.valueOf(devId), pointEntity.getId());
+
+        prodPoint.setName(pointEntity.getName());
+        prodPoint.setAlias(pointEntity.getAlias());
+        prodPoint.setProdid(String.valueOf(pointEntity.getProdid()));
+        prodPoint.setValue(pv);
+        prodPoint.setUnit(pointEntity.getUnit());
+        prodPoint.setId(String.valueOf(pointEntity.getId()));
+        prodPoint.setPtUse(String.valueOf(pointEntity.getPtuse()));
+        prodPoint.setType(String.valueOf(pointEntity.getType()));
+
+        if(ObjectUtil.isNotEmpty(pointEntity.getCmd())) {
+            prodPoint.setCmd(pointEntity.getCmd());
+        }
+        if(ObjectUtil.isNotEmpty(pointEntity.getLow())) {
+            prodPoint.setLow(String.valueOf(pointEntity.getLow()));
+        }
+
+        if(ObjectUtil.isNotEmpty(pointEntity.getHigh())) {
+            prodPoint.setHigh(String.valueOf(pointEntity.getHigh()));
+        }
+
+        if(ObjectUtil.isNotEmpty(pointEntity.getStep())){
+            prodPoint.setStep(String.valueOf(pointEntity.getStep()));
+        }
+
+        return prodPoint;
+
+    }
 
 
     @ApiOperation(value = "列出指定设备当前点位值")
@@ -200,36 +277,10 @@ public class DeviceController {
 
 
         if(ObjectUtil.isEmpty(devCmd.getDevId()) || ObjectUtil.isEmpty(devCmd.getId()) ){
-            return  " id can not be empty ";
-        }
-        DeviceEntity device = cacheService.getDevice(new BigInteger(devCmd.getDevId()));
-
-        if(ObjectUtil.isEmpty(device)){
-            return "device not exist";
+            return  " 设备ID不可为空 ";
         }
 
-        PointEntity pointEntity = cacheService.getPoint(new BigInteger(devCmd.getId()));
-
-        if(ObjectUtil.isEmpty(pointEntity)){
-            return "Point not exist";
-        }
-
-        if (pointEntity.getProdid() != device.getProduct()){
-            return "Device can not support this cmd ";
-        }
-
-        if (pointEntity.getPtuse() < 2 ){
-            return "Point is read only ";
-        }
-
-        Float pValue = Float.parseFloat(devCmd.getPValue());
-
-        if (pValue > pointEntity.getHigh() || pValue < pointEntity.getLow()){
-            return " parameters out of range ";
-        }
-
-        return "OK";
-
+        return deviceCmd.sndCmd(devCmd);
     }
 
     @ApiOperation(value = "列出所有设备")

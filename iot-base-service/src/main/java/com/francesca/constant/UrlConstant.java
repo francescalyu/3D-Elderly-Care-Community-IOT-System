@@ -72,4 +72,14 @@ public class UrlConstant {
      */
     public static final String People = iot_base + "/people" ;
 
+    /**
+     * ticket
+     */
+    public static final String Ticket = iot_base + "/ticket" ;
+
+    /**
+     * ticket rule
+     */
+    public static final String TicketRule = Ticket + "/ticket" ;
+
 }

@@ -67,7 +67,11 @@ public class DeviceMsgImpl implements DeviceMsg {
         device.setAlias(entity.getAlias());
         device.setName(entity.getName());
         device.setPid(productEntity.getId());
+
+        device.setSysId(String.valueOf(subsysEntity.getId()));
         device.setSys(subsysEntity.getAlias());
+
+
         device.setTopicUp(entity.getMqttuptopic());
         device.setTopicDown(entity.getMqttdowntopic());
         device.setManuId(entity.getManuid());
