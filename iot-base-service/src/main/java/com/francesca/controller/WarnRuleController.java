@@ -62,7 +62,7 @@ public class WarnRuleController {
 
             WarnRule warnRule1 = new WarnRule();
             warnRule1.setId(String.valueOf(warnRule.getId()));
-            warnRule1.setRuleid(String.valueOf(warnRule.getRuleid()));
+            warnRule1.setRuleid(warnRule.getRuleid().intValue());
 
             ProductEntity productEntity = productDao.selectByUid(warnRule.getProd());
             if(ObjectUtil.isNotEmpty(productEntity)){
@@ -74,9 +74,10 @@ public class WarnRuleController {
             warnRule1.setPoint(warnRule.getPoint());
             warnRule1.setOp(warnRule.getOp());
             warnRule1.setOpValue(warnRule.getPvalue());
-            warnRule1.setTime(String.valueOf(warnRule.getTime()));
-            warnRule1.setCount(String.valueOf(warnRule.getCount()));
+            warnRule1.setTime(warnRule.getTime());
+            warnRule1.setCount(warnRule.getCount());
             warnRule1.setConn(warnRule.getConn());
+            warnRule1.setType(warnRule.getType());
 
             if(ObjectUtil.isNotEmpty(warnRule.getDev()));
             DeviceEntity deviceEntity = deviceDao.selectByUid(BigInteger.valueOf(warnRule.getDev()));
@@ -109,18 +110,82 @@ public class WarnRuleController {
 
     @ApiOperation(value = "增加规则")
     @PostMapping( "add")
-    public boolean add(@RequestBody WarnRuleEntity entity) {
-        warnRuleDao.insert(entity);
+    public String add(@RequestBody WarnRule warnRule) {
 
-        return true;
+        String res = checkWarnVO(warnRule);
+
+        if (res.length() <=1 ){
+            WarnRuleEntity warnRuleEntity = new WarnRuleEntity();
+
+            warnRuleEntity.setClosewarn(Integer.valueOf(warnRule.getCloseWarn()));
+
+            if (ObjectUtil.isNotEmpty(warnRule.getDev())) {
+                warnRuleEntity.setDev(Integer.parseInt(warnRule.getDev()));
+            }
+            warnRuleEntity.setConn(warnRule.getConn());
+
+            if (ObjectUtil.isNotEmpty(warnRule.getArea())) {
+                warnRuleEntity.setArea(Integer.parseInt(warnRule.getArea()));
+            }
+
+
+            warnRuleEntity.setCount(warnRule.getCount());
+            warnRuleEntity.setName(warnRule.getName());
+            warnRuleEntity.setAlias(warnRule.getAlias());
+            warnRuleEntity.setOp(warnRule.getOp());
+            warnRuleEntity.setPid(new BigInteger(warnRule.getPoint()));
+            warnRuleEntity.setType(warnRule.getType());
+
+            if (ObjectUtil.isNotEmpty(warnRule.getSubsys())) {
+                warnRuleEntity.setSubsys(Integer.parseInt(warnRule.getSubsys()));
+            }
+
+           warnRuleEntity.setTime(warnRule.getTime());
+           warnRuleDao.insert(warnRuleEntity);
+
+        }
+
+        return res;
+
     }
 
     @ApiOperation(value = "修改规则")
     @PostMapping( "update")
-    public boolean update(@RequestBody WarnRuleEntity entity) {
-        warnRuleDao.update(entity);
+    public String update(@RequestBody WarnRule warnRule) {
+        String res = checkWarnVO(warnRule);
 
-        return true;
+        if (res.length() <=1 ){
+            WarnRuleEntity warnRuleEntity = new WarnRuleEntity();
+
+            warnRuleEntity.setClosewarn(Integer.valueOf(warnRule.getCloseWarn()));
+
+            if (ObjectUtil.isNotEmpty(warnRule.getDev())) {
+                warnRuleEntity.setDev(Integer.parseInt(warnRule.getDev()));
+            }
+            warnRuleEntity.setConn(warnRule.getConn());
+
+            if (ObjectUtil.isNotEmpty(warnRule.getArea())) {
+                warnRuleEntity.setArea(Integer.parseInt(warnRule.getArea()));
+            }
+
+
+            warnRuleEntity.setCount(warnRule.getCount());
+            warnRuleEntity.setName(warnRule.getName());
+            warnRuleEntity.setAlias(warnRule.getAlias());
+            warnRuleEntity.setOp(warnRule.getOp());
+            warnRuleEntity.setPid(new BigInteger(warnRule.getPoint()));
+            warnRuleEntity.setType(warnRule.getType());
+
+            if (ObjectUtil.isNotEmpty(warnRule.getSubsys())) {
+                warnRuleEntity.setSubsys(Integer.parseInt(warnRule.getSubsys()));
+            }
+
+            warnRuleEntity.setTime(warnRule.getTime());
+            warnRuleDao.update(warnRuleEntity);
+
+        }
+
+        return res;
     }
 
     @ApiOperation(value = "删除规则")
@@ -130,5 +195,32 @@ public class WarnRuleController {
         return warnRuleDao.delete(BigInteger.valueOf(id));
     }
 
+
+    private String checkWarnVO(WarnRule warnRule){
+
+        if (ObjectUtil.isEmpty(warnRule.getRuleid())){
+            return "规则ID不可为空";
+        }
+
+        if (ObjectUtil.isEmpty(warnRule.getAlias())){
+            return "规则名不可为空";
+        }
+
+        if (ObjectUtil.isEmpty(warnRule.getProd())){
+            return "规则关联产品不可为空";
+        }
+
+        if (ObjectUtil.isEmpty(warnRule.getPoint()) || ObjectUtil.isEmpty(warnRule.getOpValue()) || ObjectUtil.isEmpty(warnRule.getOp())){
+            return " 告警表达式非法 ";
+        }
+
+        if (ObjectUtil.isEmpty(warnRule.getType()) || warnRule.getType() > 2){
+            return "告警类型非法";
+        }
+
+         return "";
+
+
+    }
 
 }

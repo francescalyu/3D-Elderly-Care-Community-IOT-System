@@ -21,7 +21,7 @@ public class WarnRule {
     private String id;
 
     @ApiModelProperty("告警规则id 重复为同一条规则  " )
-    private String ruleid;
+    private Integer ruleid;
 
     @ApiModelProperty("规则名称" )
     private String name;
@@ -33,7 +33,7 @@ public class WarnRule {
     private String prod;
 
     @ApiModelProperty("告消警  0-消警  1-告警 " )
-    private String closeWarn;
+    private Integer closeWarn;
 
     @ApiModelProperty("运算点位名 " )
     private String point;
@@ -45,10 +45,10 @@ public class WarnRule {
     private String opValue;
 
     @ApiModelProperty("生效时间计量 > 分钟数" )
-    private String time;
+    private Integer time;
 
     @ApiModelProperty("生效计数计量 >  次 " )
-    private String count;
+    private Integer count;
 
     @ApiModelProperty(" 规则连接符  " )
     private String conn;
@@ -63,8 +63,8 @@ public class WarnRule {
     private String subsys;
 
 
-
-
+    @ApiModelProperty(" 告警类型 1-告警  2-节能 " )
+    private Integer type;
 
 
 
