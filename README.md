@@ -11,7 +11,11 @@ To address this, I proposed designing an **IoT-based system incorporating smart 
 **With user consent and strict privacy/data security measures**, the system collects data such as:  
 - Appliance and medical device usage logs  
 - Health metrics  
-- Movement patterns  
+- Movement patterns
+
+- 
+- ### the UI design of S3ECCIS
+- ![img](https://github.com/francescalyu/3D-Elderly-Care-Community-IOT-System/blob/main/UI&UX/dashboard-energy.JPG)
 
 It then constructs a **3D-simulated digital twin of the user’s home environment** on a web platform.  
 
@@ -65,8 +69,6 @@ all the software in the S3ECCIS will give its link of source.
 - ### the 3D-view with the IOT device
 - ![img](https://github.com/francescalyu/3D-Elderly-Care-Community-IOT-System/blob/main/3D-FBX/room-mark.png)
 
-- ### the UI design of S3ECCIS
-- ![img](https://github.com/francescalyu/3D-Elderly-Care-Community-IOT-System/blob/main/UI&UX/dashboard-energy.JPG)
 
 
 ---
