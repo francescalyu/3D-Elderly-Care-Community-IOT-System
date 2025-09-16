@@ -11,24 +11,26 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 
 @Data
 @NoArgsConstructor
 @ApiModel("warn - rule")
-public class WarnRule {
+public class WarnRuleVO {
 
     @ApiModelProperty("id" )
-    private String id;
+    private Integer id;
 
     @ApiModelProperty("告警规则id 重复为同一条规则  " )
     private Integer ruleid;
 
-    @ApiModelProperty("告警级别 1-告警 2-严重" )
-    private Integer level;
-
 
     @ApiModelProperty("warnId" )
     private Integer warnId;
+
+    @ApiModelProperty("告警级别 1-告警 2-严重" )
+    private Integer level;
 
     @ApiModelProperty("规则名称" )
     private String name;
@@ -36,44 +38,15 @@ public class WarnRule {
     @ApiModelProperty("别名" )
     private String alias;
 
-    @ApiModelProperty(" 关联产品 " )
-    private Integer prod;
-
-    @ApiModelProperty(" 关联产品名 " )
-    private String prodName;
-
-    @ApiModelProperty("告消警  0-消警  1-告警 " )
-    private Integer closeWarn;
-
-    @ApiModelProperty("运算点位ID " )
-    private Integer point;
-
-    @ApiModelProperty(" >  <  =  >= <=   " )
-    private String op;
-
-    @ApiModelProperty("取值" )
-    private String opValue;
-
     @ApiModelProperty("生效时间计量 > 分钟数" )
     private Integer time;
 
     @ApiModelProperty("生效计数计量 >  次 " )
     private Integer count;
 
-    @ApiModelProperty(" 规则连接符  " )
-    private String conn;
-
-    @ApiModelProperty(" 是否限制 设备 " )
-    private Integer dev;
-
-    @ApiModelProperty(" 是否限制 设备名 " )
-    private String devName;
-
     @ApiModelProperty(" 是否限制空间 " )
     private Integer area;
 
-    @ApiModelProperty(" 是否限制空间名称 " )
-    private String areaName;
 
     @ApiModelProperty(" 是否限制子系统 " )
     private Integer subsys;
@@ -86,7 +59,8 @@ public class WarnRule {
     @ApiModelProperty("是否启用  0-不启用 1-启用 ")
     private Integer isEnable;
 
-
+    @ApiModelProperty("规则条件")
+    private List<WarnRuleItem> itemList;
 
 
 }

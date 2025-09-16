@@ -54,6 +54,14 @@ public class WarnRuleDaoImpl extends ServiceImpl<WarnRuleMapper, WarnRuleEntity>
     }
 
     @Override
+    public List<WarnRuleEntity> selectByRuleId(BigInteger ruleId) {
+        LambdaQueryWrapper<WarnRuleEntity> wrapper = Wrappers.lambdaQuery();
+        wrapper.eq(WarnRuleEntity::getRuleid, ruleId);
+
+        return list(wrapper);
+    }
+
+    @Override
     public WarnRuleEntity selectByWarnId(BigInteger warnId) {
         LambdaQueryWrapper<WarnRuleEntity> wrapper = Wrappers.lambdaQuery();
         wrapper.eq(WarnRuleEntity::getWarnid, warnId) .last("limit 1");;

@@ -73,6 +73,23 @@ public class DeviceController {
 
     }
 
+    @ApiOperation(value = "按产品查询设备")
+    @GetMapping( "getDevByProd")
+    public List<Device> getDevByProd(int prod) {
+
+        if(ObjectUtil.isEmpty(prod)){
+            return null;
+        }
+
+        List<Device> res = cacheService.getAllDevice();
+        BigInteger p = new BigInteger(String.valueOf(prod));
+
+        List<Device> r = res.stream().filter(v -> v.getPid().equals(p)).collect(Collectors.toList());
+
+        return  r;
+
+    }
+
 
     @ApiOperation(value = "查询设备指定点位值")
     @GetMapping( "getdevonepoint")
@@ -104,10 +121,10 @@ public class DeviceController {
 
         prodPoint.setName(pointEntity.getName());
         prodPoint.setAlias(pointEntity.getAlias());
-        prodPoint.setProdid(String.valueOf(pointEntity.getProdid()));
+        prodPoint.setProdid(pointEntity.getProdid().intValue());
         prodPoint.setValue(pv);
         prodPoint.setUnit(pointEntity.getUnit());
-        prodPoint.setId(String.valueOf(pointEntity.getId()));
+        prodPoint.setId(pointEntity.getId().intValue());
         prodPoint.setPtUse(String.valueOf(pointEntity.getPtuse()));
         prodPoint.setType(String.valueOf(pointEntity.getType()));
 
@@ -155,10 +172,10 @@ public class DeviceController {
 
             prodPoint.setName(pointEntity.getName());
             prodPoint.setAlias(pointEntity.getAlias());
-            prodPoint.setProdid(String.valueOf(pointEntity.getProdid()));
+            prodPoint.setProdid(pointEntity.getProdid().intValue());
             prodPoint.setValue(pv);
             prodPoint.setUnit(pointEntity.getUnit());
-            prodPoint.setId(String.valueOf(pointEntity.getId()));
+            prodPoint.setId(pointEntity.getId().intValue());
             prodPoint.setPtUse(String.valueOf(pointEntity.getPtuse()));
             prodPoint.setType(String.valueOf(pointEntity.getType()));
 
@@ -235,10 +252,10 @@ public class DeviceController {
 
             prodPoint.setName(pointEntity.getName());
             prodPoint.setAlias(pointEntity.getAlias());
-            prodPoint.setProdid(String.valueOf(pointEntity.getProdid()));
+            prodPoint.setProdid(pointEntity.getProdid().intValue());
             prodPoint.setValue(pv);
             prodPoint.setUnit(pointEntity.getUnit());
-            prodPoint.setId(String.valueOf(pointEntity.getId()));
+            prodPoint.setId(pointEntity.getId().intValue());
             prodPoint.setPtUse(String.valueOf(pointEntity.getPtuse()));
             prodPoint.setType(String.valueOf(pointEntity.getType()));
 

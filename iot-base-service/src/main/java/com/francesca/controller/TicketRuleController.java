@@ -61,7 +61,9 @@ public class TicketRuleController {
            return null;
        }
 
-       return tkRuleDao.selectByWarnId(BigInteger.valueOf(rule.getWarnid()));
+       List<TkruleEntity> res = tkRuleDao.selectByWarnId(BigInteger.valueOf(rule.getWarnid()));
+
+       return  res;
 
     }
 
@@ -102,6 +104,8 @@ public class TicketRuleController {
             }
 
          }
+
+         tkruleEntity.setWarnid(BigInteger.valueOf(warnRule.getWarnid()));
 
          tkRuleDao.insert(tkruleEntity);
           return "新增成功";

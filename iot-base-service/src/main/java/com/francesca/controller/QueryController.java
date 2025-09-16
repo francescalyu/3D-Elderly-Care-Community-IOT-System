@@ -1,27 +1,24 @@
 package com.francesca.controller;
 
 
-import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.francesca.constant.UrlConstant;
-import com.francesca.dao.AreaDao;
 import com.francesca.dao.Health1hDao;
 import com.francesca.dao.Power5minDao;
-import com.francesca.model.DTO.AreaEntity;
 import com.francesca.model.DTO.Health1hEntity;
 import com.francesca.model.DTO.Power5minEntity;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
 
 

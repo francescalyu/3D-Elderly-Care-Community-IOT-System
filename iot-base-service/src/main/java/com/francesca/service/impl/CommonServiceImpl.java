@@ -81,7 +81,7 @@ public class CommonServiceImpl implements CommonService {
                 dev = cacheService.getGeekOpenACController().get(devId.intValue());
                 break;
             default:
-                dev = null;
+                dev = cacheService.getHkVideo();
                 break;
       }
 

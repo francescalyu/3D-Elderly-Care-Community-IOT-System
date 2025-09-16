@@ -59,9 +59,9 @@ public class ProductController {
 
             prodPoint.setName(pointEntity.getName());
             prodPoint.setAlias(pointEntity.getAlias());
-            prodPoint.setProdid(String.valueOf(pointEntity.getProdid()));
+            prodPoint.setProdid(pointEntity.getProdid().intValue());
             prodPoint.setUnit(pointEntity.getUnit());
-            prodPoint.setId(String.valueOf(pointEntity.getId()));
+            prodPoint.setId(pointEntity.getId().intValue());
             prodPoint.setType(String.valueOf(pointEntity.getType()));
             prodPoint.setPtUse(String.valueOf(pointEntity.getPtuse()));
 

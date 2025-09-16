@@ -13,6 +13,7 @@ import com.francesca.mqtt.ustoneMsg.UStone10AOutlet;
 import com.francesca.mqtt.ustoneMsg.UStone3WaySwitch;
 import com.francesca.mqtt.ustoneMsg.UStoneAirSixSensorStatus;
 import com.francesca.mqtt.ustoneMsg.UStoneSmokeSensorStatus;
+import com.francesca.mqtt.video.HkVideo;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -123,5 +124,7 @@ public interface CacheService {
         ConcurrentHashMap<Integer, GeekOpenACController> getGeekOpenACController();
 
         List<TkruleEntity> getTkRules();
+
+        HkVideo getHkVideo();
 
 }

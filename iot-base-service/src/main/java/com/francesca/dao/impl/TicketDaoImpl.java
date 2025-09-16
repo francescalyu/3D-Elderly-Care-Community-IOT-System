@@ -2,6 +2,7 @@ package com.francesca.dao.impl;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -30,7 +31,10 @@ public class TicketDaoImpl extends ServiceImpl<TicketMapper, TicketEntity> imple
 
     @Override
     public List<TicketEntity> selectAll() {
-        return list(null);
+        QueryWrapper<TicketEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.last("limit 200");
+
+        return  ticketMapper.selectList(queryWrapper);
     }
 
     @Override

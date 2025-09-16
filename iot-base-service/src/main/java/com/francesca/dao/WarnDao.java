@@ -19,6 +19,9 @@ public interface WarnDao {
 
     void  insert(WarnEntity entity);
 
+
+
+
     void  update(WarnEntity entity);
 
     boolean  delete(BigInteger id);

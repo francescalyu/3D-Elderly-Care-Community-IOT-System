@@ -20,6 +20,8 @@ public interface WarnRuleDao {
 
     List<WarnRuleEntity> selectByProd(BigInteger prodId);
 
+    List<WarnRuleEntity> selectByRuleId(BigInteger ruleId);
+
     WarnRuleEntity selectByWarnId(BigInteger id);
 
     void  insert(WarnRuleEntity entity);

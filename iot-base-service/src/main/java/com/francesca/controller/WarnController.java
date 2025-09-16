@@ -23,7 +23,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 
 /**
@@ -64,6 +66,45 @@ public class WarnController {
 
         return warnDao.selectAll();
     }
+
+
+    @ApiOperation(value = "新增告警定义  (id 送 告警规则的 warnid ) 如没有送0 ")
+    @PostMapping( "add")
+    public Integer add(@RequestBody WarnEntity entity) {
+
+        if (ObjectUtil.isNotEmpty(entity) && ObjectUtil.isNotEmpty(entity.getId())){
+            WarnEntity warn = warnDao.selectByUid(entity.getId());
+
+            if (ObjectUtil.isNotEmpty(warn)){
+                return  -1;
+            }
+        }
+
+        if (ObjectUtil.isEmpty(entity) || ObjectUtil.isEmpty(entity.getName()) || ObjectUtil.isEmpty(entity.getLevel())){
+            return -1;
+        }
+
+        warnDao.insert(entity);
+
+        List<WarnEntity> finds = warnDao.selectAll();
+        Optional<BigInteger> maxId = finds.stream()
+                .map(WarnEntity::getId)
+                .max(Comparator.naturalOrder());
+
+        int max = maxId.orElse(new BigInteger("-1")).intValue(); // 如果列表为空则返回0
+
+       return max;
+
+    }
+
+    @ApiOperation(value = "删除告警定义  (id 送 告警规则的 warnid ) ")
+    @DeleteMapping( "del")
+    public boolean del(@RequestParam Integer warnid) {
+
+       return warnDao.delete(BigInteger.valueOf(warnid));
+
+    }
+
 
     @ApiOperation(value = "列出当月所有告警  参数 YYYYMM ")
     @GetMapping( "getMonthWarn")
@@ -132,7 +173,7 @@ public class WarnController {
     @GetMapping( "getTodayWarn")
     public List<WarnRecordVO> getTodayWarn() {
 
-        List<WarnRecordEntity> warnRecordEntities =  warnRecordDao.selectAll();
+        List<WarnRecordEntity> warnRecordEntities =  warnRecordDao.selectByDate(LocalDate.now());
         List<WarnRuleEntity> rules = warnRuleDao.selectAll();
 
         if(ObjectUtil.isEmpty(warnRecordEntities)){

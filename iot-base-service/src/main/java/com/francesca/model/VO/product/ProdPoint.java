@@ -18,10 +18,10 @@ import lombok.NoArgsConstructor;
 public class ProdPoint {
 
     @ApiModelProperty("点位id" )
-    private String id;
+    private Integer id;
 
     @ApiModelProperty("产品id" )
-    private String prodid;
+    private Integer prodid;
 
     @ApiModelProperty("点位名" )
     private String name;

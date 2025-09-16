@@ -63,6 +63,11 @@ public class UrlConstant {
     public static final String Warn = iot_base + "/warn";
 
     /**
+     * about
+     */
+    public static final String About = iot_base + "/about";
+
+    /**
      * warn rule
      */
     public static final String WarnRule = Warn + "/rule";

@@ -16,6 +16,7 @@ import com.francesca.mqtt.ustoneMsg.UStone10AOutlet;
 import com.francesca.mqtt.ustoneMsg.UStone3WaySwitch;
 import com.francesca.mqtt.ustoneMsg.UStoneAirSixSensorStatus;
 import com.francesca.mqtt.ustoneMsg.UStoneSmokeSensorStatus;
+import com.francesca.mqtt.video.HkVideo;
 import com.francesca.service.CacheService;
 import com.francesca.service.DeviceMsg;
 import com.francesca.util.CommonUtil;
@@ -28,6 +29,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -634,6 +636,21 @@ public class CacheServiceImpl implements CacheService {
     @Override
     public List<TkruleEntity> getTkRules() {
         return this.tkruleEntities;
+    }
+
+    @Override
+    public HkVideo getHkVideo() {
+      List<DeviceEntity> find = deviceEntityMap.values().stream().filter(v -> v.getProduct() == 12).collect(Collectors.toList());
+
+      if (ObjectUtil.isEmpty(find)){
+          return  null;
+      }
+
+      HkVideo hkVideo = new HkVideo();
+      hkVideo.setFLVurl(find.get(0).getDescript());
+
+      return hkVideo;
+
     }
 
 

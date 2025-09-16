@@ -297,14 +297,16 @@ public class WarnRuleServiceImpl implements WarnRuleService {
     private WarnRecordEntity isOpen(WarnRuleEntity rule , WarnRecordEntity record){
 
         // if rule is use count,  check count is exceed limit or not
-        if (ObjectUtil.isEmpty(record.getCount())){
-            record.setCount(0);
-        }
-        record.setCount(record.getCount() + 1 );
+        if (ObjectUtil.isNotEmpty(rule.getCount()) && rule.getCount() > 0) {
+            if (ObjectUtil.isEmpty(record.getCount())) {
+                record.setCount(0);
+            }
+            record.setCount(record.getCount() + 1);
 
-        if (ObjectUtil.isNotEmpty(rule.getCount())) {
-            if (rule.getCount() <= record.getCount() ){
-                record.setStatus(2);
+            if (ObjectUtil.isNotEmpty(rule.getCount())) {
+                if (rule.getCount() <= record.getCount()) {
+                    record.setStatus(2);
+                }
             }
         }
 
