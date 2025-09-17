@@ -1,0 +1,295 @@
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'primaryColor': '#ffffff',
+      'primaryTextColor': '#000000',
+      'primaryBorderColor': '#000000',
+      'lineColor': '#000000',
+      'secondaryColor': '#ffffff',
+      'tertiaryColor': '#ffffff',
+      'fontSize':'20px'
+    }
+  }
+}%%
+
+
+classDiagram
+    %% 基础配置模块
+    namespace base define of s3eccis {
+        class area {
+            <<space of a room>>
+            +tinyint ID (PK)
+            +varchar name
+            +varchar alias
+            +int tenant
+        }
+
+        class subsys {
+            << system define of devices >>
+            +tinyint ID (PK)
+            +varchar name
+            +varchar alias
+        }
+
+        class product {
+            <<product is a collect define of devices >>
+            +int ID (PK)
+            +varchar name
+            +varchar alias
+            +tinyint subsys
+            +tinyint isctrl
+            +varchar descript
+            +varchar aliasen
+            +varchar manu
+            +varchar sn
+            +varchar picurl
+        }
+
+        class point {
+            <<points is the data collect of product >>
+            +bigint ID (PK)
+            +varchar name
+            +varchar alias
+            +varchar unit
+            +varchar aliasen
+            +int prodid
+            +tinyint type
+            +tinyint ptuse
+            +varchar cmd
+            +float low
+            +float high
+            +float step
+        }
+    }
+
+    %% 设备管理模块
+    namespace device manager  {
+        class device {
+            <<device of a room >>
+            +bigint ID (PK)
+            +varchar manuid
+            +int subsys
+            +int product
+            +varchar ip
+            +varchar mqttuptopic
+            +varchar mqttdowntopic
+            +varchar name
+            +varchar alias
+            +varchar aliasen
+            +varchar descript
+            +int area
+            +int tenant
+            +varchar twinuid
+        }
+
+        class product2pt {
+            <<product link to point >>
+            +bigint ID (PK)
+            +bigint did
+            +varchar voltagerms
+            +varchar activepower
+            +varchar currentrms
+            +varchar apparentpower
+            +varchar powerfactor
+            +varchar energyToday
+            +timestamp time
+        }
+    }
+
+    %% 人员管理模块
+    namespace people manage {
+        class people {
+            <<users of s3eccis >>
+            +int ID (PK)
+            +varchar name
+            +int age
+            +varchar birth
+            +int sex
+            +tinyint type
+            +varchar alias
+            +varchar aliasen
+            +varchar cellphone
+            +tinyint inform
+            +int link
+            +varchar description
+            +varchar username
+            +varchar passwd
+            +varchar addr
+            +varchar room3d
+        }
+    }
+
+    %% 告警管理模块
+    namespace warn manage {
+        class warn {
+            <<define of a warn >>
+            +bigint ID (PK)
+            +varchar name
+            +varchar alias
+            +int level
+            +bigint subsys
+            +bigint area
+            +varchar descript
+            +int tenant
+        }
+
+        class warnrule {
+            <<rules to create warn in define condition >>
+            +bigint ID (PK)
+            +bigint ruleid
+            +varchar point
+            +bigint pid
+            +varchar op
+            +varchar pvalue
+            +varchar conn
+            +tinyint prod
+            +tinyint dev
+            +tinyint subsys
+            +tinyint area
+            +int time
+            +int count
+            +varchar name
+            +varchar alias
+            +varchar descript
+            +int closewarn
+            +int warnid
+            +tinyint isenable
+            +tinyint type
+        }
+
+        class warnrecord {
+            <<warn history record >>
+            +bigint ID (PK)
+            +varchar name
+            +varchar alias
+            +int level
+            +bigint subsys
+            +bigint area
+            +tinyint status
+            +datetime create_time
+            +datetime close_time
+            +int count
+            +bigint ruleid
+            +bigint warnid
+            +bigint devid
+            +bigint delay
+        }
+    }
+
+    %% 工单管理模块
+    namespace ticket manage  {
+        class tkrule {
+            <<rule to define action when a warn arrived >>
+            +bigint ID (PK)
+            +varchar name
+            +varchar alias
+            +int tktype
+            +varchar descript
+            +bigint warnid
+            +int peopleid
+            +int expiretime
+            +int prodid
+            +int devid
+            +int pid
+            +float cmdvalue
+            +int retry
+        }
+
+        class ticket {
+            <<ticket history >>
+            +bigint ID (PK)
+            +varchar name
+            +varchar alias
+            +int tktype
+            +varchar inform
+            +bigint warnrecord
+            +int peopleid
+            +int status
+            +int prodid
+            +int devid
+            +int pid
+            +float cmdvalue
+            +int expire
+            +varchar result
+            +datetime createtime
+            +datetime informtime
+            +datetime closetime
+        }
+    }
+
+    %% 数据统计模块
+    namespace data Statistics {
+        class health1h {
+            <<health data (every hour)>>
+            +bigint ID (PK)
+            +varchar heartrate
+            +varchar bloodpressure
+            +varchar bodytemp
+            +varchar calories
+            +varchar sleep
+            +varchar step
+            +timestamp time
+        }
+
+        class power5min {
+            <<energy data (every 5 min)>>
+            +bigint ID (PK)
+            +varchar energytoday
+            +varchar currentpower
+            +varchar powersave
+            +varchar co2
+            +varchar tree
+            +varchar acpower
+            +varchar lightpower
+            +varchar electpower
+            +timestamp time
+            +tinyint ptype
+        }
+
+        class power5mintotal {
+            <<energy totoal count (every 5 min)>>
+            +bigint ID (PK)
+            +varchar energytoday
+            +varchar currentpower
+            +varchar powersave
+            +varchar co2
+            +varchar tree
+            +varchar acpower
+            +varchar lightpower
+            +varchar electpower
+            +timestamp time
+            +tinyint ptype
+        }
+    }
+
+    %% 关系定义
+    device --> subsys : subsys
+    device --> product : product
+    device --> area : area
+    point --> product : prodid
+    product --> subsys : subsys
+
+    product2pt --> device : did
+
+    ticket --> warnrecord : warnrecord
+    ticket --> people : peopleid
+    ticket --> product : prodid
+    ticket --> device : devid
+    ticket --> point : pid
+
+    tkrule --> warn : warnid
+    tkrule --> people : peopleid
+    tkrule --> product : prodid
+    tkrule --> device : devid
+    tkrule --> point : pid
+
+    warnrecord --> warn : warnid
+    warnrecord --> device : devid
+
+    warnrule --> warn : warnid
+
+        %% Individual node styling. Try the visual editor toolbar for easier styling!
+        style E color:#FFFFFF, fill:#AA00FF, stroke:#AA00FF
+        style G color:#FFFFFF, stroke:#00C853, fill:#00C853
+        style I color:#FFFFFF, stroke:#2962FF, fill:#2962FF
