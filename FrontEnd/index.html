@@ -1,0 +1,635 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>个人物联网学习</title>
+</head>
+
+<body>
+  <div id="app"></div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+
+</html>
+<script>
+  // (function (win) {
+  //   // 获取页面所有的 <script > 标签对象
+  //   let scripts = document.getElementsByTagName('script')
+  //   // 遍历标签
+  //   for(let i = 0; i < scripts.length; i++) {
+  //     // 提取单个<script > 标签对象
+  //     let script = scripts[i]
+  //     // 获取标签中的 src
+  //     let url = script.getAttribute("src")
+  //     // 获取标签中的 type
+  //     let type = script.getAttribute("type")
+  //     // 获取标签中的js代码
+  //     let scriptText = script.innerHTML
+  //     // 如果有引用地址或者 type 属性 为 "module" 则代表该标签需要更改
+  //     if (url || type === "module") {
+  //       // 创建一个新的标签对象
+  //       let tag=document.createElement('script');
+  //       // 设置src的引入
+  //       tag.setAttribute('url',url);
+  //       // 设置js代码
+  //       tag.innerHTML = scriptText
+  //       // 删除原先的标签
+  //       script.remove()
+  //       // 将标签添加到代码中
+  //       document.getElementsByTagName('head')[0].appendChild(tag)
+  //     }
+  //   }
+  // })(window)
+</script>
+<style>
+  
+  #app {
+    min-width: 1440px !important;
+    min-height: auto !important;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    color: #444;
+    background: url("@/assets/img/bg2.png") no-repeat;
+   background-size: 100% 100%;
+   
+  }
+
+  /* 针对大屏幕设备 */
+  @media (min-width: 2000px) and (max-width: 2800px) {
+    /* #app .fs1 {
+      font-size: 20px !important;
+    }
+    #app .fs2 {
+      font-size: 20px !important;
+    }
+    #app .fs3 {
+      font-size: 16px !important;
+    }
+    #app .fs4 {
+      font-size: 16px !important;
+    }
+    #app .fs24 {
+      font-size: 24px !important;
+    }
+    #app .fs20 {
+      font-size: 20px !important;
+    }
+    #app .fs30 {
+      font-size: 30px !important;
+    }
+    #app .fs34 {
+      font-size: 30px !important;
+    } */
+    #app .top_item {
+      .item_top {
+        font-size: 20px !important;
+      }
+
+      .top_item_L {
+        top: calc(60% - 45px);
+      }
+
+      .top_item_R {
+        /* font-size: 20px !important; */
+        top: calc(60% - 35px);
+
+        span {
+          font-size: 34px !important;
+        }
+
+      }
+
+      .item_cont_L {
+        span {
+          font-size: 40px;
+        }
+
+      }
+
+      .top_item_L1 {
+        font-size: 24px !important;
+      }
+
+      .b_top {
+        bottom: 20%;
+        font-size: 18px !important;
+      }
+
+      .b_top1 {
+        top: 15%;
+        font-size: 18px !important;
+      }
+    }
+
+    #app .body_item_L1_content_L {
+      font-size: 18px !important;
+    }
+
+    #app .body_item_L1_content_R {
+      font-size: 18px !important;
+    }
+
+    #app .body_item_L2_contents_L {
+      div {
+        font-size: 18px !important;
+
+        P {
+          font-size: 15px !important;
+        }
+
+      }
+    }
+
+    #app .body_item_L2_contents_R {
+      div {
+        font-size: 18px !important;
+
+        P {
+          font-size: 15px !important;
+        }
+      }
+    }
+
+    #app .body_item_L3_content_R {
+      font-size: 16px !important;
+
+      span {
+        font-size: 18px !important;
+      }
+    }
+
+    #app .body_item_R1_list {
+      font-size: 15px !important;
+    }
+
+    #app .body_item_L3_content_L {
+      font-size: 16px !important;
+
+      span {
+        font-size: 18px !important;
+      }
+    }
+
+    #app .item_L3_lists {
+      font-size: 18px !important;
+    }
+
+    #app .content_item_lists {
+
+      .item_lists_top {
+        .top_L {
+          font-size: 18px !important;
+        }
+
+        .top_R {
+          span {
+            font-size: 22px !important;
+          }
+        }
+      }
+
+      .item_lists_bottom .c1 .c2 .c3 {
+        font-size: 22px;
+      }
+
+    }
+
+    #app .content1_item_lists {
+      padding: 5px !important;
+
+      .list_title {
+        font-size: 18px !important;
+      }
+
+      .list_itemT {
+        font-size: 18px !important;
+
+        span {
+          font-size: 28px !important;
+        }
+      }
+
+      .list_itemB {
+        font-size: 18px !important;
+      }
+
+      .item_lists_L {
+        font-size: 18px !important;
+
+        span {
+          font-size: 40px !important;
+        }
+      }
+
+      .item_lists_R {
+        font-size: 18px !important;
+
+        span {
+          font-size: 40px !important;
+        }
+      }
+    }
+
+    #app .content_title {
+      font-size: 22px !important;
+
+      span {
+        font-size: 36px !important;
+      }
+    }
+
+    #app .content_text {
+      font-size: 22px !important;
+    }
+
+    /* 运营 */
+    #app .top_title {
+      font-size: 22px !important;
+    }
+
+    #app .top_content {
+      div {
+        font-size: 20px !important;
+
+        span {
+          font-size: 36px !important;
+        }
+      }
+    }
+
+    #app .body_B_L_contents {
+      div {
+        font-size: 16px !important;
+
+        span {
+          font-size: 20px !important;
+        }
+      }
+    }
+
+    .user_title {
+      height: 70px !important;
+      line-height: 70px !important;
+      font-size: 20px !important;
+    }
+
+    .user_list_item {
+      font-size: 16px !important;
+
+      span {
+        font-size: 22px !important;
+      }
+    }
+  }
+
+  /* 针对小屏幕设备 */
+  @media (min-width: 0px) and (max-width: 1440px) {
+    /* #app .fs1 {
+      font-size: 12px !important;
+    }
+    #app .fs2 {
+      font-size: 20px !important;
+    }
+    #app .fs3 {
+      font-size: 16px !important;
+    }
+    #app .fs4 {
+      font-size: 16px !important;
+    }
+    #app .fs24 {
+      font-size: 24px !important;
+    }
+    #app .fs20 {
+      font-size: 20px !important;
+    }
+    #app .fs30 {
+      font-size: 30px !important;
+    }
+    #app .fs34 {
+      font-size: 30px !important;
+    } */
+    #app .top_item {
+      .top_item_L {
+        top: calc(60% - 45px);
+      }
+
+      .top_item_R {
+        font-size: 12px !important;
+        top: calc(60% - 35px);
+
+        span {
+          font-size: 18px !important;
+        }
+
+      }
+
+      .item_cont_L {
+        span {
+          font-size: 20px;
+        }
+
+      }
+
+      .top_item_L1 {
+        font-size: 14px !important;
+      }
+
+      .b_top {
+        bottom: 20%;
+        font-size: 12px !important;
+      }
+
+      .b_top1 {
+        top: 15%;
+        font-size: 12px !important;
+      }
+    }
+
+    #app .item_L3_lists {
+      font-size: 12px !important;
+    }
+
+    #app .content_item_lists {
+
+      .item_lists_top {
+        .top_L {
+          font-size: 12px !important;
+        }
+
+        .top_R {
+          span {
+            font-size: 14px !important;
+          }
+        }
+      }
+
+      .item_lists_bottom .c1 .c2 .c3 {
+        font-size: 14px;
+      }
+
+    }
+
+    #app .content1_item_lists {
+      padding: 5px !important;
+
+      .list_title {
+        font-size: 12px !important;
+      }
+
+      .list_itemT {
+        font-size: 12px !important;
+
+        span {
+          font-size: 18px !important;
+        }
+      }
+
+      .list_itemB {
+        font-size: 12px !important;
+      }
+
+      .item_lists_L {
+        font-size: 12px !important;
+
+        span {
+          font-size: 20px !important;
+        }
+      }
+
+      .item_lists_R {
+        font-size: 12px !important;
+
+        span {
+          font-size: 20px !important;
+        }
+      }
+    }
+
+    #app .content_title {
+      font-size: 14px !important;
+
+      span {
+        font-size: 18px !important;
+      }
+    }
+
+    #app .content_text {
+      font-size: 14px !important;
+    }
+
+    /* 运营 */
+    #app .top_title {
+      font-size: 16px !important;
+    }
+
+    #app .top_content {
+      div {
+        font-size: 14px !important;
+
+        span {
+          font-size: 18px !important;
+        }
+      }
+    }
+
+    #app .body_B_L_contents {
+      div {
+        font-size: 12px !important;
+
+        span {
+          font-size: 14px !important;
+        }
+      }
+    }
+
+    #app .bottom_R_num {
+      div {
+        font-size: 12px !important;
+
+        span {
+          font-size: 14px !important;
+        }
+      }
+    }
+
+    #app .body_B_R_content {
+      padding: 0px !important;
+
+      .content_L_lists {
+        padding: 5px !important;
+      }
+
+      .B_R_content_R {
+        padding: 5px !important;
+      }
+
+      .color1 {
+        div {
+          font-size: 12px !important;
+
+          span {
+            font-size: 16px !important;
+          }
+        }
+      }
+
+      .color2 {
+        div {
+          font-size: 12px !important;
+
+          span {
+            font-size: 16px !important;
+          }
+        }
+      }
+
+      .color3 {
+        div {
+          font-size: 12px !important;
+
+          span {
+            font-size: 16px !important;
+          }
+        }
+      }
+
+      .color4 {
+        div {
+          font-size: 12px !important;
+
+          span {
+            font-size: 16px !important;
+          }
+        }
+      }
+
+      .user_title {
+        height: 50px !important;
+      }
+
+      .user_list_item {
+        img {
+          width: 60px !important;
+          height: 60px !important;
+        }
+
+        font-size: 12px !important;
+
+        span {
+          font-size: 14px !important;
+        }
+      }
+    }
+  }
+
+  /* 针对中等屏幕设备 */
+  @media (min-width: 1400px) and (max-width: 1680px) {
+    #app .fs1 {
+      font-size: 12px !important;
+    }
+    #app .fs2 {
+      font-size: 14px !important;
+    }
+    #app .fs3 {
+      font-size: 16px !important;
+    }
+    #app .fs4 {
+      font-size: 16px !important;
+    }
+    #app .fs24 {
+      font-size: 24px !important;
+    }
+    #app .fs20 {
+      font-size: 20px !important;
+    }
+    #app .fs30 {
+      font-size: 30px !important;
+    }
+    #app .body_item_L2_contents_L div {
+      top: 20px;
+      left: 45%;
+
+    }
+
+    #app .body_item_L2_contents_R div {
+      top: 20px;
+      left: 45%;
+
+    }
+
+    #app .body_item_L2_contents .L1 {
+      background-size: 95% 85% !important;
+    }
+
+    #app .body_item_L2_contents .L2 {
+      background-size: 95% 85% !important;
+    }
+
+    #app .body_item_L2_contents .L3 {
+      background-size: 95% 85% !important;
+    }
+
+    #app .body_item_L2_contents .L4 {
+      background-size: 95% 85% !important;
+    }
+
+    #app .body_item_L2_contents .L5 {
+      background-size: 95% 85% !important;
+    }
+
+    #app .body_item_L2_contents .L6 {
+      background-size: 95% 85% !important;
+    }
+
+
+    #app .top_item {
+
+      .top_item_L {
+        top: calc(55% - 45px);
+      }
+      .top_item_R {
+        top: calc(55% - 35px);
+      }
+
+      .b_top {
+        bottom: 20%;
+      }
+
+      .b_top1 {
+        top: 15%;
+      }
+    }
+
+
+    #app .item_icon {
+      div {
+        top: 20%;
+      }
+    }
+
+    #app .el-table__inner-wrapper {
+      font-size: 12px !important;
+    }
+    #app .content1_item_lists {
+      padding: 5px !important;
+    }
+  }
+  .blue-link{
+    color: #5ebabd;
+  }
+  .blue-link:hover{
+    color: rgba(94, 186, 189, 0.8);
+  }
+  .red-link{
+    color: rgba(253,79,79, 1);
+  }
+  .red-link:hover{
+    color: rgba(253,79,79, 0.8);
+  }
+</style>
