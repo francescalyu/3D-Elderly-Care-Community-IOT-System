@@ -281,7 +281,7 @@ public class WarnController {
            return warnTotal;
        }
 
-       int total = res.size();
+       int total = (int) res.stream().filter(v -> v.getStatus() == 1).count();
        int closeWarn = (int) res.stream().filter(v -> v.getStatus() == 0).count();
        int ticketWarn = (int) res.stream().filter(v -> v.getStatus() == 4).count();
 
@@ -296,8 +296,8 @@ public class WarnController {
             warnTotal.setWarnDeviceToday("0");
             warnTotal.setWarnHealthToday("0");
         }else {
-            int warnDevice = (int) today.stream().filter(v -> v.getSubsys().intValue() == 2).count();
-            int warnHealth = today.size() - warnDevice;
+            int warnHealth = (int) today.stream().filter(v -> v.getSubsys().intValue() == 2).count();
+            int warnDevice = today.size() - warnHealth;
 
             warnTotal.setWarnDeviceToday(String.valueOf(warnDevice));
             warnTotal.setWarnHealthToday(String.valueOf(warnHealth));

@@ -11,6 +11,8 @@ import com.francesca.model.DTO.PeopleEntity;
 import com.francesca.model.DTO.SubsysEntity;
 import com.francesca.model.DTO.TicketEntity;
 import com.francesca.model.DTO.WarnRecordEntity;
+import com.francesca.model.VO.Warn.WarnTotal;
+import com.francesca.model.VO.ticket.TicketTotal;
 import com.francesca.model.VO.ticket.TicketVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -20,6 +22,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigInteger;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -46,6 +50,50 @@ public class TicketController {
 
     @Autowired
     private PeopleDao peopleDao;
+
+
+    @ApiOperation(value = "获取工单统计")
+    @GetMapping( "getTicketTotal")
+    public TicketTotal getTicketTotal() {
+
+       LocalDateTime now = LocalDateTime.now();
+
+        // 定义格式为yyyyMMdd
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMM");
+
+        String yearMonth = now.format(formatter);
+
+        List<TicketEntity> res = ticketDao.selectByMonth(yearMonth);
+
+        TicketTotal ticketTotal = new TicketTotal();
+        ticketTotal.setTicketRemain("0");
+        ticketTotal.setTicketExpire("0");
+        ticketTotal.setTicketExpire("0");
+        ticketTotal.setTicketAuto("0");
+        ticketTotal.setTicketManual("0");
+
+
+        if (ObjectUtil.isEmpty(res)){
+               return ticketTotal;
+        }else {
+            int tkRemain = (int) res.stream().filter(v -> v.getStatus() == 1).count();
+            int tkClose = (int) res.stream().filter(v -> v.getStatus() == 3).count();
+            int tkExpire = (int) res.stream().filter(v -> v.getExpire() == 1).count();
+            int tkmanual = (int) res.stream().filter(v -> v.getTktype() == 2).count();
+            int tkauto = (int) res.stream().filter(v -> v.getTktype() == 1).count();
+
+            ticketTotal.setTicketRemain(String.valueOf(tkRemain));
+            ticketTotal.setTicketClose(String.valueOf(tkClose));
+            ticketTotal.setTicketExpire(String.valueOf(tkExpire));
+            ticketTotal.setTicketAuto(String.valueOf(tkauto));
+            ticketTotal.setTicketManual(String.valueOf(tkmanual));
+
+        }
+
+         return ticketTotal;
+
+
+    }
 
     @ApiOperation(value = "列出所有工单")
     @GetMapping( "getall")

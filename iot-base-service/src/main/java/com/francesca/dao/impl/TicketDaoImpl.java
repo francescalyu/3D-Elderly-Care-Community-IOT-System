@@ -54,7 +54,7 @@ public class TicketDaoImpl extends ServiceImpl<TicketMapper, TicketEntity> imple
         LocalDateTime end = start.plusMonths(1).minusSeconds(1);
 
         LambdaQueryWrapper<TicketEntity> wrapper = Wrappers.lambdaQuery();
-        wrapper.between(TicketEntity::getCreatetime, start, end);
+        wrapper.between(TicketEntity::getCreatetime, start, end).last("limit 200");;
 
         return list(wrapper);
     }

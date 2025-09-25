@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @ApiModel("告警统计")
 public class WarnTotal {
 
-    @ApiModelProperty("当月告警总数" )
+    @ApiModelProperty("当月未处理" )
     private String warnTotal;
 
     @ApiModelProperty("当月已派单" )
