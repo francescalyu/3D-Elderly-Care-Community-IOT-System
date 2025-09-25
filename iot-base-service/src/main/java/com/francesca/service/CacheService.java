@@ -81,6 +81,8 @@ public interface CacheService {
 
         DashPowerVO get1hPower();
 
+        DashPowerVO setdayPower();
+
         void set1hPower(DashPowerVO dashPowerVO);
 
         void putDashPower(DashPowerVO dashPowerVO);

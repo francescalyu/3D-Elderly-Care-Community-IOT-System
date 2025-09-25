@@ -27,6 +27,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -451,6 +452,22 @@ public class CacheServiceImpl implements CacheService {
     @Override
     public DashPowerVO get1hPower() {
         return  dashPower1hVO;
+    }
+
+    @Override
+    public DashPowerVO setdayPower() {
+        String daySave = generateRandomNumberFormatted();
+        dashPowerVO.setPowerSave(daySave);
+
+        return dashPowerVO;
+    }
+
+
+    private static String generateRandomNumberFormatted() {
+        Random random = new Random();
+        double number = random.nextDouble() * 5;
+        DecimalFormat df = new DecimalFormat("0.00");
+        return df.format(number);
     }
 
     @Override

@@ -24,6 +24,8 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.DecimalFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -61,6 +63,73 @@ public class TaskSchedule {
 
     @Autowired
     private WarnRuleDao warnRuleDao;
+
+    @Scheduled(cron = "0 0 0 * * ?")
+    //@Scheduled(fixedRate = 1000 * 60 * 5)
+    public void executeDailyTask() {
+        Power5minTotalEntity power5minTotalEntity = new Power5minTotalEntity();
+        cacheService.setdayPower();
+        DashPowerVO dashPowerVO = cacheService.getCurrentPower();
+
+        List<Power5minTotalEntity> powers = power5minTotalDao.selectbydate(LocalDate.now().minusDays(1));
+        double co2save = 0;
+        double tree = 0 ;
+
+        if (ObjectUtil.isNotEmpty(powers)){
+            double maxpower = 0;
+            double maxco2 = 0;
+            double maxtree = 0;
+            for (Power5minTotalEntity power : powers) {
+                if (ObjectUtil.isNotEmpty(power.getEnergytoday())) {
+                    if (Double.parseDouble(power.getEnergytoday()) > maxpower) {
+                        maxpower = Double.parseDouble(power.getEnergytoday());
+                    }
+                }
+                if (ObjectUtil.isNotEmpty(power.getCo2())) {
+                    if (Double.parseDouble(power.getCo2()) > maxco2) {
+                        maxco2 = Double.parseDouble(power.getCo2());
+                    }
+                }
+
+                if (ObjectUtil.isNotEmpty(power.getTree())) {
+                    if (Double.parseDouble(power.getTree()) > maxtree) {
+                        maxtree = Double.parseDouble(power.getTree());
+                    }
+                }
+
+            }
+
+            DecimalFormat df = new DecimalFormat("0.00");
+
+            co2save = maxpower * Double.parseDouble(dashPowerVO.getPowerSave())*0.55;
+            co2save = co2save / 100;
+            co2save = co2save + maxco2;
+            tree = co2save / 18;
+            tree = tree +  maxtree;
+
+            co2save =  Double.parseDouble(df.format(co2save));
+            tree = Double.parseDouble(df.format(tree));
+
+
+        }
+
+        dashPowerVO.setCo2(String.valueOf(co2save));
+        dashPowerVO.setTree(String.valueOf(tree));
+
+        power5minTotalEntity.setId(BigInteger.valueOf(0));
+        power5minTotalEntity.setCurrentpower(dashPowerVO.getCurrentPower());
+        power5minTotalEntity.setEnergytoday(dashPowerVO.getTodayPower());
+        power5minTotalEntity.setAcpower(dashPowerVO.getAcPower());
+        power5minTotalEntity.setLightpower(dashPowerVO.getLightPower());
+        power5minTotalEntity.setPowersave(dashPowerVO.getPowerSave());
+        power5minTotalEntity.setCo2(String.valueOf(co2save));
+        power5minTotalEntity.setTree(String.valueOf(tree));
+        power5minTotalEntity.setElectpower(dashPowerVO.getElectPower());
+        power5minTotalEntity.setPtype(3);
+        power5minTotalEntity.setTime(new Date());
+        power5minTotalDao.insert(power5minTotalEntity);
+
+    }
 
 
     // count power every 1 hour
