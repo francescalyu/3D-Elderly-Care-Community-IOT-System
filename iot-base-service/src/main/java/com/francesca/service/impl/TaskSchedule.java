@@ -64,8 +64,8 @@ public class TaskSchedule {
     @Autowired
     private WarnRuleDao warnRuleDao;
 
-    @Scheduled(cron = "0 0 0 * * ?")
-    //@Scheduled(fixedRate = 1000 * 60 * 5)
+    //@Scheduled(cron = "0 0 0 * * ?")
+    @Scheduled(fixedRate = 1000 * 60 * 5)
     public void executeDailyTask() {
         Power5minTotalEntity power5minTotalEntity = new Power5minTotalEntity();
         cacheService.setdayPower();
