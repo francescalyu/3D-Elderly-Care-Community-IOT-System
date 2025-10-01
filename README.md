@@ -18,7 +18,7 @@ click the device icon on 3D , get the real on time data of the device, as the PI
 
 press the on/off switch to control the light and AC
 
-
+- ![img](https://github.com/francescalyu/3D-Elderly-Care-Community-IOT-System/blob/main/UI%26UX/3D-IOT-Control.png)
 
 
 #### **Background:**  
