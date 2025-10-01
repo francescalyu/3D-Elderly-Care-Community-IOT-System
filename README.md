@@ -14,6 +14,13 @@ click the device icon on 3D , get the real on time data of the device, as the PI
 - ![img](https://github.com/francescalyu/3D-Elderly-Care-Community-IOT-System/blob/main/3D-IOT-Device.png)
 
 
+### environment device control
+
+press the on/off switch to control the light and AC
+
+
+
+
 #### **Background:**  
 The concept of this system originated from my involvement in a community-based elderly care service center. I observed that many seniors in the community live alone, suffer from memory decline, or have mobility issues. They struggle to operate household appliances and medical devices properly, leading to significant health risks and even life-threatening situations. Meanwhile, doctors and caregivers in the community are often understaffed, making it difficult to provide adequate care for these individuals.  
 
