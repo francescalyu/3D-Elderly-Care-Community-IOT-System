@@ -64,8 +64,8 @@ public class TaskSchedule {
     @Autowired
     private WarnRuleDao warnRuleDao;
 
-    //@Scheduled(cron = "0 0 0 * * ?")
-    @Scheduled(fixedRate = 1000 * 60 * 5)
+    @Scheduled(cron = "0 0 0 * * ?")
+    //@Scheduled(fixedRate = 1000 * 60 * 5)
     public void executeDailyTask() {
         Power5minTotalEntity power5minTotalEntity = new Power5minTotalEntity();
         cacheService.setdayPower();
@@ -104,7 +104,7 @@ public class TaskSchedule {
             co2save = maxpower * Double.parseDouble(dashPowerVO.getPowerSave())*0.55;
             co2save = co2save / 100;
             co2save = co2save + maxco2;
-            tree = co2save / 18;
+            tree = co2save / 180;
             tree = tree +  maxtree;
 
             co2save =  Double.parseDouble(df.format(co2save));
