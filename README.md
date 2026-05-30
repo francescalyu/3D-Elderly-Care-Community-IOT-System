@@ -87,7 +87,9 @@ all the software in the S3ECCIS will give its link of source.
 - ### the 3D-view with the IOT device
 - ![img](https://github.com/francescalyu/3D-Elderly-Care-Community-IOT-System/blob/main/3D-FBX/room-mark.png)
 
-
+- ### about the deploy
+- this project is package and depoly on a Tencent Cloud VPS , include MQTT Server Docker with emqx, maria db docker,
+- spring java backend and vue js docker, As I’m still a student and cannot afford costly cloud servers, the server bandwidth for s3eccis.site is limited at roughly 3MB/s, which may result in slow website loading speeds.
 
 ---
 
